@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, Mail, Globe, MapPin, Send, Check, Loader2, AlertCircle } from 'lucide-react'
+import { Phone, Mail, Globe, MapPin, Send, Check } from 'lucide-react'
 
 const DETAILS = [
   { icon: Phone, label: 'Call us', value: '+91 83105 79306', href: 'tel:+918310579306' },
@@ -11,50 +11,35 @@ const DETAILS = [
 
 const RECIPIENT = 'swandigitalsolutions@gmail.com'
 // FormSubmit delivers the form straight to the inbox — no backend needed.
-// The FIRST submission triggers a one-time activation email to RECIPIENT;
-// click the link in it once and every later submission arrives automatically.
-const ENDPOINT = `https://formsubmit.co/ajax/${RECIPIENT}`
+// This uses a normal form POST (not the AJAX endpoint, which refuses until
+// the address is verified). On the FIRST real submission FormSubmit emails
+// RECIPIENT a one-time "Activate Form" link — click it once, and from then
+// on every submission redirects back here to `?sent=1` and just works.
+const ACTION = `https://formsubmit.co/${RECIPIENT}`
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
-  const [status, setStatus] = useState('idle') // idle | sending | sent | error
+  const [status, setStatus] = useState('idle') // idle | sending | sent
+  const [nextUrl, setNextUrl] = useState('')
+
+  useEffect(() => {
+    const { origin, pathname, search } = window.location
+    setNextUrl(`${origin}${pathname}?sent=1#contact`)
+
+    if (new URLSearchParams(search).get('sent') === '1') {
+      setStatus('sent')
+      window.history.replaceState({}, '', pathname + '#contact')
+      document.getElementById('contact')?.scrollIntoView()
+    }
+  }, [])
 
   const handleChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setStatus('sending')
-    try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message,
-          _subject: `New project enquiry from ${form.name || 'your website'}`,
-          _template: 'table',
-          _captcha: 'false',
-        }),
-      })
-      const data = await res.json().catch(() => ({}))
-      if (res.ok && (data.success === 'true' || data.success === true)) {
-        setStatus('sent')
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
-  }
 
   const reset = () => {
     setForm({ name: '', email: '', message: '' })
     setStatus('idle')
   }
-
-  const sending = status === 'sending'
 
   return (
     <section id="contact" className="relative py-20 sm:py-28 md:py-36">
@@ -149,9 +134,19 @@ export default function Contact() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.4 }}
-                onSubmit={handleSubmit}
+                action={ACTION}
+                method="POST"
+                onSubmit={() => setStatus('sending')}
                 className="rounded-3xl border border-line bg-surface p-6 sm:p-8 md:p-10 space-y-5"
               >
+                {/* FormSubmit config */}
+                <input type="hidden" name="_subject" value="New project enquiry — Swan Digital website" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_captcha" value="false" />
+                {nextUrl && <input type="hidden" name="_next" value={nextUrl} />}
+                {/* honeypot — bots fill this, humans never see it */}
+                <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" />
+
                 <div>
                   <label htmlFor="name" className="text-sm text-mist">Your name</label>
                   <input
@@ -180,26 +175,21 @@ export default function Contact() {
                   />
                 </div>
 
-                {status === 'error' && (
-                  <div className="flex items-start gap-2 text-sm text-red">
-                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
-                    Something went wrong sending your message. Please try again, or
-                    email us directly at {RECIPIENT}.
-                  </div>
-                )}
-
                 <button
                   type="submit"
-                  disabled={sending}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red hover:bg-red-soft transition-colors font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                  disabled={status === 'sending'}
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
                 >
-                  {sending ? 'Sending…' : 'Send message'}
-                  {sending ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Send size={16} />
-                  )}
+                  {status === 'sending' ? 'Sending…' : 'Send message'}
+                  <Send size={16} />
                 </button>
+
+                <p className="text-[11px] text-mist/70 text-center">
+                  Prefer email? Write to{' '}
+                  <a href={`mailto:${RECIPIENT}`} className="text-mist underline hover:text-white">
+                    {RECIPIENT}
+                  </a>
+                </p>
               </motion.form>
             )}
           </AnimatePresence>
