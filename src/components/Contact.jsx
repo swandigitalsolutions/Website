@@ -178,7 +178,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
                 >
                   {status === 'sending' ? 'Sending…' : 'Send message'}
                   <Send size={16} />

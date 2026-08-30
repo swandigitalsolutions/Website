@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone } from 'lucide-react'
+import useScrollSpy from '../hooks/useScrollSpy'
 
 const LINKS = [
   { label: 'Services', href: '#services' },
@@ -12,12 +13,16 @@ const LINKS = [
   { label: 'Contact', href: '#contact' },
 ]
 
+const SECTION_IDS = ['services', 'work', 'ai-studio', 'why-us', 'process', 'reviews', 'contact']
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const active = useScrollSpy(SECTION_IDS)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -40,16 +45,26 @@ export default function Navbar() {
         </a>
 
         <nav className="hidden lg:flex items-center gap-7 xl:gap-10">
-          {LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm text-mist hover:text-white transition-colors relative group"
-            >
-              {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-red group-hover:w-full transition-all duration-300" />
-            </a>
-          ))}
+          {LINKS.map((link) => {
+            const isActive = `#${active}` === link.href
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? 'true' : undefined}
+                className={`text-sm transition-colors relative group ${
+                  isActive ? 'text-white' : 'text-mist hover:text-white'
+                }`}
+              >
+                {link.label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-px bg-red transition-all duration-300 ${
+                    isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}
+                />
+              </a>
+            )
+          })}
         </nav>
 
         <div className="hidden lg:flex items-center gap-4 xl:gap-5">
@@ -59,7 +74,7 @@ export default function Navbar() {
           </a>
           <a
             href="#contact"
-            className="px-5 py-2.5 rounded-full bg-red text-white text-sm font-medium hover:bg-red-soft transition-colors shadow-glow"
+            className="px-5 py-2.5 rounded-full bg-red text-plainwhite text-sm font-medium hover:bg-red-soft transition-colors shadow-glow"
           >
             Get a Quote
           </a>
@@ -97,7 +112,7 @@ export default function Navbar() {
               <a
                 href="#contact"
                 onClick={() => setOpen(false)}
-                className="mt-2 px-5 py-3 rounded-full bg-red text-white text-sm font-medium text-center"
+                className="mt-2 px-5 py-3 rounded-full bg-red text-plainwhite text-sm font-medium text-center"
               >
                 Get a Quote
               </a>

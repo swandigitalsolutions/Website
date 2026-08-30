@@ -102,7 +102,7 @@ export default function ChatWidget() {
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
         aria-label={open ? 'Close chat assistant' : 'Open chat assistant'}
-        className="fixed bottom-5 right-5 z-[60] w-[4.25rem] h-[4.25rem] rounded-full bg-red text-white shadow-glow flex items-center justify-center hover:bg-red-soft transition-colors"
+        className="fixed bottom-5 right-5 z-[60] w-[4.25rem] h-[4.25rem] rounded-full bg-red text-plainwhite shadow-glow flex items-center justify-center hover:bg-red-soft transition-colors"
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
@@ -160,7 +160,7 @@ export default function ChatWidget() {
                   <div
                     className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                       m.from === 'user'
-                        ? 'bg-red text-white rounded-br-sm'
+                        ? 'bg-red text-plainwhite rounded-br-sm'
                         : 'bg-surface2 border border-line text-white/90 rounded-bl-sm'
                     }`}
                   >
@@ -190,7 +190,7 @@ export default function ChatWidget() {
                   aria-label={listening ? 'Stop voice input' : 'Start voice input'}
                   className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                     listening
-                      ? 'bg-red text-white animate-pulse'
+                      ? 'bg-red text-plainwhite animate-pulse'
                       : 'border border-line text-mist hover:text-white hover:border-red/50'
                   }`}
                 >
@@ -206,7 +206,7 @@ export default function ChatWidget() {
               <button
                 type="submit"
                 aria-label="Send message"
-                className="shrink-0 w-10 h-10 rounded-full bg-red text-white flex items-center justify-center hover:bg-red-soft transition-colors"
+                className="shrink-0 w-10 h-10 rounded-full bg-red text-plainwhite flex items-center justify-center hover:bg-red-soft transition-colors"
               >
                 <Send size={16} />
               </button>

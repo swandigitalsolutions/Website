@@ -2,35 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Theme tokens (space-separated RGB for Tailwind alpha) ---------- */
+:root {
+  --ink: 6 6 7;
+  --surface: 14 14 17;
+  --surface2: 21 21 24;
+  --line: 35 35 39;
+  --mist: 154 154 163;
+  --fg: 245 245 244;
+  --red: 233 32 42;
+  --red-soft: 255 75 84;
+  --red-deep: 140 15 22;
+  --grid-line: 255 255 255;
+  color-scheme: dark;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #060607;
-  color: #F5F5F4;
+  background-color: rgb(var(--ink));
+  color: rgb(var(--fg));
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 ::selection {
-  background: #E9202A;
+  background: rgb(var(--red));
   color: #fff;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #060607;
-}
-::-webkit-scrollbar-thumb {
-  background: #232327;
-  border-radius: 8px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #E9202A;
-}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: rgb(var(--ink)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--red)); }
 
 .eyebrow {
   font-family: 'JetBrains Mono', monospace;
@@ -48,25 +55,70 @@ body {
 
 .noise-grid {
   background-image:
-    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgb(var(--grid-line) / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid-line) / 0.04) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
-/* Horizontal auto-scrolling marquee (client reviews) */
+/* ---------- "white" utilities re-pointed at the theme foreground ---------- */
+/* In dark mode --fg is near-white so nothing changes; in light mode these
+   flip to dark text. Buttons that must stay white use text-plainwhite. */
+.text-white { color: rgb(var(--fg)) !important; }
+.text-white\/90 { color: rgb(var(--fg) / 0.9) !important; }
+.text-white\/85 { color: rgb(var(--fg) / 0.85) !important; }
+.text-white\/80 { color: rgb(var(--fg) / 0.8) !important; }
+.text-white\/70 { color: rgb(var(--fg) / 0.7) !important; }
+.text-white\/60 { color: rgb(var(--fg) / 0.6) !important; }
+.text-plainwhite { color: #fff !important; }
+
+/* ---------- Aurora hero backdrop ---------- */
+.aurora {
+  background:
+    radial-gradient(38% 45% at 18% 20%, rgb(var(--red) / 0.22), transparent 70%),
+    radial-gradient(32% 40% at 82% 12%, rgba(124, 58, 237, 0.20), transparent 70%),
+    radial-gradient(45% 50% at 65% 85%, rgb(var(--red-soft) / 0.16), transparent 70%),
+    radial-gradient(40% 45% at 25% 90%, rgba(34, 211, 238, 0.12), transparent 70%);
+  filter: blur(28px);
+  animation: aurora-drift 24s ease-in-out infinite alternate;
+  will-change: transform;
+  contain: paint;
+}
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-4%, -2%, 0) scale(1); }
+  50%  { transform: translate3d(3%, 2%, 0) scale(1.07); }
+  100% { transform: translate3d(5%, -3%, 0) scale(1.03); }
+}
+
+/* ---------- Card glare sweep on hover ---------- */
+.card-glare { position: relative; }
+.card-glare::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.14) 45%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.card-glare:hover::after { transform: translateX(120%); }
+
+/* ---------- Horizontal auto-scrolling marquees ---------- */
 @keyframes marquee-x {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
-.marquee-track {
-  animation: marquee-x 45s linear infinite;
-  will-change: transform;
-}
-.marquee-mask:hover .marquee-track {
-  animation-play-state: paused;
-}
+.marquee-track { animation: marquee-x 45s linear infinite; will-change: transform; }
+.marquee-track--slow { animation-duration: 38s; }
+.marquee-mask:hover .marquee-track { animation-play-state: paused; }
 
-/* Respect reduced motion */
+/* ---------- Lenis smooth scroll ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -74,22 +126,21 @@ body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .marquee-track {
-    animation: none !important;
-  }
+  .marquee-track { animation: none !important; }
   .marquee-mask {
     overflow-x: auto !important;
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
+  .aurora { animation: none !important; }
 }
 
-/* Focus visibility */
+/* ---------- Focus visibility ---------- */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #E9202A;
+  outline: 2px solid rgb(var(--red));
   outline-offset: 3px;
   border-radius: 4px;
 }

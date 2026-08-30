@@ -2,6 +2,8 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import SwanMark from './SwanMark'
 import BrowserMockup from './BrowserMockup'
+import Tilt from './Tilt'
+import CountUp from './CountUp'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -15,8 +17,8 @@ const fadeUp = {
 export default function Hero() {
   return (
     <section id="top" className="relative pt-28 pb-20 sm:pt-36 sm:pb-24 md:pt-48 md:pb-32 overflow-hidden">
-      {/* ambient glow */}
-      <div className="absolute -top-40 right-0 w-[560px] h-[560px] max-w-full bg-radial-glow pointer-events-none" />
+      {/* animated aurora backdrop */}
+      <div className="aurora absolute -inset-x-24 -top-40 h-[720px] pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
       <div className="absolute inset-0 noise-grid opacity-40 pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 grid md:grid-cols-2 gap-12 md:gap-16 items-center relative">
@@ -67,7 +69,7 @@ export default function Hero() {
           >
             <a
               href="#contact"
-              className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-red text-white font-medium shadow-glow hover:bg-red-soft transition-colors"
+              className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-red text-plainwhite font-medium shadow-glow hover:bg-red-soft transition-colors"
             >
               Start your project
               <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
@@ -85,16 +87,21 @@ export default function Hero() {
             initial="hidden"
             animate="show"
             variants={fadeUp}
-            className="mt-10 sm:mt-14 flex items-center gap-6 sm:gap-8 text-sm text-mist"
+            className="mt-10 sm:mt-14 flex flex-wrap items-center gap-x-6 gap-y-4 sm:gap-x-8 text-sm text-mist"
           >
             <div>
-              <div className="font-display text-2xl text-white font-semibold">100%</div>
-              client satisfaction
+              <CountUp end={40} suffix="+" className="font-display text-2xl text-white font-semibold" />
+              <div>projects shipped</div>
             </div>
             <div className="h-8 w-px bg-line" />
             <div>
-              <div className="font-display text-2xl text-white font-semibold">On-time</div>
-              delivery, every time
+              <CountUp end={100} suffix="%" className="font-display text-2xl text-white font-semibold" />
+              <div>client satisfaction</div>
+            </div>
+            <div className="h-8 w-px bg-line" />
+            <div>
+              <CountUp end={5} suffix="★" className="font-display text-2xl text-white font-semibold" />
+              <div>average rating</div>
             </div>
           </motion.div>
         </div>
@@ -110,7 +117,9 @@ export default function Hero() {
             className="absolute -z-0 inset-0 m-auto w-40 h-64 opacity-10 pointer-events-none"
             strokeWidth={3}
           />
-          <BrowserMockup />
+          <Tilt className="w-full max-w-md" max={9}>
+            <BrowserMockup />
+          </Tilt>
         </motion.div>
       </div>
     </section>

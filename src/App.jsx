@@ -1,5 +1,6 @@
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import TrustedBy from './components/TrustedBy'
 import Services from './components/Services'
 import Works from './components/Works'
 import AIStudio from './components/AIStudio'
@@ -11,13 +12,20 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import ChatWidget from './components/ChatWidget'
 import Reveal from './components/Reveal'
+import ScrollProgress from './components/ScrollProgress'
+import Intro from './components/Intro'
+import SmoothScroll from './components/SmoothScroll'
 
 export default function App() {
   return (
-    <div className="bg-ink text-white font-body min-h-screen">
+    <div className="bg-ink text-fg font-body min-h-screen">
+      <Intro />
+      <SmoothScroll />
+      <ScrollProgress />
       <Navbar />
       <main>
         <Hero />
+        <TrustedBy />
         <Reveal><Services /></Reveal>
         <Reveal><Works /></Reveal>
         <Reveal><AIStudio /></Reveal>

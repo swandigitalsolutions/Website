@@ -1,19 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        ink: '#060607',
-        surface: '#0E0E11',
-        surface2: '#151518',
-        line: '#232327',
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        surface2: 'rgb(var(--surface2) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        mist: 'rgb(var(--mist) / <alpha-value>)',
+        fg: 'rgb(var(--fg) / <alpha-value>)',
         red: {
-          DEFAULT: '#E9202A',
-          soft: '#FF4B54',
-          deep: '#8C0F16',
+          DEFAULT: 'rgb(var(--red) / <alpha-value>)',
+          soft: 'rgb(var(--red-soft) / <alpha-value>)',
+          deep: 'rgb(var(--red-deep) / <alpha-value>)',
         },
-        mist: '#9A9AA3',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],
@@ -22,10 +24,10 @@ export default {
       },
       backgroundImage: {
         'red-gradient': 'linear-gradient(135deg, #FF4B54 0%, #E9202A 45%, #8C0F16 100%)',
-        'radial-glow': 'radial-gradient(circle at center, rgba(233,32,42,0.25) 0%, rgba(233,32,42,0) 70%)',
+        'radial-glow': 'radial-gradient(circle at center, rgb(var(--red) / 0.25) 0%, rgb(var(--red) / 0) 70%)',
       },
       boxShadow: {
-        glow: '0 0 40px rgba(233,32,42,0.25)',
+        glow: '0 0 40px rgb(var(--red) / 0.25)',
         card: '0 20px 60px -20px rgba(0,0,0,0.6)',
       },
     },

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
+import BeforeAfter from './BeforeAfter'
 
 /**
  * Portfolio showcase — mock projects. Swap `image` with a real
@@ -69,12 +70,28 @@ export default function Works() {
           </h2>
         </div>
 
+        {/* before / after redesign comparison */}
+        <div className="mb-12 sm:mb-16 grid lg:grid-cols-[1fr_minmax(0,340px)] gap-6 lg:gap-10 items-center">
+          <BeforeAfter />
+          <div>
+            <p className="eyebrow text-red mb-3">Redesign impact</p>
+            <h3 className="font-display text-2xl sm:text-3xl font-semibold leading-snug mb-3">
+              Drag to see the difference a rebuild makes.
+            </h3>
+            <p className="text-sm text-mist leading-relaxed">
+              Slower, dated sites on the left; the faster, conversion-focused
+              rebuilds we ship on the right. Swap these for your own
+              before/after screenshots.
+            </p>
+          </div>
+        </div>
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {PROJECTS.map((p) => (
             <motion.article
               key={p.title}
               whileHover={{ y: -8, scale: 1.025 }}
-              className="group relative rounded-2xl border border-line bg-surface overflow-hidden shadow-card hover:border-red/50 hover:shadow-glow transition-[border-color,box-shadow] duration-300 cursor-pointer"
+              className="card-glare group relative rounded-2xl border border-line bg-surface overflow-hidden shadow-card hover:border-red/50 hover:shadow-glow transition-[border-color,box-shadow] duration-300 cursor-pointer"
             >
               <div className={`relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br ${p.accent}`}>
                 <div className="absolute inset-0 noise-grid opacity-20" />

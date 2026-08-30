@@ -35,6 +35,8 @@ export default function BrowserMockup() {
   const [i, setI] = useState(0)
 
   useEffect(() => {
+    // warm the cache so the crossfades never show a blank frame
+    SHOTS.forEach((s) => { const img = new Image(); img.src = s.image })
     const id = setInterval(() => setI((n) => (n + 1) % SHOTS.length), 3200)
     return () => clearInterval(id)
   }, [])
@@ -79,6 +81,7 @@ export default function BrowserMockup() {
               key={shot.image}
               src={shot.image}
               alt={shot.label}
+              decoding="async"
               initial={{ opacity: 0, scale: 1.04 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.99 }}

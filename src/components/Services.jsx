@@ -85,7 +85,7 @@ export default function Services() {
             <motion.div
               key={s.title}
               whileHover={{ y: -8, scale: 1.035, transition: { type: 'spring', stiffness: 300, damping: 18 } }}
-              className="group relative rounded-2xl border border-line bg-surface overflow-hidden hover:border-red/50 hover:shadow-glow transition-[border-color,box-shadow] duration-300 cursor-pointer"
+              className="card-glare group relative rounded-2xl border border-line bg-surface overflow-hidden hover:border-red/50 hover:shadow-glow transition-[border-color,box-shadow] duration-300 cursor-pointer"
             >
               {/* photo banner with brand-colour wash */}
               <div className={`relative h-32 bg-gradient-to-br ${s.accent} overflow-hidden`}>

@@ -211,7 +211,7 @@ export default function AIStudio() {
             <button
               onClick={generate}
               disabled={phase === 'thinking'}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
             >
               {phase === 'thinking' ? (
                 <>Thinking<span className="inline-flex w-6 justify-between">
@@ -327,7 +327,7 @@ export default function AIStudio() {
                       </div>
                       <a
                         href="#contact"
-                        className="ml-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red text-white text-sm font-medium hover:bg-red-soft transition-colors"
+                        className="ml-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red text-plainwhite text-sm font-medium hover:bg-red-soft transition-colors"
                       >
                         Build this <ArrowRight size={15} />
                       </a>
