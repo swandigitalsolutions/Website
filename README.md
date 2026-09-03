@@ -31,7 +31,7 @@ Then open the local URL it prints (usually http://localhost:5173).
 npm run build
 ```
 This outputs a static `dist/` folder you can upload to any host
-(Vercel, Netlify, Hostinger, GoDaddy, etc.) or point www.swandigital.com to.
+(Vercel, Netlify, Hostinger, GoDaddy, etc.) or point www.swandigitalsolutions.com to.
 
 ## Editing content
 - Colors, fonts: `tailwind.config.js`

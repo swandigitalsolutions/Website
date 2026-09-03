@@ -14,8 +14,8 @@ export const COMPANY = {
   phone: '+91 83105 79306',
   phoneHref: 'tel:+918310579306',
   email: 'swandigitalsolutions@gmail.com',
-  website: 'www.swandigital.com',
-  location: 'India',
+  website: 'www.swandigitalsolutions.com',
+  location: 'Devanahalli',
 }
 
 export const KB = [
@@ -119,7 +119,7 @@ export const KB = [
     id: 'location',
     keywords: ['where', 'location', 'based', 'office', 'address', 'country', 'remote'],
     answer:
-      'Swan Digital Solutions is based in India and works with clients remotely.',
+      'Swan Digital Solutions is based in Devanahalli, India and works with clients remotely.',
   },
   {
     id: 'thanks',

@@ -5,8 +5,8 @@ import { Phone, Mail, Globe, MapPin, Send, Check } from 'lucide-react'
 const DETAILS = [
   { icon: Phone, label: 'Call us', value: '+91 83105 79306', href: 'tel:+918310579306' },
   { icon: Mail, label: 'Email us', value: 'swandigitalsolutions@gmail.com', href: 'mailto:swandigitalsolutions@gmail.com' },
-  { icon: Globe, label: 'Website', value: 'www.swandigital.com', href: 'https://www.swandigital.com' },
-  { icon: MapPin, label: 'Location', value: 'India', href: null },
+  { icon: Globe, label: 'Website', value: 'www.swandigitalsolutions.com', href: 'https://www.swandigitalsolutions.com' },
+  { icon: MapPin, label: 'Location', value: 'Devanahalli, India', href: null },
 ]
 
 const RECIPIENT = 'swandigitalsolutions@gmail.com'

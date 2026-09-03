@@ -10,22 +10,22 @@ import { Lock, Circle } from 'lucide-react'
  */
 const SHOTS = [
   {
-    url: 'swandigital.com/lakeside-resort',
+    url: 'swandigitalsolutions.com/lakeside-resort',
     label: 'Hotel booking site',
     image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=900&q=80',
   },
   {
-    url: 'swandigital.com/vidya-school',
+    url: 'swandigitalsolutions.com/vidya-school',
     label: 'School management portal',
     image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
   },
   {
-    url: 'swandigital.com/meridian-erp',
+    url: 'swandigitalsolutions.com/meridian-erp',
     label: 'Business dashboard',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80',
   },
   {
-    url: 'swandigital.com/spice-route',
+    url: 'swandigitalsolutions.com/spice-route',
     label: 'Restaurant website',
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80',
   },
