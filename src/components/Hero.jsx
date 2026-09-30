@@ -17,6 +17,18 @@ const fadeUp = {
 export default function Hero() {
   return (
     <section id="top" className="relative pt-28 pb-20 sm:pt-36 sm:pb-24 md:pt-48 md:pb-32 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[min(42vw,560px)] overflow-hidden"
+      >
+        <img
+          src="/work/swan-home-banner.webp"
+          alt=""
+          className="absolute inset-x-0 top-0 h-auto w-full opacity-55"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-ink/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/35 via-ink/65 to-ink" />
+      </div>
       {/* animated aurora backdrop */}
       <div className="aurora absolute -inset-x-24 -top-40 h-[720px] pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
       <div className="absolute inset-0 noise-grid opacity-40 pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
@@ -31,7 +43,7 @@ export default function Hero() {
             className="eyebrow inline-flex flex-wrap items-center gap-2 text-red mb-5 sm:mb-6"
           >
             <Sparkles size={14} />
-            Websites &middot; Business Software &middot; Digital Solutions
+            Websites &middot; Business Software &middot; AI &middot; Business Analysis &amp; Growth
           </motion.div>
 
           <motion.h1
@@ -90,18 +102,18 @@ export default function Hero() {
             className="mt-10 sm:mt-14 flex flex-wrap items-center gap-x-6 gap-y-4 sm:gap-x-8 text-sm text-mist"
           >
             <div>
-              <CountUp end={40} suffix="+" className="font-display text-2xl text-white font-semibold" />
-              <div>projects shipped</div>
+              <CountUp end={8} className="font-display text-2xl text-white font-semibold" />
+              <div>featured projects</div>
             </div>
             <div className="h-8 w-px bg-line" />
             <div>
-              <CountUp end={100} suffix="%" className="font-display text-2xl text-white font-semibold" />
-              <div>client satisfaction</div>
+              <div className="font-display text-2xl text-white font-semibold">AI</div>
+              <div>tile visualizer</div>
             </div>
             <div className="h-8 w-px bg-line" />
             <div>
-              <CountUp end={5} suffix="★" className="font-display text-2xl text-white font-semibold" />
-              <div>average rating</div>
+              <div className="font-display text-2xl text-white font-semibold">Web + ERP</div>
+              <div>websites &amp; software</div>
             </div>
           </motion.div>
         </div>

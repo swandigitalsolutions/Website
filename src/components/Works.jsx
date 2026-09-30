@@ -1,135 +1,141 @@
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
-import BeforeAfter from './BeforeAfter'
+import { ArrowUpRight, Briefcase } from 'lucide-react'
+import { PROJECTS } from '../data/projects'
+import TileVisualizerDemo from './TileVisualizerDemo'
 
-/**
- * Portfolio showcase — mock projects. Swap `image` with a real
- * screenshot (drop it in `public/work/` and use "/work/name.jpg")
- * and update the copy. If an image fails to load, a branded gradient
- * with the category label shows instead.
- */
-const PROJECTS = [
-  {
-    title: 'Lakeside Resort',
-    category: 'Hotel Website',
-    desc: 'Booking-ready site with room galleries, live availability and a reservations flow.',
-    tags: ['Website', 'Booking', 'Hospitality'],
-    accent: 'from-[#FF4B54] to-[#8C0F16]',
-    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    title: 'Vidya Public School',
-    category: 'School Management System',
-    desc: 'Admissions, attendance, fee collection and parent messaging in one dashboard.',
-    tags: ['Web App', 'ERP', 'Education'],
-    accent: 'from-[#3B82F6] to-[#1E3A8A]',
-    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    title: 'Meridian Traders',
-    category: 'Business Management Software',
-    desc: 'Inventory, invoicing and reporting tool built around their warehouse workflow.',
-    tags: ['Software', 'Inventory', 'Dashboard'],
-    accent: 'from-[#10B981] to-[#065F46]',
-    image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    title: 'Coastal Interiors',
-    category: 'Business Website + SEO',
-    desc: 'Fast marketing site with a project portfolio and lead capture, tuned for search.',
-    tags: ['Website', 'SEO', 'Marketing'],
-    accent: 'from-[#F59E0B] to-[#92400E]',
-    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    title: 'Spice Route Kitchen',
-    category: 'Restaurant Website',
-    desc: 'Digital menu, photo gallery and table-reservation requests for a busy restaurant.',
-    tags: ['Website', 'Menu', 'Reservations'],
-    accent: 'from-[#EF4444] to-[#7F1D1D]',
-    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    title: 'FleetTrack',
-    category: 'Custom Web Application',
-    desc: 'Real-time vehicle and job tracking portal with role-based access for dispatchers.',
-    tags: ['Web App', 'Realtime', 'Logistics'],
-    accent: 'from-[#8B5CF6] to-[#4C1D95]',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80',
-  },
+const FILTERS = [
+  'All projects',
+  'AI & visualization',
+  'Business software',
+  'Websites & commerce',
 ]
 
 export default function Works() {
+  const [activeFilter, setActiveFilter] = useState(FILTERS[0])
+  const visibleProjects = useMemo(
+    () => activeFilter === FILTERS[0]
+      ? PROJECTS
+      : PROJECTS.filter((project) => project.group === activeFilter),
+    [activeFilter],
+  )
+
   return (
     <section id="work" className="relative py-20 sm:py-28 md:py-36">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
-        <div className="max-w-2xl mb-12 sm:mb-16">
-          <p className="eyebrow text-red mb-4">Our Work</p>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight">
-            A look at what we&rsquo;ve <span className="text-gradient">shipped.</span>
-          </h2>
-        </div>
-
-        {/* before / after redesign comparison */}
-        <div className="mb-12 sm:mb-16 grid lg:grid-cols-[1fr_minmax(0,340px)] gap-6 lg:gap-10 items-center">
-          <BeforeAfter />
-          <div>
-            <p className="eyebrow text-red mb-3">Redesign impact</p>
-            <h3 className="font-display text-2xl sm:text-3xl font-semibold leading-snug mb-3">
-              Drag to see the difference a rebuild makes.
-            </h3>
-            <p className="text-sm text-mist leading-relaxed">
-              Slower, dated sites on the left; the faster, conversion-focused
-              rebuilds we ship on the right. Swap these for your own
-              before/after screenshots.
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
+        <div className="mb-10 flex flex-col gap-6 sm:mb-14 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <p className="eyebrow mb-4 text-red">Selected client projects</p>
+            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+              Real work. <span className="text-gradient">Made to fit.</span>
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-mist sm:text-base">
+              Websites, business software and interactive experiences built for the teams behind them.
             </p>
+          </div>
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-xs text-mist">
+            <Briefcase size={14} className="text-red" />
+            {PROJECTS.length} featured projects
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {PROJECTS.map((p) => (
-            <motion.article
-              key={p.title}
-              whileHover={{ y: -8, scale: 1.025 }}
-              className="card-glare group relative rounded-2xl border border-line bg-surface overflow-hidden shadow-card hover:border-red/50 hover:shadow-glow transition-[border-color,box-shadow] duration-300 cursor-pointer"
+        <div className="mb-6 grid gap-6 lg:mb-16 lg:grid-cols-[minmax(0,1.35fr)_minmax(250px,0.65fr)] lg:items-center lg:gap-10">
+          <TileVisualizerDemo />
+          <div className="py-1 lg:py-5">
+            <p className="eyebrow mb-3 text-red">AI-powered product experience</p>
+            <h3 className="mb-4 font-display text-2xl font-semibold leading-snug sm:text-3xl">
+              A live tile visualizer, still being refined.
+            </h3>
+            <p className="mb-6 text-sm leading-relaxed text-mist sm:text-base">
+              The SDS Tiles &amp; Ceramics virtual trial room previews a chosen tile against a photo of a customer’s own space. Our developers are refining integrations, visual design and tile-combination analysis to improve preview accuracy.
+            </p>
+            <a
+              href="https://tile-visualizer-roan.vercel.app/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm font-medium text-white transition-colors hover:border-red/60 hover:bg-red/10"
             >
-              <div className={`relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br ${p.accent}`}>
-                <div className="absolute inset-0 noise-grid opacity-20" />
+              Explore the tile visualizer <ArrowUpRight size={16} className="text-red" />
+            </a>
+            <p className="mt-4 text-xs text-mist/70">Current build shown. Product work is still in progress.</p>
+          </div>
+        </div>
+
+        <div className="mb-7 flex flex-col gap-4 border-t border-line pt-7 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="eyebrow text-mist">Browse the work</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter projects by type">
+            {FILTERS.map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                aria-pressed={activeFilter === filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`rounded-full border px-3.5 py-2 text-xs transition-colors sm:px-4 sm:text-sm ${
+                  activeFilter === filter
+                    ? 'border-red/60 bg-red/10 text-white'
+                    : 'border-line bg-surface text-mist hover:border-red/40 hover:text-white'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <motion.div layout className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
+          {visibleProjects.map((project, index) => (
+            <motion.article
+              key={project.title}
+              layout
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.28, delay: index * 0.025 }}
+              whileHover={{ y: -5 }}
+              className="card-glare group relative overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-[border-color,box-shadow] duration-300 hover:border-red/50 hover:shadow-glow"
+            >
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Open ${project.title} project website in a new tab`}
+                className="absolute inset-0 z-20 rounded-2xl focus-visible:outline-none"
+              />
+              <div className={`relative aspect-[2/1] overflow-hidden bg-gradient-to-br ${project.accent}`}>
+                <div className="absolute inset-0 noise-grid opacity-10" />
                 <img
-                  src={p.image}
-                  alt={p.title}
+                  src={project.image}
+                  alt={`${project.title} project website`}
                   loading="lazy"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  decoding="async"
+                  onError={(event) => { event.currentTarget.style.display = 'none' }}
+                  className="absolute inset-0 h-full w-full object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-surface/90 via-surface/10 to-transparent" />
-                <span className="absolute bottom-3 left-4 eyebrow text-white/90 drop-shadow">
-                  {p.category}
-                </span>
               </div>
 
-              <div className="p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-display text-lg font-semibold">{p.title}</h3>
-                  <span className="shrink-0 w-9 h-9 rounded-full border border-line flex items-center justify-center text-mist group-hover:text-white group-hover:border-red/50 group-hover:bg-red/10 transition-colors">
-                    <ArrowUpRight size={16} />
+              <div className="p-4 sm:p-5">
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <p className="text-[11px] text-mist">{project.product}</p>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line bg-surface2 text-white transition-colors group-hover:border-red group-hover:bg-red">
+                    <ArrowUpRight size={14} />
                   </span>
                 </div>
-                <p className="mt-3 text-sm text-mist leading-relaxed">{p.desc}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {p.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[11px] px-2.5 py-1 rounded-full bg-surface2 border border-line text-white/70"
-                    >
-                      {t}
+                <p className="eyebrow mb-1 text-[9px] text-red">{project.category}</p>
+                <h3 className="font-display text-base font-semibold leading-snug text-white sm:text-lg">{project.title}</h3>
+                <p className="mt-2.5 min-h-[4.5em] text-xs leading-relaxed text-mist sm:text-sm">{project.description}</p>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {project.tags.map((tag) => (
+                    <span key={tag} className="rounded-full border border-line bg-surface2 px-2.5 py-1 text-[10px] text-white/75">
+                      {tag}
                     </span>
                   ))}
                 </div>
+                <p className="mt-4 truncate border-t border-line pt-3 font-mono text-[10px] text-mist/70">
+                  {new URL(project.href).hostname}
+                </p>
               </div>
             </motion.article>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
