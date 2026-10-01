@@ -22,7 +22,7 @@ const EASE = [0.22, 1, 0.36, 1]
 
 export default function WhyChooseUs() {
   return (
-    <section id="why-us" className="relative overflow-hidden border-y border-line bg-surface py-20 sm:py-28 md:py-36">
+    <section id="why-us" className="sheet overflow-hidden py-20 sm:py-28 md:py-36">
       <div className="absolute inset-0 noise-grid opacity-60 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
       <SwanMark
         className="absolute -right-10 top-0 hidden h-full w-auto opacity-[0.12] lg:block"

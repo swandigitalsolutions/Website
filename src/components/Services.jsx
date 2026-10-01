@@ -80,7 +80,7 @@ const SERVICES = [
 
 export default function Services() {
   return (
-    <section id="services" className="relative py-20 sm:py-28 md:py-36">
+    <section id="services" className="sheet sheet-alt py-20 sm:py-28 md:py-36">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">

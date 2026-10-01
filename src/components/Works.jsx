@@ -23,7 +23,7 @@ export default function Works() {
   )
 
   return (
-    <section id="work" className="relative py-20 sm:py-28 md:py-36">
+    <section id="work" className="sheet py-20 sm:py-28 md:py-36">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
         <div className="mb-10 flex flex-col gap-6 sm:mb-14 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
