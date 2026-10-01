@@ -7,7 +7,6 @@ import Tilt from './Tilt'
 import CountUp from './CountUp'
 import SplitText from './SplitText'
 import Magnetic from './Magnetic'
-import SwanGlide from './SwanGlide'
 import { heroDelay } from '../lib/intro'
 
 const EASE = [0.22, 1, 0.36, 1]
@@ -33,9 +32,6 @@ export default function Hero() {
   const mockY = useTransform(smooth, [0, 1], [0, 70])
   const mockRotate = useTransform(smooth, [0, 1], [0, -4])
   const auroraY = useTransform(smooth, [0, 1], [0, 160])
-  const { scrollY } = useScroll()
-  const cueOpacity = useTransform(scrollY, [0, 160], [1, 0])
-  const cuePointer = useTransform(cueOpacity, (o) => (o < 0.1 ? 'none' : 'auto'))
 
   return (
     <section ref={ref} id="top" className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 md:pt-48 md:pb-32 overflow-hidden">
@@ -44,7 +40,6 @@ export default function Hero() {
         <div className="aurora absolute -inset-x-24 -top-40 h-[820px] [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
       </motion.div>
       <div className="absolute inset-0 noise-grid pointer-events-none [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent_75%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-ink pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-16 items-center relative">
         <motion.div style={{ y: textY, opacity: textOpacity }}>
@@ -181,14 +176,6 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* scroll cue */}
-      {/* pinned to the viewport so it's always above the fold, gone once you scroll */}
-      <motion.div
-        style={{ opacity: cueOpacity, pointerEvents: cuePointer }}
-        className="fixed bottom-5 left-1/2 z-30 -translate-x-1/2 hidden md:block"
-      >
-        <SwanGlide delay={D + 1.4} />
-      </motion.div>
     </section>
   )
 }

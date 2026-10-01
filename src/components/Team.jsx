@@ -39,7 +39,7 @@ const EASE = [0.22, 1, 0.36, 1]
 
 export default function Team() {
   return (
-    <section id="team" className="relative overflow-hidden py-20 sm:py-28 md:py-36">
+    <section id="team" className="sheet overflow-hidden py-20 sm:py-28 md:py-36">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_18%,rgba(222,27,40,0.07),transparent_38%),radial-gradient(circle_at_10%_90%,rgba(99,102,241,0.06),transparent_40%)]" />
       <div className="mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
         <div className="mb-10 flex flex-col gap-6 sm:mb-14 md:flex-row md:items-end md:justify-between">

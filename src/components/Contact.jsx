@@ -71,7 +71,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="relative py-20 sm:py-28 md:py-36">
+    <section id="contact" className="sheet sheet-alt py-20 sm:py-28 md:py-36">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
         <div>
           <SectionEyebrow>Contact</SectionEyebrow>

@@ -26,7 +26,7 @@ export default function Process() {
   })
 
   return (
-    <section id="process" className="relative py-20 sm:py-28 md:py-36">
+    <section id="process" className="sheet sheet-alt py-20 sm:py-28 md:py-36">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
         <div className="max-w-2xl mb-12 sm:mb-16">
           <SectionEyebrow>How We Work</SectionEyebrow>

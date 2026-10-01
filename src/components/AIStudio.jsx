@@ -256,7 +256,7 @@ export default function AIStudio() {
   }, [phase, result])
 
   return (
-    <section id="planner" className="relative py-20 sm:py-28 md:py-36 overflow-hidden">
+    <section id="planner" className="sheet sheet-alt py-20 sm:py-28 md:py-36 overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(222,27,40,0.07),transparent_45%),radial-gradient(circle_at_85%_90%,rgba(99,102,241,0.08),transparent_45%)]" />
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">

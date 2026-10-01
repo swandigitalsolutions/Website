@@ -230,7 +230,7 @@ export default function ProjectOrbit() {
   return (
     <section
       aria-label="Selected client projects"
-      className="relative overflow-hidden border-y border-line bg-gradient-to-b from-surface via-ink to-surface py-14 sm:py-20"
+      className="sheet overflow-hidden py-14 sm:py-20"
     >
       <div className="absolute inset-0 noise-grid opacity-50 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
 

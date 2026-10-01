@@ -28,6 +28,11 @@ const easeOutBack = (t) => 1 + 2.4 * Math.pow(t - 1, 3) + 1.4 * Math.pow(t - 1, 
 const NECK_REST = [[0.7, 0.42], [1.02, 0.86], [0.78, 1.42], [0.92, 1.98], [1.18, 2.12]]
 const NECK_STRIKE = [[0.7, 0.42], [1.15, 0.8], [1.38, 1.22], [1.74, 1.4], [2.02, 1.24]]
 const NECK_BACK = [[0.7, 0.42], [0.96, 0.9], [0.66, 1.46], [0.76, 2.04], [0.98, 2.2]]
+// "puller" mode: beak dipped to grip a page edge, and reared back hauling it up
+const NECK_DIP = [[0.7, 0.42], [1.15, 0.75], [1.55, 0.86], [1.95, 0.64], [2.2, 0.4]]
+const NECK_PULL = [[0.7, 0.42], [1.0, 0.95], [1.15, 1.45], [1.45, 1.72], [1.8, 1.6]]
+const HEAD_DIP = new THREE.Vector3(0.45, -1, 0).normalize()
+const HEAD_PULL = new THREE.Vector3(0.15, -1, 0).normalize()
 
 function ellipsoid(material, sx, sy, sz, segments = 40) {
   const g = new THREE.SphereGeometry(1, segments, Math.round(segments * 0.75))
@@ -213,7 +218,8 @@ function waterTexture() {
   return t
 }
 
-export function createSwanScene(canvas, { reducedMotion = false } = {}) {
+export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' } = {}) {
+  const puller = mode === 'puller'
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75))
   renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -227,9 +233,14 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
   scene.environmentIntensity = 0.55
 
-  const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 60)
-  camera.position.set(0, 2.25, 10.5)
-  camera.lookAt(0, 1.0, 0)
+  const camera = new THREE.PerspectiveCamera(puller ? 26 : 24, 1, 0.1, 60)
+  if (puller) {
+    camera.position.set(0.55, 1.15, 9)
+    camera.lookAt(0.55, 0.8, 0)
+  } else {
+    camera.position.set(0, 2.25, 10.5)
+    camera.lookAt(0, 1.0, 0)
+  }
 
   // lighting: soft sky, warm key with shadows, brand-red rim from behind
   scene.add(new THREE.HemisphereLight('#ffffff', '#c9d2e3', 0.75))
@@ -266,7 +277,7 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
 
   // the swan
   const root = new THREE.Group()
-  root.rotation.y = -0.9
+  root.rotation.y = puller ? -0.3 : -0.9
   scene.add(root)
 
   const bodyGroup = new THREE.Group()
@@ -288,14 +299,14 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
   const head = buildHead(feather)
   bodyGroup.add(head)
 
-  // water, shadow catcher and ripple pool
+  // water, shadow catcher and ripple pool (the puller only casts a shadow)
   const water = new THREE.Mesh(
     new THREE.CircleGeometry(3, 72),
     new THREE.MeshBasicMaterial({ map: waterTexture(), transparent: true, depthWrite: false }),
   )
   water.rotation.x = -Math.PI / 2
   water.renderOrder = 1
-  scene.add(water)
+  if (!puller) scene.add(water)
 
   const shadowCatcher = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.ShadowMaterial({ opacity: 0.16 }))
   shadowCatcher.rotation.x = -Math.PI / 2
@@ -306,7 +317,7 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
 
   const ringGeo = new THREE.RingGeometry(0.965, 1, 96)
   ringGeo.rotateX(-Math.PI / 2)
-  const ripples = Array.from({ length: 10 }, () => {
+  const ripples = Array.from({ length: puller ? 0 : 10 }, () => {
     const m = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: '#8f9bb3', transparent: true, opacity: 0, depthWrite: false }))
     m.position.y = 0.006
     m.visible = false
@@ -316,6 +327,7 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
     return m
   })
   const spawnRipple = (x, z, { from = 1.1, to = 3.2, dur = 3, peak = 0.32, color = '#8f9bb3' } = {}) => {
+    if (!ripples.length) return
     const r = ripples.find((m) => !m.visible) || ripples[0]
     r.position.x = x
     r.position.z = z
@@ -345,7 +357,8 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
   // the neck clone must share the live geometry
   pairs.forEach(([a, b]) => { if (a === neck.mesh) b.geometry = neck.geometry })
   reflection.renderOrder = 0
-  scene.add(reflection)
+  if (puller) pairs.length = 0
+  else scene.add(reflection)
 
   // ---------- behaviour state ----------
   const state = {
@@ -363,6 +376,8 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
     ruffle: 0,
     nextRuffle: 6,
     lean: 0,
+    pull: 0,
+    pullTarget: 0,
   }
 
   const pts = [0, 1, 2, 3, 4].map(() => new THREE.Vector3())
@@ -431,6 +446,11 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
       })
     })
 
+    if (puller) {
+      posePuller(dt)
+      return
+    }
+
     // neck: blend keyframes, lift for vertical look, rotate about its base
     const r = s.reach
     for (let i = 0; i < 5; i++) {
@@ -496,6 +516,46 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
     }
   }
 
+  // Puller: the beak grips a page edge in front of the swan; `pull` (0..1)
+  // rears the neck back and lifts the edge, the body leaning into the haul.
+  function posePuller(dt) {
+    const s = state
+    s.pull = damp(s.pull, s.pullTarget, 7, dt)
+    const k = s.pull
+    bodyGroup.rotation.z += k * 0.1
+    bodyGroup.position.x = -k * 0.08
+    wings.forEach((w, i) => {
+      const side = i === 0 ? -1 : 1
+      w.rotation.x += side * k * 0.22 // wings flare with the effort
+    })
+    const sway = Math.sin(s.t * 0.8) * 0.04
+    for (let i = 0; i < 5; i++) {
+      const w = i / 4
+      const x = lerp(NECK_DIP[i][0], NECK_PULL[i][0], k) + Math.sin(s.t * 1.3) * 0.012 * w
+      const y = lerp(NECK_DIP[i][1], NECK_PULL[i][1], k) + Math.sin(s.t * 2.2) * 0.01 * w * (1 - k)
+      const bx = NECK_DIP[0][0]
+      const dx = x - bx
+      const yaw = sway * w
+      pts[i].set(bx + dx * Math.cos(yaw), y, -dx * Math.sin(yaw))
+    }
+    planeN.set(Math.sin(sway * 0.6), 0, Math.cos(sway * 0.6)).normalize()
+    neck.update(pts, planeN)
+    head.position.copy(neck.curve.getPointAt(1, tmpT))
+    headDir.copy(HEAD_DIP).lerp(HEAD_PULL, k).normalize()
+    m4.lookAt(headDir, ZERO, UP)
+    head.quaternion.setFromRotationMatrix(m4)
+    head.rotateZ(Math.sin(s.t * 0.6) * 0.05)
+
+    s.nextBlink -= dt
+    if (s.nextBlink <= 0) {
+      s.blink = 1
+      s.nextBlink = 2.5 + Math.random() * 3
+    }
+    s.blink = Math.max(0, s.blink - dt * 8)
+    const lid = 1 - Math.sin(s.blink * Math.PI) * 0.9
+    head.userData.eyes.forEach((e) => { e.scale.y = lid })
+  }
+
   // ---------- sizing / loop ----------
   let width = 1
   let height = 1
@@ -540,8 +600,23 @@ export function createSwanScene(canvas, { reducedMotion = false } = {}) {
     return (1 - v.y) / 2
   }
 
+  const projected = new THREE.Vector3()
   return {
     resize,
+    /** Beak tip in canvas CSS pixels (from the last rendered pose). */
+    beakScreen() {
+      head.updateWorldMatrix(true, false)
+      projected.copy(head.userData.beakTip).applyMatrix4(head.matrixWorld).project(camera)
+      return { x: ((projected.x + 1) / 2) * width, y: ((1 - projected.y) / 2) * height }
+    },
+    setPull(v) {
+      state.pullTarget = THREE.MathUtils.clamp(v, 0, 1)
+    },
+    /** Render one frame on demand (used by the puller, which owns its loop). */
+    step(dt) {
+      pose(dt)
+      renderer.render(scene, camera)
+    },
     setActive,
     floorFraction,
     peck(onContact) {

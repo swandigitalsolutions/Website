@@ -18,6 +18,8 @@
   --night: 9 14 28;
   --night2: 18 26 46;
   --grid-line: 11 18 32;
+  --sheet: 250 251 255;
+  --sheet-alt: 243 246 254;
   color-scheme: light;
 }
 
@@ -25,8 +27,12 @@ html {
   scroll-behavior: smooth;
 }
 
+html {
+  background-color: #dfe6f5; /* sky fallback before MoonSky paints */
+}
+
 body {
-  background-color: rgb(var(--ink));
+  background-color: transparent;
   color: rgb(var(--fg));
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
@@ -156,6 +162,82 @@ body {
 .spotlight:hover::before,
 .spotlight:hover::after { opacity: 1; }
 
+/* ---------- Moonlit sky ---------- */
+.moon-sky {
+  background:
+    radial-gradient(60% 45% at var(--moon-x, 80vw) var(--moon-y, 20vh), rgb(255 255 255 / 0.35), transparent 70%),
+    linear-gradient(to bottom, var(--sky-top, #b8c7ec) 0%, var(--sky-mid, #dfe4f6) 55%, var(--sky-low, #f7e9ef) 100%);
+}
+.moon {
+  position: absolute;
+  left: var(--moon-x, 80vw);
+  top: var(--moon-y, 20vh);
+  width: clamp(70px, 9vw, 128px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  opacity: var(--moon-o, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 0 40px 6px rgb(255 255 255 / 0.55), 0 0 140px 40px rgb(214 224 255 / 0.45);
+}
+/* a daytime moon: chalky disc with soft maria, lit from the upper right */
+.moon-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(18% 16% at 38% 34%, rgb(176 182 198 / 0.32), transparent 70%),
+    radial-gradient(22% 18% at 58% 58%, rgb(170 176 194 / 0.3), transparent 70%),
+    radial-gradient(12% 10% at 30% 64%, rgb(182 188 204 / 0.28), transparent 70%),
+    radial-gradient(9% 8% at 66% 30%, rgb(186 192 208 / 0.25), transparent 70%),
+    radial-gradient(5% 5% at 46% 76%, rgb(160 166 184 / 0.3), transparent 70%),
+    radial-gradient(circle at 68% 30%, #ffffff 0%, #f4f3ee 45%, #dcdde3 100%);
+  box-shadow: inset -10px -8px 22px rgb(150 160 190 / 0.35);
+  mix-blend-mode: screen;
+}
+.cloud-wrap { position: absolute; will-change: transform; }
+.cloud {
+  aspect-ratio: 3.2 / 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(28% 70% at 30% 60%, #fff 0%, rgb(255 255 255 / 0) 70%),
+    radial-gradient(30% 85% at 52% 45%, #fff 0%, rgb(255 255 255 / 0) 70%),
+    radial-gradient(26% 70% at 72% 62%, #fff 0%, rgb(255 255 255 / 0) 70%),
+    radial-gradient(45% 50% at 50% 80%, rgb(255 255 255 / 0.9) 0%, rgb(255 255 255 / 0) 75%);
+  filter: blur(6px);
+  animation: cloud-drift 160s ease-in-out infinite alternate;
+}
+@keyframes cloud-drift {
+  from { transform: translateX(-6vw); }
+  to { transform: translateX(10vw); }
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px rgb(255 255 255 / 0.9);
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* ---------- Paper sheets laid over the sky ---------- */
+.sheet,
+.sheet-alt {
+  position: relative;
+  isolation: isolate;
+  border-radius: 40px 40px 0 0;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 -24px 50px -34px rgb(30 40 90 / 0.45);
+}
+.sheet { background-color: rgb(var(--sheet) / 0.9); }
+.sheet.sheet-alt { background-color: rgb(var(--sheet-alt) / 0.9); }
+@media (max-width: 767px) {
+  .sheet, .sheet-alt { border-radius: 26px 26px 0 0; }
+}
+
 /* ---------- Project orbit ---------- */
 .orbit-card {
   -webkit-box-reflect: below 8px linear-gradient(transparent 72%, rgb(255 255 255 / 0.22));
@@ -163,11 +245,6 @@ body {
 }
 @keyframes orbit-dash { to { stroke-dashoffset: -314; } }
 .orbit-dash { animation: orbit-dash 7s linear infinite; }
-
-/* ---------- Swan glide scroll cue ---------- */
-@keyframes wave-slide { to { transform: translateX(-40px); } }
-.wave-slide { animation: wave-slide 2.4s linear infinite; }
-.wave-slide--slow { animation-duration: 3.6s; }
 
 /* ---------- Rotating badge ---------- */
 @keyframes spin-slow { to { transform: rotate(360deg); } }
@@ -206,7 +283,7 @@ html.lenis, html.lenis body { height: auto; }
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after, .orbit-dash, .wave-slide { animation: none !important; }
+  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after, .orbit-dash, .cloud, .star { animation: none !important; }
 }
 
 /* ---------- Focus visibility ---------- */
