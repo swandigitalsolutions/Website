@@ -7,6 +7,7 @@ import Tilt from './Tilt'
 import CountUp from './CountUp'
 import SplitText from './SplitText'
 import Magnetic from './Magnetic'
+import SwanGlide from './SwanGlide'
 import { heroDelay } from '../lib/intro'
 
 const EASE = [0.22, 1, 0.36, 1]
@@ -32,6 +33,9 @@ export default function Hero() {
   const mockY = useTransform(smooth, [0, 1], [0, 70])
   const mockRotate = useTransform(smooth, [0, 1], [0, -4])
   const auroraY = useTransform(smooth, [0, 1], [0, 160])
+  const { scrollY } = useScroll()
+  const cueOpacity = useTransform(scrollY, [0, 160], [1, 0])
+  const cuePointer = useTransform(cueOpacity, (o) => (o < 0.1 ? 'none' : 'auto'))
 
   return (
     <section ref={ref} id="top" className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 md:pt-48 md:pb-32 overflow-hidden">
@@ -178,23 +182,13 @@ export default function Hero() {
       </div>
 
       {/* scroll cue */}
-      <motion.a
-        href="#services"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: D + 1.4 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-mist hover:text-red transition-colors"
-        aria-label="Scroll to services"
+      {/* pinned to the viewport so it's always above the fold, gone once you scroll */}
+      <motion.div
+        style={{ opacity: cueOpacity, pointerEvents: cuePointer }}
+        className="fixed bottom-5 left-1/2 z-30 -translate-x-1/2 hidden md:block"
       >
-        <span className="eyebrow text-[10px]">Scroll</span>
-        <span className="relative flex h-9 w-5 justify-center rounded-full border border-current">
-          <motion.span
-            className="mt-1.5 h-1.5 w-1 rounded-full bg-current"
-            animate={{ y: [0, 12, 0], opacity: [1, 0.2, 1] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </span>
-      </motion.a>
+        <SwanGlide delay={D + 1.4} />
+      </motion.div>
     </section>
   )
 }

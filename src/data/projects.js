@@ -14,6 +14,7 @@ import {
 export const PROJECTS = [
   {
     title: 'SDS Tiles & Ceramics',
+    mark: 'SDS',
     product: 'Virtual Trial Room',
     href: 'https://tile-visualizer-roan.vercel.app/',
     group: 'AI & visualization',
@@ -26,6 +27,7 @@ export const PROJECTS = [
   },
   {
     title: 'StoneQuarryERP',
+    mark: 'SQ',
     product: 'Stone & Quarry ERP',
     href: 'https://stone-quarry-business-erp.vercel.app/',
     group: 'Business software',
@@ -38,6 +40,7 @@ export const PROJECTS = [
   },
   {
     title: 'J S Public Pre Primary School',
+    mark: 'JS',
     product: 'School Portal',
     href: 'https://jspsoft.vercel.app/login',
     group: 'Business software',
@@ -50,6 +53,7 @@ export const PROJECTS = [
   },
   {
     title: 'Sāri',
+    mark: 'Sā',
     product: 'The Art of Drape',
     href: 'https://sarees.swandigitalsolutions.workers.dev/',
     group: 'Websites & commerce',
@@ -62,6 +66,7 @@ export const PROJECTS = [
   },
   {
     title: 'KMG Stones',
+    mark: 'KMG',
     product: 'Temple Stone',
     href: 'https://www.kmgstones.com/',
     group: 'Websites & commerce',
@@ -74,6 +79,7 @@ export const PROJECTS = [
   },
   {
     title: 'Discipline Karate Institute',
+    mark: 'DK',
     product: 'Traditional Karate',
     href: 'https://karate-website-new.swandigitalsolutions.workers.dev/',
     group: 'Websites & commerce',
@@ -86,6 +92,7 @@ export const PROJECTS = [
   },
   {
     title: 'Meridian Motor Heritage',
+    mark: 'MH',
     product: 'Heritage Motors Gallery',
     href: 'https://heritage-motors-gallery.swandigitalsolutions.workers.dev/',
     group: 'Websites & commerce',
@@ -98,6 +105,7 @@ export const PROJECTS = [
   },
   {
     title: 'Petravera Stone',
+    mark: 'PV',
     product: 'Natural Stone for Architecture',
     href: 'https://sunxmanpower-webiste.swandigitalsolutions.workers.dev/',
     group: 'Websites & commerce',
@@ -110,7 +118,9 @@ export const PROJECTS = [
   },
 ]
 
-export const CLIENTS = PROJECTS.map(({ title, icon }) => ({ name: title, icon }))
+
+// The two hex stops of a project's `accent` gradient, for inline styles.
+export const accentColors = (project) => project.accent.match(/#[0-9a-fA-F]{6}/g) ?? ['#DE1B28', '#8C0F16']
 
 // Keep every client banner available in the hero carousel.
 export const FEATURED_PROJECTS = PROJECTS

@@ -1,7 +1,7 @@
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import BrandBanner from './components/BrandBanner'
-import TrustedBy from './components/TrustedBy'
+import ProjectOrbit from './components/ProjectOrbit'
 import Services from './components/Services'
 import Works from './components/Works'
 import AIStudio from './components/AIStudio'
@@ -30,7 +30,7 @@ export default function App() {
       <main>
         <Hero />
         <BrandBanner />
-        <TrustedBy />
+        <ProjectOrbit />
         <Services />
         <Works />
         <AIStudio />

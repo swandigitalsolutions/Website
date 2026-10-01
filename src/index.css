@@ -156,14 +156,18 @@ body {
 .spotlight:hover::before,
 .spotlight:hover::after { opacity: 1; }
 
-/* ---------- Horizontal auto-scrolling marquees ---------- */
-@keyframes marquee-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+/* ---------- Project orbit ---------- */
+.orbit-card {
+  -webkit-box-reflect: below 8px linear-gradient(transparent 72%, rgb(255 255 255 / 0.22));
+  backface-visibility: visible;
 }
-.marquee-track { animation: marquee-x 45s linear infinite; will-change: transform; }
-.marquee-track--slow { animation-duration: 38s; }
-.marquee-mask:hover .marquee-track { animation-play-state: paused; }
+@keyframes orbit-dash { to { stroke-dashoffset: -314; } }
+.orbit-dash { animation: orbit-dash 7s linear infinite; }
+
+/* ---------- Swan glide scroll cue ---------- */
+@keyframes wave-slide { to { transform: translateX(-40px); } }
+.wave-slide { animation: wave-slide 2.4s linear infinite; }
+.wave-slide--slow { animation-duration: 3.6s; }
 
 /* ---------- Rotating badge ---------- */
 @keyframes spin-slow { to { transform: rotate(360deg); } }
@@ -202,13 +206,7 @@ html.lenis, html.lenis body { height: auto; }
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .marquee-track { animation: none !important; }
-  .marquee-mask {
-    overflow-x: auto !important;
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-  }
-  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after { animation: none !important; }
+  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after, .orbit-dash, .wave-slide { animation: none !important; }
 }
 
 /* ---------- Focus visibility ---------- */
