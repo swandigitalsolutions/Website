@@ -3,6 +3,18 @@
 A premium, animated React website for Swan Digital Solutions, built with
 Vite, Tailwind CSS and Framer Motion.
 
+## Design & motion
+- **Theme** — light "porcelain" palette (cool white canvas, deep navy ink,
+  brand red). Tokens live in `src/index.css` (`:root`); navy panels (intro,
+  CTA, footer) use the `.on-night` class to flip the tokens locally.
+- **Motion system** — brand intro with loading counter and curtain wipe
+  (once per session), masked word-by-word headings (`SplitText`),
+  magnetic buttons (`Magnetic`), pointer spotlight on cards, trailing cursor
+  ring (`Cursor`), hide-on-scroll glass navbar with sliding active pill,
+  scroll-linked hero parallax and banner reveal (`BrandBanner`), a process
+  rail that fills as you scroll, clip-path team portraits.
+- Everything respects `prefers-reduced-motion`.
+
 ## What's inside
 - **Hero** — animated signature "swan curve" mark, gradient headline
 - **Services** — the 8 services from your business card, hover-animated cards

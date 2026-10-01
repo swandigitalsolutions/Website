@@ -11,6 +11,8 @@ export default {
         line: 'rgb(var(--line) / <alpha-value>)',
         mist: 'rgb(var(--mist) / <alpha-value>)',
         fg: 'rgb(var(--fg) / <alpha-value>)',
+        night: 'rgb(var(--night) / <alpha-value>)',
+        night2: 'rgb(var(--night2) / <alpha-value>)',
         red: {
           DEFAULT: 'rgb(var(--red) / <alpha-value>)',
           soft: 'rgb(var(--red-soft) / <alpha-value>)',
@@ -27,8 +29,9 @@ export default {
         'radial-glow': 'radial-gradient(circle at center, rgb(var(--red) / 0.25) 0%, rgb(var(--red) / 0) 70%)',
       },
       boxShadow: {
-        glow: '0 0 40px rgb(var(--red) / 0.25)',
-        card: '0 20px 60px -20px rgba(0,0,0,0.6)',
+        glow: '0 12px 32px -10px rgb(var(--red) / 0.55)',
+        card: '0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 48px -18px rgba(16, 24, 40, 0.18)',
+        lift: '0 2px 4px rgba(16, 24, 40, 0.04), 0 30px 70px -24px rgba(16, 24, 40, 0.28)',
       },
     },
   },

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, Mail, Globe, MapPin, Send, Check } from 'lucide-react'
+import SplitText from './SplitText'
+import SectionEyebrow from './SectionEyebrow'
 
 const DETAILS = [
   { icon: Phone, label: 'Call us', value: '+91 83105 79306', href: 'tel:+918310579306' },
@@ -70,28 +72,36 @@ export default function Contact() {
 
   return (
     <section id="contact" className="relative py-20 sm:py-28 md:py-36">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 grid lg:grid-cols-2 gap-12 lg:gap-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
         <div>
-          <p className="eyebrow text-red mb-4">Contact</p>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mb-6">
-            Let&rsquo;s start your project.
-          </h2>
+          <SectionEyebrow>Contact</SectionEyebrow>
+          <SplitText
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mb-6"
+            segments={['Let’s start your', { text: 'project.', className: 'text-gradient' }]}
+          />
           <p className="text-mist max-w-md mb-10 leading-relaxed">
             Reach out directly, or send a message and we&rsquo;ll get back to
             you within one business day.
           </p>
 
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
-            {DETAILS.map((d) => (
-              <a
+            {DETAILS.map((d, i) => (
+              <motion.a
                 key={d.label}
                 href={d.href || undefined}
-                className={`rounded-2xl border border-line bg-surface p-5 ${d.href ? 'hover:border-red/50 transition-colors' : ''}`}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={d.href ? { y: -4 } : undefined}
+                className="spotlight group rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow duration-500 hover:shadow-lift"
               >
-                <d.icon size={18} className="text-red mb-3" />
+                <span className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-red/10 text-red transition-colors duration-300 group-hover:bg-red group-hover:text-[#fff]">
+                  <d.icon size={17} />
+                </span>
                 <div className="text-xs text-mist mb-1">{d.label}</div>
                 <div className="text-sm font-medium break-words">{d.value}</div>
-              </a>
+              </motion.a>
             ))}
           </div>
         </div>
@@ -105,7 +115,7 @@ export default function Contact() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="rounded-3xl border border-red/30 bg-gradient-to-br from-surface2 to-ink p-8 md:p-12 text-center overflow-hidden"
+                className="rounded-3xl border border-red/30 bg-gradient-to-br from-red/[0.06] to-surface shadow-lift p-8 md:p-12 text-center overflow-hidden"
               >
                 <motion.div
                   initial={{ scale: 0, rotate: -30 }}
@@ -164,7 +174,7 @@ export default function Contact() {
                 action={ACTION}
                 method="POST"
                 onSubmit={() => setStatus('sending')}
-                className="rounded-3xl border border-line bg-surface p-6 sm:p-8 md:p-10 space-y-5"
+                className="rounded-3xl border border-line bg-surface p-6 sm:p-8 md:p-10 space-y-5 shadow-lift"
               >
                 {/* FormSubmit config */}
                 <input type="hidden" name="_subject" value="New project enquiry — Swan Digital website" />
@@ -180,7 +190,7 @@ export default function Contact() {
                     id="name" name="name" type="text" required
                     value={form.name} onChange={handleChange}
                     placeholder="Jordan Lee"
-                    className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/50 outline-none transition-colors"
+                    className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/60 focus:bg-surface focus:shadow-[0_0_0_4px_rgb(var(--red)/0.1)] outline-none transition-all duration-300"
                   />
                 </div>
                 <div>
@@ -189,7 +199,7 @@ export default function Contact() {
                     id="email" name="email" type="email" required
                     value={form.email} onChange={handleChange}
                     placeholder="you@company.com"
-                    className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/50 outline-none transition-colors"
+                    className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/60 focus:bg-surface focus:shadow-[0_0_0_4px_rgb(var(--red)/0.1)] outline-none transition-all duration-300"
                   />
                 </div>
                 <div>
@@ -198,17 +208,17 @@ export default function Contact() {
                     id="message" name="message" rows={4} required
                     value={form.message} onChange={handleChange}
                     placeholder="Share your goals, required features, or paste an outline from our website planner..."
-                    className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/50 outline-none transition-colors resize-none"
+                    className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/60 focus:bg-surface focus:shadow-[0_0_0_4px_rgb(var(--red)/0.1)] outline-none transition-all duration-300 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
+                  className="btn-shine group w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite shadow-glow hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
                 >
                   {status === 'sending' ? 'Sending…' : 'Send message'}
-                  <Send size={16} />
+                  <Send size={16} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5" />
                 </button>
 
                 <p className="text-[11px] text-mist/70 text-center">

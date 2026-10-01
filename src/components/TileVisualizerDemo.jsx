@@ -11,7 +11,7 @@ export default function TileVisualizerDemo() {
       whileHover={{ y: -3 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative isolate overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
+      className="group relative isolate overflow-hidden rounded-3xl border border-line bg-surface shadow-card hover:shadow-lift transition-shadow duration-500"
     >
       <motion.div
         aria-hidden="true"
@@ -27,7 +27,7 @@ export default function TileVisualizerDemo() {
           <p className="truncate text-sm font-semibold text-white">Tile visualizer · current build</p>
           <p className="truncate text-xs text-mist">SDS Tiles &amp; Ceramics</p>
         </div>
-        <span className="hidden items-center gap-2 rounded-full border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-1 text-[10px] font-medium text-[#fcd34d] sm:inline-flex">
+        <span className="hidden items-center gap-2 rounded-full border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-1 text-[10px] font-medium text-[#b45309] sm:inline-flex">
           <motion.span
             className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]"
             animate={{ opacity: [0.45, 1, 0.45], scale: [0.85, 1.15, 0.85] }}
@@ -37,8 +37,8 @@ export default function TileVisualizerDemo() {
         </span>
       </div>
 
-      <div className="bg-[#08090c] p-2 sm:p-3">
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-black ring-1 ring-inset ring-white/5 shadow-[0_12px_36px_rgba(0,0,0,0.35)]">
+      <div className="bg-surface2 p-2 sm:p-3">
+        <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_18px_40px_-16px_rgba(16,24,40,0.45)]">
           <video
             className="block aspect-video w-full bg-[#090909] object-contain"
             autoPlay
