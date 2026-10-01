@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import {
   Globe, UtensilsCrossed, GraduationCap, BarChart3,
-  Code2, Settings, Bot, Megaphone,
+  Code2, Settings, Bot, Megaphone, TrendingUp,
 } from 'lucide-react'
 
 /**
@@ -38,6 +38,13 @@ const SERVICES = [
     desc: 'Custom internal tools that streamline operations, inventory and reporting.',
     accent: 'from-[#10B981] to-[#0D9488]',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Business Analysis & Growth',
+    desc: 'Review business goals, workflows and opportunities, then shape practical steps for sustainable growth.',
+    accent: 'from-[#F97316] to-[#DC2626]',
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80',
   },
   {
     icon: Code2,

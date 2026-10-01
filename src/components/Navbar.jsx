@@ -6,14 +6,14 @@ import useScrollSpy from '../hooks/useScrollSpy'
 const LINKS = [
   { label: 'Services', href: '#services' },
   { label: 'Work', href: '#work' },
-  { label: 'AI Studio', href: '#ai-studio' },
+  { label: 'Planner', href: '#planner' },
+  { label: 'Team', href: '#team' },
   { label: 'Why Us', href: '#why-us' },
   { label: 'Process', href: '#process' },
-  { label: 'Reviews', href: '#reviews' },
   { label: 'Contact', href: '#contact' },
 ]
 
-const SECTION_IDS = ['services', 'work', 'ai-studio', 'why-us', 'process', 'reviews', 'contact']
+const SECTION_IDS = ['services', 'work', 'planner', 'team', 'why-us', 'process', 'contact']
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)

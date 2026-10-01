@@ -23,19 +23,19 @@ export const KB = [
     id: 'greeting',
     keywords: ['hi', 'hello', 'hey', 'yo', 'good morning', 'good evening', 'namaste'],
     answer:
-      "Hi! I'm the Swan Digital assistant. Ask me about our services, how we work, pricing, or how to get in touch.",
+      "Hi! I'm the Swan Digital assistant. Ask me about our services, the projects shown here, how we work, or how to get in touch.",
   },
   {
     id: 'about',
     keywords: ['who are you', 'about', 'company', 'swan digital', 'what do you do', 'what is swan'],
     answer:
-      'Swan Digital Solutions designs premium websites, business software and digital growth systems for hotels, schools and modern businesses — engineered to launch fast and scale further. Everything is built in-house.',
+      'Swan Digital Solutions designs premium websites, business software and digital growth systems for clients across education, stone, fashion, sport, automotive and other sectors.',
   },
   {
     id: 'services-overview',
     keywords: ['services', 'what do you offer', 'offerings', 'what can you build', 'help with', 'products'],
     answer:
-      'We offer eight core services: Business Websites, Hotel & Restaurant Websites, School Management Systems, Business Management Software, Custom Web Applications, Website Maintenance, AI Solutions & Automation, and Digital Marketing Support.',
+      'We offer nine core services: Business Websites, Hotel & Restaurant Websites, School Management Systems, Business Management Software, Business Analysis & Growth, Custom Web Applications, Website Maintenance, AI Solutions & Automation, and Digital Marketing Support.',
   },
   {
     id: 'websites',
@@ -62,6 +62,12 @@ export const KB = [
       'We build Business Management Software — custom internal tools that streamline operations, inventory and reporting for your team.',
   },
   {
+    id: 'business-growth',
+    keywords: ['business analysis', 'business growth', 'growth strategy', 'business strategy', 'business opportunities'],
+    answer:
+      'Business Analysis & Growth helps review your goals, workflows and opportunities, then identify practical steps for sustainable growth.',
+  },
+  {
     id: 'webapp',
     keywords: ['web app', 'web application', 'custom app', 'portal', 'dashboard', 'saas', 'workflow'],
     answer:
@@ -77,7 +83,7 @@ export const KB = [
     id: 'ai',
     keywords: ['ai', 'artificial intelligence', 'automation', 'chatbot', 'bot', 'automate', 'machine learning'],
     answer:
-      'Our AI Solutions & Automation service adds practical AI features and automations that save your team real hours — this chat assistant is one small example.',
+      'Swan Digital Solutions is developing AI-powered experiences, including the tile visualizer shown in the Work section. The on-page website planner and chat assistant use local rules; they do not call an AI model.',
   },
   {
     id: 'marketing',
@@ -95,25 +101,25 @@ export const KB = [
     id: 'why-us',
     keywords: ['why choose', 'why you', 'why swan', 'different', 'better', 'benefits', 'advantage'],
     answer:
-      'Why clients choose us: modern, secure & scalable solutions; on-time delivery every time; affordable pricing with the best value; dedicated support & maintenance; and 100% client satisfaction.',
+      'Swan Digital Solutions builds websites, business software and applied digital experiences around each project’s needs. Browse the work section to see the current client projects, or contact the team to discuss your requirements.',
   },
   {
     id: 'timeline',
     keywords: ['how long', 'timeline', 'time', 'delivery', 'deadline', 'fast', 'when', 'duration', 'turnaround'],
     answer:
-      "We're engineered to launch fast, and we deliver on time, every time. Share your scope with us and we'll give you a clear timeline within a day.",
+      "Timelines depend on the project’s scope. Share your requirements with the team to discuss a suitable plan.",
   },
   {
     id: 'pricing',
     keywords: ['price', 'pricing', 'cost', 'quote', 'budget', 'rate', 'how much', 'charges', 'estimate'],
     answer:
-      "Pricing is affordable and quoted per project for the best value. Tell us about your business and we'll put together a clear plan and pricing within one business day. Use “Get a Quote”, or email swandigitalsolutions@gmail.com.",
+      "Pricing is scoped to the project. Use the contact form or email swandigitalsolutions@gmail.com to request a quote.",
   },
   {
     id: 'contact',
     keywords: ['contact', 'reach', 'get in touch', 'talk', 'call', 'phone', 'email', 'enquiry', 'inquiry', 'hire', 'start'],
     answer:
-      'You can call +91 83105 79306, email swandigitalsolutions@gmail.com, or use the contact form on this site — we reply within one business day.',
+      'You can call +91 83105 79306, email swandigitalsolutions@gmail.com, or use the contact form on this site to reach the team.',
   },
   {
     id: 'location',

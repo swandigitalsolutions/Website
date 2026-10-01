@@ -6,7 +6,7 @@ import Works from './components/Works'
 import AIStudio from './components/AIStudio'
 import WhyChooseUs from './components/WhyChooseUs'
 import Process from './components/Process'
-import Testimonials from './components/Testimonials'
+import Team from './components/Team'
 import CTA from './components/CTA'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
@@ -31,7 +31,7 @@ export default function App() {
         <Reveal><AIStudio /></Reveal>
         <Reveal><WhyChooseUs /></Reveal>
         <Reveal><Process /></Reveal>
-        <Reveal><Testimonials /></Reveal>
+        <Reveal><Team /></Reveal>
         <Reveal><CTA /></Reveal>
         <Reveal><Contact /></Reveal>
       </main>

@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Wand2, RefreshCw, ArrowRight, Layout, Palette, Clock, Layers } from 'lucide-react'
 
 /**
- * "AI Studio" — an on-page concept generator. It *looks* like a model
- * thinking and streaming a result, but every output is composed locally
- * from the tables below. No API, no network, no keys. Tune the copy and
- * palettes here to change what it produces.
+ * Website planner: this on-page tool assembles an outline locally from the
+ * selected business type and goal. It does not call an AI model or API.
  */
 const BUSINESSES = {
   hotel: {
@@ -80,12 +78,12 @@ const HEADLINES = [
   (b) => `Premium ${b.noun}. Zero friction.`,
 ]
 
-const THINKING = [
-  'Analysing your industry…',
-  'Choosing a layout system…',
-  'Selecting a colour palette…',
+const PLANNING_STEPS = [
+  'Matching a layout direction…',
+  'Choosing a colour palette…',
   'Mapping the page structure…',
-  'Estimating scope & timeline…',
+  'Preparing an indicative scope…',
+  'Putting your outline together…',
 ]
 
 function pick(arr, seed) {
@@ -95,7 +93,7 @@ function pick(arr, seed) {
 export default function AIStudio() {
   const [biz, setBiz] = useState('hotel')
   const [goal, setGoal] = useState('bookings')
-  const [phase, setPhase] = useState('idle') // idle | thinking | done
+  const [phase, setPhase] = useState('idle') // idle | planning | done
   const [step, setStep] = useState(0)
   const [result, setResult] = useState(null)
   const [typed, setTyped] = useState('')
@@ -109,12 +107,12 @@ export default function AIStudio() {
 
   const generate = () => {
     clearTimers()
-    setPhase('thinking')
+    setPhase('planning')
     setStep(0)
     setResult(null)
     setTyped('')
 
-    THINKING.forEach((_, i) => {
+    PLANNING_STEPS.forEach((_, i) => {
       timers.current.push(setTimeout(() => setStep(i + 1), 480 * (i + 1)))
     })
 
@@ -135,7 +133,7 @@ export default function AIStudio() {
           timeline: `${lo + g.addWeeks}–${hi + g.addWeeks} weeks`,
         })
         setPhase('done')
-      }, 480 * (THINKING.length + 1) + 200)
+      }, 480 * (PLANNING_STEPS.length + 1) + 200)
     )
   }
 
@@ -154,20 +152,19 @@ export default function AIStudio() {
   }, [phase, result])
 
   return (
-    <section id="ai-studio" className="relative py-20 sm:py-28 md:py-36 overflow-hidden">
+    <section id="planner" className="relative py-20 sm:py-28 md:py-36 overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(233,32,42,0.10),transparent_45%),radial-gradient(circle_at_85%_90%,rgba(124,58,237,0.10),transparent_45%)]" />
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
         <div className="max-w-2xl mb-10 sm:mb-14">
           <p className="eyebrow inline-flex items-center gap-2 text-red mb-4">
-            <Sparkles size={14} /> AI Studio
+            <Sparkles size={14} /> Website planner
           </p>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight">
-            See your site <span className="text-gradient">concept</span> in seconds.
+            Start with a <span className="text-gradient">clear plan.</span>
           </h2>
           <p className="mt-4 text-mist leading-relaxed">
-            Pick your business and your goal — our studio assistant sketches a
-            starting direction: layout, palette, pages and a rough timeline.
+            Choose your business type and goal to create a draft outline with suggested pages, sections, a visual direction and an indicative timeline. The planner runs locally; our team scopes the actual build with you.
           </p>
         </div>
 
@@ -210,17 +207,17 @@ export default function AIStudio() {
 
             <button
               onClick={generate}
-              disabled={phase === 'thinking'}
+              disabled={phase === 'planning'}
               className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
             >
-              {phase === 'thinking' ? (
-                <>Thinking<span className="inline-flex w-6 justify-between">
+              {phase === 'planning' ? (
+                <>Building outline<span className="inline-flex w-6 justify-between">
                   <Dot d={0} /><Dot d={0.15} /><Dot d={0.3} />
                 </span></>
               ) : phase === 'done' ? (
                 <><RefreshCw size={16} /> Regenerate</>
               ) : (
-                <><Wand2 size={16} /> Generate concept</>
+                <><Wand2 size={16} /> Create my outline</>
               )}
             </button>
           </div>
@@ -244,15 +241,15 @@ export default function AIStudio() {
                   >
                     <Wand2 size={30} className="text-red mb-4" />
                     <p className="max-w-xs text-sm">
-                      Choose your options and hit <span className="text-white">Generate concept</span> to
+                      Choose your options and hit <span className="text-white">Create my outline</span> to
                       see a starting direction appear here.
                     </p>
                   </motion.div>
                 )}
 
-                {phase === 'thinking' && (
+                {phase === 'planning' && (
                   <motion.ul
-                    key="thinking"
+                    key="planning"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     className="h-[320px] flex flex-col justify-center gap-3 font-mono text-sm"
                   >
@@ -279,7 +276,7 @@ export default function AIStudio() {
                     className="space-y-6"
                   >
                     <div>
-                      <div className="eyebrow text-red mb-2 flex items-center gap-2"><Layout size={13} /> Hero direction</div>
+                      <div className="eyebrow text-red mb-2 flex items-center gap-2"><Layout size={13} /> Suggested direction</div>
                       <div className="font-display text-2xl sm:text-3xl font-semibold leading-tight min-h-[2.4em]">
                         {typed}
                         <span className="inline-block w-[2px] h-[1em] align-middle bg-red animate-pulse ml-0.5" />
@@ -299,7 +296,7 @@ export default function AIStudio() {
                         </div>
                       </Block>
 
-                      <Block icon={Clock} title="Rough timeline">
+                      <Block icon={Clock} title="Indicative timeline">
                         <div className="font-display text-2xl font-semibold text-white">{result.timeline}</div>
                         <div className="text-xs text-mist mt-1">design → build → launch</div>
                       </Block>
@@ -329,12 +326,12 @@ export default function AIStudio() {
                         href="#contact"
                         className="ml-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red text-plainwhite text-sm font-medium hover:bg-red-soft transition-colors"
                       >
-                        Build this <ArrowRight size={15} />
+                        Discuss this outline <ArrowRight size={15} />
                       </a>
                     </div>
 
                     <p className="text-[11px] text-mist/70">
-                      Generated on-device as a starting point — your real project is scoped with our team.
+                      This is a locally assembled planning aid, not an AI-generated design or delivery quote. We scope every real project with you.
                     </p>
                   </motion.div>
                 )}
