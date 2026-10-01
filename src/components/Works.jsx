@@ -45,8 +45,8 @@ export default function Works() {
         <div className="mb-6 grid grid-cols-1 gap-6 lg:mb-16 lg:grid-cols-[minmax(0,1.35fr)_minmax(250px,0.65fr)] lg:items-center lg:gap-10">
           <TileVisualizerDemo />
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="spotlight relative isolate overflow-hidden rounded-3xl border border-red/20 bg-gradient-to-br from-red/[0.07] via-surface to-surface p-5 shadow-card sm:p-7 lg:p-8"
