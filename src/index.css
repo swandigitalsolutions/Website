@@ -3,18 +3,22 @@
 @tailwind utilities;
 
 /* ---------- Theme tokens (space-separated RGB for Tailwind alpha) ---------- */
+/* Light "porcelain" theme: cool white canvas, deep navy ink, brand red.
+   `night` is the deep navy used for the intro, CTA band and footer. */
 :root {
-  --ink: 6 6 7;
-  --surface: 14 14 17;
-  --surface2: 21 21 24;
-  --line: 35 35 39;
-  --mist: 154 154 163;
-  --fg: 245 245 244;
-  --red: 233 32 42;
-  --red-soft: 255 75 84;
+  --ink: 248 249 252;
+  --surface: 255 255 255;
+  --surface2: 242 244 249;
+  --line: 226 230 239;
+  --mist: 86 96 117;
+  --fg: 11 18 32;
+  --red: 222 27 40;
+  --red-soft: 240 58 70;
   --red-deep: 140 15 22;
-  --grid-line: 255 255 255;
-  color-scheme: dark;
+  --night: 9 14 28;
+  --night2: 18 26 46;
+  --grid-line: 11 18 32;
+  color-scheme: light;
 }
 
 html {
@@ -26,7 +30,9 @@ body {
   color: rgb(var(--fg));
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -36,7 +42,7 @@ body {
 
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: rgb(var(--ink)); }
-::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 8px; border: 2px solid rgb(var(--ink)); }
 ::-webkit-scrollbar-thumb:hover { background: rgb(var(--red)); }
 
 .eyebrow {
@@ -47,61 +53,108 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #FF4B54 0%, #E9202A 60%, #8C0F16 100%);
+  background: linear-gradient(120deg, #F23A46 0%, #DE1B28 45%, #8C0F16 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animated shimmer variant for hero highlight words */
+.text-gradient-live {
+  background: linear-gradient(110deg, #8C0F16 0%, #DE1B28 25%, #FF6B74 50%, #DE1B28 75%, #8C0F16 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-pan 6s ease-in-out infinite alternate;
+}
+@keyframes gradient-pan {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
 }
 
 .noise-grid {
   background-image:
-    linear-gradient(to right, rgb(var(--grid-line) / 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--grid-line) / 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgb(var(--grid-line) / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid-line) / 0.05) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
 /* ---------- "white" utilities re-pointed at the theme foreground ---------- */
-/* In dark mode --fg is near-white so nothing changes; in light mode these
-   flip to dark text. Buttons that must stay white use text-plainwhite. */
+/* Components use text-white for "primary text"; on the light theme these
+   resolve to navy. Text that sits on photos, red or navy panels uses
+   text-plainwhite so it always stays white. */
 .text-white { color: rgb(var(--fg)) !important; }
 .text-white\/90 { color: rgb(var(--fg) / 0.9) !important; }
 .text-white\/85 { color: rgb(var(--fg) / 0.85) !important; }
 .text-white\/80 { color: rgb(var(--fg) / 0.8) !important; }
+.text-white\/75 { color: rgb(var(--fg) / 0.75) !important; }
 .text-white\/70 { color: rgb(var(--fg) / 0.7) !important; }
 .text-white\/60 { color: rgb(var(--fg) / 0.6) !important; }
 .text-plainwhite { color: #fff !important; }
 
-/* ---------- Aurora hero backdrop ---------- */
+/* Navy panels: re-scope tokens so everything inside reads light-on-dark */
+.on-night {
+  --fg: 245 246 250;
+  --mist: 160 170 192;
+  --line: 40 50 74;
+  --surface: 18 26 46;
+  --surface2: 26 35 58;
+  --grid-line: 255 255 255;
+  color: rgb(var(--fg));
+}
+
+/* ---------- Aurora hero backdrop (light) ---------- */
 .aurora {
   background:
-    radial-gradient(38% 45% at 18% 20%, rgb(var(--red) / 0.22), transparent 70%),
-    radial-gradient(32% 40% at 82% 12%, rgba(124, 58, 237, 0.20), transparent 70%),
-    radial-gradient(45% 50% at 65% 85%, rgb(var(--red-soft) / 0.16), transparent 70%),
-    radial-gradient(40% 45% at 25% 90%, rgba(34, 211, 238, 0.12), transparent 70%);
-  filter: blur(28px);
-  animation: aurora-drift 24s ease-in-out infinite alternate;
+    radial-gradient(36% 42% at 14% 22%, rgb(var(--red) / 0.16), transparent 70%),
+    radial-gradient(30% 38% at 84% 14%, rgba(99, 102, 241, 0.16), transparent 70%),
+    radial-gradient(42% 48% at 68% 82%, rgb(var(--red-soft) / 0.12), transparent 70%),
+    radial-gradient(38% 44% at 26% 92%, rgba(14, 165, 233, 0.12), transparent 70%);
+  filter: blur(30px);
+  animation: aurora-drift 22s ease-in-out infinite alternate;
   will-change: transform;
   contain: paint;
 }
 @keyframes aurora-drift {
-  0%   { transform: translate3d(-4%, -2%, 0) scale(1); }
-  50%  { transform: translate3d(3%, 2%, 0) scale(1.07); }
-  100% { transform: translate3d(5%, -3%, 0) scale(1.03); }
+  0%   { transform: translate3d(-4%, -2%, 0) scale(1) rotate(0deg); }
+  50%  { transform: translate3d(3%, 2%, 0) scale(1.08) rotate(4deg); }
+  100% { transform: translate3d(5%, -3%, 0) scale(1.03) rotate(-3deg); }
 }
 
-/* ---------- Card glare sweep on hover ---------- */
-.card-glare { position: relative; }
-.card-glare::after {
+/* ---------- Pointer spotlight on cards ---------- */
+/* --mx / --my are set by the global pointer handler in useSpotlight. */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.14) 45%, transparent 60%);
-  transform: translateX(-120%);
-  transition: transform 0.7s ease;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--red) / 0.08), transparent 45%);
 }
-.card-glare:hover::after { transform: translateX(120%); }
+.spotlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 30;
+  padding: 1px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--red) / 0.7), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.spotlight:hover::before,
+.spotlight:hover::after { opacity: 1; }
 
 /* ---------- Horizontal auto-scrolling marquees ---------- */
 @keyframes marquee-x {
@@ -111,6 +164,29 @@ body {
 .marquee-track { animation: marquee-x 45s linear infinite; will-change: transform; }
 .marquee-track--slow { animation-duration: 38s; }
 .marquee-mask:hover .marquee-track { animation-play-state: paused; }
+
+/* ---------- Rotating badge ---------- */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 22s linear infinite; }
+
+/* ---------- Shine sweep on primary buttons ---------- */
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.4), transparent);
+  transform: skewX(-20deg);
+  animation: btn-shine 5s ease-in-out infinite;
+}
+@keyframes btn-shine {
+  0%, 70% { left: -60%; }
+  100% { left: 130%; }
+}
 
 /* ---------- Lenis smooth scroll ---------- */
 html.lenis, html.lenis body { height: auto; }
@@ -132,7 +208,7 @@ html.lenis, html.lenis body { height: auto; }
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
-  .aurora { animation: none !important; }
+  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after { animation: none !important; }
 }
 
 /* ---------- Focus visibility ---------- */

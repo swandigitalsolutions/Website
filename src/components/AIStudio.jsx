@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Wand2, RefreshCw, ArrowRight, Layout, Palette, Clock, Layers } from 'lucide-react'
+import SplitText from './SplitText'
+import SectionEyebrow from './SectionEyebrow'
 
 /**
  * Website planner: this on-page tool assembles an outline locally from the
@@ -255,24 +257,23 @@ export default function AIStudio() {
 
   return (
     <section id="planner" className="relative py-20 sm:py-28 md:py-36 overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(233,32,42,0.10),transparent_45%),radial-gradient(circle_at_85%_90%,rgba(124,58,237,0.10),transparent_45%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(222,27,40,0.07),transparent_45%),radial-gradient(circle_at_85%_90%,rgba(99,102,241,0.08),transparent_45%)]" />
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
         <div className="max-w-2xl mb-10 sm:mb-14">
-          <p className="eyebrow inline-flex items-center gap-2 text-red mb-4">
-            <Sparkles size={14} /> Website planner
-          </p>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight">
-            Start with a <span className="text-gradient">clear plan.</span>
-          </h2>
+          <SectionEyebrow icon={Sparkles}>Website planner</SectionEyebrow>
+          <SplitText
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight"
+            segments={['Start with a', { text: 'clear plan.', className: 'text-gradient' }]}
+          />
           <p className="mt-4 text-mist leading-relaxed">
             Build a practical first brief for a website, business system or AI-enabled workflow. Choose what your business does and the result you need; the planner suggests content, useful features and an indicative schedule. These are structured starting recommendations, not live AI analysis or a fixed quote. Our team will confirm feasibility, integrations and scope with you.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-[minmax(0,360px)_1fr] gap-6 lg:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,360px)_1fr] gap-6 lg:gap-8 items-start">
           {/* controls */}
-          <div className="rounded-3xl border border-line bg-surface p-6 sm:p-7">
+          <div className="spotlight rounded-3xl border border-line bg-surface p-6 sm:p-7 shadow-card">
             <label className="text-xs text-mist">My business is a…</label>
             <div className="mt-2 mb-5 grid grid-cols-2 gap-2">
               {Object.entries(BUSINESSES).map(([k, v]) => (
@@ -284,7 +285,7 @@ export default function AIStudio() {
                   aria-pressed={biz === k}
                   className={`text-left text-sm rounded-xl border px-3 py-2.5 transition-colors ${
                     biz === k
-                      ? 'border-red/60 bg-red/10 text-white'
+                      ? 'border-red/60 bg-red/10 text-white shadow-[0_0_0_3px_rgb(var(--red)/0.08)]'
                       : 'border-line bg-surface2 text-mist hover:text-white hover:border-red/40'
                   }`}
                 >
@@ -304,7 +305,7 @@ export default function AIStudio() {
                   aria-pressed={goal === k}
                   className={`text-xs rounded-full border px-3 py-1.5 transition-colors ${
                     goal === k
-                      ? 'border-red/60 bg-red/10 text-white'
+                      ? 'border-red/60 bg-red/10 text-white shadow-[0_0_0_3px_rgb(var(--red)/0.08)]'
                       : 'border-line bg-surface2 text-mist hover:text-white hover:border-red/40'
                   }`}
                 >
@@ -317,7 +318,7 @@ export default function AIStudio() {
               type="button"
               onClick={generate}
               disabled={phase === 'planning'}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
+              className="btn-shine w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red text-plainwhite shadow-glow hover:bg-red-soft transition-colors font-medium disabled:opacity-70"
             >
               {phase === 'planning' ? (
                 <>Building outline<span className="inline-flex w-6 justify-between">
@@ -332,7 +333,7 @@ export default function AIStudio() {
           </div>
 
           {/* canvas */}
-          <div className="relative rounded-3xl border border-line bg-surface min-h-[420px] overflow-hidden">
+          <div className="relative rounded-3xl border border-line bg-surface min-h-[420px] overflow-hidden shadow-lift">
             <div className="flex items-center gap-2 px-5 h-11 border-b border-line bg-surface2">
               <span className="w-2.5 h-2.5 rounded-full bg-red/70" />
               <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]/70" />
@@ -397,7 +398,7 @@ export default function AIStudio() {
                         <div className="flex gap-2">
                           {result.palette.map((c) => (
                             <div key={c} className="flex-1">
-                              <div className="h-10 rounded-lg border border-white/10" style={{ background: c }} />
+                              <div className="h-10 rounded-lg border border-line shadow-card" style={{ background: c }} />
                               <div className="mt-1 text-[10px] text-mist font-mono">{c}</div>
                             </div>
                           ))}
