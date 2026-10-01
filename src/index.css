@@ -99,6 +99,7 @@ body {
 .text-white\/75 { color: rgb(var(--fg) / 0.75) !important; }
 .text-white\/70 { color: rgb(var(--fg) / 0.7) !important; }
 .text-white\/60 { color: rgb(var(--fg) / 0.6) !important; }
+.hover\:text-white:hover { color: rgb(var(--fg)) !important; }
 .text-plainwhite { color: #fff !important; }
 
 /* Navy panels: re-scope tokens so everything inside reads light-on-dark */
@@ -216,7 +217,7 @@ body {
   to { transform: translateX(108vw); }
 }
 .pond-bob { animation: pond-bob 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
-.pond-bob.-scale-y-100 { animation-name: pond-bob-reflect; transform-origin: 50% 0%; }
+.pond-bob--reflect { animation-name: pond-bob-reflect; transform-origin: 50% 50%; }
 @keyframes pond-bob {
   0%, 100% { transform: translateY(0) rotate(-2deg); }
   50% { transform: translateY(-2px) rotate(2deg); }
@@ -224,6 +225,33 @@ body {
 @keyframes pond-bob-reflect {
   0%, 100% { transform: scaleY(-1) translateY(0) rotate(2deg); }
   50% { transform: scaleY(-1) translateY(-2px) rotate(-2deg); }
+}
+/* full-bodied swan: wing breathes, tail flicks, neck sways; some dip to drink */
+.ss-wing, .ss-neck, .ss-tail { transform-box: view-box; }
+.ss-wing { animation: ss-wing 4.2s ease-in-out infinite; }
+@keyframes ss-wing {
+  0%, 100% { transform: rotate(0deg) scaleY(1); }
+  50% { transform: rotate(-4deg) scaleY(1.05); }
+}
+.ss-tail { animation: ss-tail 6.5s ease-in-out infinite; }
+@keyframes ss-tail {
+  0%, 84%, 100% { transform: rotate(0deg); }
+  88% { transform: rotate(-9deg); }
+  92% { transform: rotate(5deg); }
+  96% { transform: rotate(-3deg); }
+}
+.ss-neck { animation: ss-neck 5.4s ease-in-out infinite; }
+@keyframes ss-neck {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2.5deg); }
+}
+.ss-dips .ss-neck { animation: ss-dip 13s ease-in-out infinite; }
+@keyframes ss-dip {
+  0%, 70%, 100% { transform: rotate(-1deg); }
+  35% { transform: rotate(2deg); }
+  78% { transform: rotate(34deg); }
+  84% { transform: rotate(36deg); }
+  92% { transform: rotate(0deg); }
 }
 .pond-wake { animation: pond-wake 2.4s ease-in-out infinite; transform-origin: 100% 30%; }
 @keyframes pond-wake {
@@ -285,7 +313,9 @@ html.lenis, html.lenis body { height: auto; }
     scroll-behavior: auto !important;
   }
   .aurora, .spin-slow, .text-gradient-live, .btn-shine::after, .orbit-dash,
-  .pond-waves, .pond-glint, .pond-bob, .pond-wake, .pond-ring, .promo-float { animation: none !important; }
+  .pond-waves, .pond-glint, .pond-bob, .pond-wake, .pond-ring, .promo-float,
+  .ss-wing, .ss-tail, .ss-neck { animation: none !important; }
+  .pond-bob--reflect { transform: scaleY(-1); }
   .pond-swimmer { animation: none !important; transform: translateX(var(--rest, 40vw)); }
 }
 
