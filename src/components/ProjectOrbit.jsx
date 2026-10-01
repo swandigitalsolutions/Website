@@ -20,11 +20,15 @@ const EASE = [0.22, 1, 0.36, 1]
 // shortest signed distance between two angles, in (-180, 180]
 const wrap = (deg) => ((((deg + 180) % 360) + 360) % 360) - 180
 
+const PECK_EVERY = 3.4 // seconds between the swan's nudges
+
 /**
- * "Project orbit": every client site stands on a slowly turning 3D
- * carousel. The ring drifts on its own, picks up speed from page-scroll
- * velocity, can be flung by dragging (with inertia), and eases to any
- * card that's tapped. The front-facing project is captioned below.
+ * "Project orbit": every client site stands on a 3D carousel kept turning
+ * by a real-time 3D swan at its hub: every few seconds it strikes with its
+ * beak and the reel advances one card on contact. The swan watches the
+ * pointer, leans into spins, and the ring still picks up speed from page
+ * scroll, can be flung by dragging (with inertia), and eases to any card
+ * that's tapped. The front-facing project is captioned below.
  */
 export default function ProjectOrbit() {
   const stageRef = useRef(null)
@@ -33,6 +37,11 @@ export default function ProjectOrbit() {
   const [cardW, setCardW] = useState(340)
   const [hovering, setHovering] = useState(false)
   const reduce = useRef(false)
+  const canvasRef = useRef(null)
+  const swan = useRef(null)
+  const [floorFrac, setFloorFrac] = useState(0.72)
+  const idle = useRef(0)
+  const lastRot = useRef(0)
 
   // interaction state lives in refs so the frame loop never re-renders
   const target = useRef(null)
@@ -55,6 +64,57 @@ export default function ProjectOrbit() {
   }, [])
 
   const radius = Math.round((cardW / 2) / Math.tan(Math.PI / N) * 1.12)
+  const cardH = Math.round(cardW * 0.5) + 58
+  // the swan's canvas stands at the ring's centre (farther away than the
+  // front card), so it is drawn larger to read at the right scale
+  const swanW = Math.round(cardW * 2.8)
+  const swanH = Math.round(cardH * 3)
+  const headroom = Math.round(cardH * 0.75)
+  const counterRot = useTransform(rot, (r) => -r)
+
+  // load three.js + the swan only when the section is about to be seen
+  useEffect(() => {
+    const stage = stageRef.current
+    const canvas = canvasRef.current
+    if (!stage || !canvas) return
+    let disposed = false
+    let io
+    const load = async () => {
+      try {
+        const { createSwanScene } = await import('../lib/swanScene')
+        if (disposed) return
+        const api = createSwanScene(canvas, { reducedMotion: reduce.current })
+        api.resize(canvas.clientWidth, canvas.clientHeight)
+        setFloorFrac(api.floorFraction())
+        swan.current = api
+        io = new IntersectionObserver(([e]) => api.setActive(e.isIntersecting && !document.hidden), { rootMargin: '120px' })
+        io.observe(stage)
+      } catch {
+        swan.current = null // no WebGL: the reel advances on its own
+      }
+    }
+    const pre = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        pre.disconnect()
+        load()
+      }
+    }, { rootMargin: '600px' })
+    pre.observe(stage)
+    const onVis = () => swan.current?.setActive(!document.hidden)
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      disposed = true
+      pre.disconnect()
+      io?.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+      swan.current?.dispose()
+      swan.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    swan.current?.resize(swanW, swanH)
+  }, [swanW, swanH])
 
   useAnimationFrame((_, delta) => {
     const dt = Math.min(delta, 50) / 1000
@@ -69,14 +129,34 @@ export default function ProjectOrbit() {
       }
     } else {
       if (!reduce.current) {
-        const drift = hovering ? 0 : -7 // deg per second
         const fromScroll = -scrollVel.get() * 0.018
-        r += (drift + fromScroll + fling.current) * dt
+        r += (fromScroll + fling.current) * dt
       }
       fling.current *= Math.pow(0.04, dt) // inertia decay
       if (Math.abs(fling.current) < 0.5) fling.current = 0
     }
     rot.set(r)
+
+    // the swan reads the ring's angular velocity to lean and look along it
+    swan.current?.setSpin((r - lastRot.current) / Math.max(dt, 0.001))
+    lastRot.current = r
+
+    // when the reel is at rest and nobody is hovering, the swan nudges it on
+    const resting = target.current === null && fling.current === 0 && Math.abs(scrollVel.get()) < 30
+    if (!reduce.current && !hovering && resting) {
+      idle.current += dt
+      if (idle.current >= PECK_EVERY) {
+        idle.current = 0
+        const next = Math.round(-r / STEP) + 1
+        const advance = () => {
+          const cur = rot.get()
+          target.current = cur + wrap(-next * STEP - cur)
+        }
+        if (!swan.current?.peck(advance)) advance()
+      }
+    } else {
+      idle.current = 0
+    }
   })
 
   useMotionValueEvent(rot, 'change', (r) => {
@@ -94,6 +174,10 @@ export default function ProjectOrbit() {
     drag.current = { x: e.clientX, y: e.clientY, last: e.clientX, t: performance.now(), v: 0, active: false, moved: false, id: e.pointerId }
   }
   const onPointerMove = (e) => {
+    const sr = stageRef.current?.getBoundingClientRect()
+    if (sr && e.pointerType === 'mouse') {
+      swan.current?.look(((e.clientX - sr.left) / sr.width - 0.5) * 2, ((e.clientY - sr.top) / sr.height - 0.5) * 2)
+    }
     const d = drag.current
     if (!d) return
     const dx = e.clientX - d.x
@@ -142,7 +226,6 @@ export default function ProjectOrbit() {
   }
 
   const project = PROJECTS[front]
-  const cardH = Math.round(cardW * 0.5) + 58
 
   return (
     <section
@@ -154,7 +237,7 @@ export default function ProjectOrbit() {
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
         <div className="flex flex-col items-center text-center">
           <p className="eyebrow text-mist">Selected projects across industries</p>
-          <p className="mt-2 text-xs text-mist/80">Drag, scroll or tap a card to turn the reel</p>
+          <p className="mt-2 text-xs text-mist/80">Our swan keeps the reel turning — or drag, scroll and tap the cards yourself</p>
         </div>
 
         {/* 3D stage */}
@@ -170,19 +253,22 @@ export default function ProjectOrbit() {
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
           onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
+          onMouseLeave={() => {
+            setHovering(false)
+            swan.current?.look(0, 0)
+          }}
           className="relative mx-auto mt-6 select-none touch-pan-y cursor-grab active:cursor-grabbing focus-visible:outline-none"
-          style={{ height: cardH + 120, perspective: 1100 }}
+          style={{ height: headroom + cardH + 120, perspective: 1100, perspectiveOrigin: `50% ${headroom + cardH / 2}px` }}
         >
           {/* floor: glow, orbit track and travelling light */}
           <div
             className="pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgb(var(--red)/0.14),transparent)]"
-            style={{ width: radius * 2.6, height: 110, top: cardH - 30 }}
+            style={{ width: radius * 2.6, height: 110, top: headroom + cardH - 40 }}
           />
           <svg
             aria-hidden="true"
             className="pointer-events-none absolute left-1/2 -translate-x-1/2 overflow-visible"
-            style={{ width: radius * 2.2, height: 56, top: cardH - 14 }}
+            style={{ width: radius * 2.2, height: 56, top: headroom + cardH - 24 }}
             viewBox="0 0 200 40"
             preserveAspectRatio="none"
           >
@@ -191,8 +277,9 @@ export default function ProjectOrbit() {
           </svg>
 
           <motion.div
-            className="absolute left-1/2 top-10"
+            className="absolute left-1/2"
             style={{
+              top: headroom,
               width: cardW,
               height: cardH,
               marginLeft: -cardW / 2,
@@ -201,6 +288,19 @@ export default function ProjectOrbit() {
               z: -radius,
             }}
           >
+            {/* the swan: a camera-facing canvas standing at the hub of the ring */}
+            <motion.canvas
+              ref={canvasRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute"
+              style={{
+                width: swanW,
+                height: swanH,
+                left: (cardW - swanW) / 2,
+                top: cardH - floorFrac * swanH,
+                rotateY: counterRot,
+              }}
+            />
             {PROJECTS.map((p, i) => (
               <OrbitCard
                 key={p.title}
