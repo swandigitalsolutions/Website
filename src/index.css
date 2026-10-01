@@ -191,6 +191,62 @@ body {
 @keyframes orbit-dash { to { stroke-dashoffset: -314; } }
 .orbit-dash { animation: orbit-dash 7s linear infinite; }
 
+/* ---------- Footer pond: water and swimming swans ---------- */
+.pond-reflection {
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 75%);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 75%);
+}
+.pond-waves { animation: pond-slide 36s linear infinite; }
+@keyframes pond-slide { to { transform: translateX(-50%); } }
+.pond-glint {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.5), transparent);
+  filter: blur(1px);
+  animation: pond-glint 7s ease-in-out infinite;
+}
+@keyframes pond-glint {
+  0%, 100% { opacity: 0; transform: translateX(-20px) scaleX(0.6); }
+  50% { opacity: 0.8; transform: translateX(20px) scaleX(1); }
+}
+.pond-swimmer {
+  animation: pond-swim 50s linear infinite;
+  will-change: transform;
+}
+@keyframes pond-swim {
+  from { transform: translateX(-12vw); }
+  to { transform: translateX(108vw); }
+}
+.pond-bob { animation: pond-bob 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+.pond-bob.-scale-y-100 { animation-name: pond-bob-reflect; transform-origin: 50% 0%; }
+@keyframes pond-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-2px) rotate(2deg); }
+}
+@keyframes pond-bob-reflect {
+  0%, 100% { transform: scaleY(-1) translateY(0) rotate(2deg); }
+  50% { transform: scaleY(-1) translateY(-2px) rotate(-2deg); }
+}
+.pond-wake { animation: pond-wake 2.4s ease-in-out infinite; transform-origin: 100% 30%; }
+@keyframes pond-wake {
+  0%, 100% { opacity: 0.7; transform: scaleY(0.9); }
+  50% { opacity: 1; transform: scaleY(1.1); }
+}
+.pond-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  animation: pond-ring 2.8s ease-out infinite;
+}
+.pond-ring--late { animation-delay: -1.4s; }
+@keyframes pond-ring {
+  from { opacity: 0.8; transform: scale(0.4); }
+  to { opacity: 0; transform: scale(1.6); }
+}
+.promo-float { animation: promo-float 5s ease-in-out infinite; }
+@keyframes promo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
 /* ---------- Rotating badge ---------- */
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 .spin-slow { animation: spin-slow 22s linear infinite; }
@@ -228,7 +284,9 @@ html.lenis, html.lenis body { height: auto; }
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after, .orbit-dash { animation: none !important; }
+  .aurora, .spin-slow, .text-gradient-live, .btn-shine::after, .orbit-dash,
+  .pond-waves, .pond-glint, .pond-bob, .pond-wake, .pond-ring, .promo-float { animation: none !important; }
+  .pond-swimmer { animation: none !important; transform: translateX(var(--rest, 40vw)); }
 }
 
 /* ---------- Focus visibility ---------- */

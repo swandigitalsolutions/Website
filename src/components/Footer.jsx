@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
+import SwanPond from './SwanPond'
 
 const EASE = [0.22, 1, 0.36, 1]
+const PROMOS = ['Innovate', 'Build', 'Grow']
 
 export default function Footer() {
   return (
@@ -32,8 +34,26 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* oversized wordmark that rises into place */}
-        <div aria-hidden="true" className="mt-12 overflow-hidden select-none">
+        {/* brand promise, each marked with the swan */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          {PROMOS.map((word, i) => (
+            <motion.span
+              key={word}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.15 * i, ease: EASE }}
+              className="promo-float inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] py-1.5 pl-2 pr-4 text-xs font-medium tracking-[0.18em] uppercase text-plainwhite backdrop-blur"
+              style={{ animationDelay: `${-i * 1.6}s` }}
+            >
+              <img src="/swan-mark.webp" alt="" className="h-5 w-auto" />
+              {word}
+            </motion.span>
+          ))}
+        </div>
+
+        {/* oversized wordmark that rises into place, standing on the water */}
+        <div aria-hidden="true" className="mt-8 overflow-hidden select-none">
           <motion.div
             initial={{ y: '100%' }}
             whileInView={{ y: '0%' }}
@@ -45,7 +65,9 @@ export default function Footer() {
           </motion.div>
         </div>
 
-        <p className="mt-8 border-t border-line pt-6 text-xs text-mist text-center">
+        <SwanPond />
+
+        <p className="mt-2 border-t border-line pt-6 text-xs text-mist text-center">
           &copy; {new Date().getFullYear()} Swan Digital Solutions. All rights reserved.
         </p>
       </div>
