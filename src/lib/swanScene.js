@@ -6,8 +6,9 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
  * Sculpted from deformed ellipsoids (body, layered wing feathers, tail),
  * a live tapered neck tube that is rebuilt every frame, and a head with
  * an orange beak, black knob and eyes. It breathes, bobs on the water,
- * blinks, follows the pointer, leans into the reel's spin and performs a
- * peck whose contact moment is reported back so the reel can advance.
+ * blinks, follows the pointer and leans into the reel's spin. Its display
+ * — rising proud and beating both articulated wings — reports the last
+ * downstroke so the reel can be thrown back into motion.
  *
  * Model space: the swan faces +x, y is up, the waterline is y = 0.
  */
@@ -22,17 +23,12 @@ const ZERO = new THREE.Vector3()
 
 const lerp = (a, b, t) => a + (b - a) * t
 const damp = (a, b, lambda, dt) => lerp(a, b, 1 - Math.exp(-lambda * dt))
-const easeOutBack = (t) => 1 + 2.4 * Math.pow(t - 1, 3) + 1.4 * Math.pow(t - 1, 2)
+const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
 // neck centreline keyframes in the swan's side plane (x forward, y up)
 const NECK_REST = [[0.7, 0.42], [1.02, 0.86], [0.78, 1.42], [0.92, 1.98], [1.18, 2.12]]
 const NECK_STRIKE = [[0.7, 0.42], [1.15, 0.8], [1.38, 1.22], [1.74, 1.4], [2.02, 1.24]]
 const NECK_BACK = [[0.7, 0.42], [0.96, 0.9], [0.66, 1.46], [0.76, 2.04], [0.98, 2.2]]
-// "puller" mode: beak dipped to grip a page edge, and reared back hauling it up
-const NECK_DIP = [[0.7, 0.42], [1.15, 0.75], [1.55, 0.86], [1.95, 0.64], [2.2, 0.4]]
-const NECK_PULL = [[0.7, 0.42], [1.0, 0.95], [1.15, 1.45], [1.45, 1.72], [1.8, 1.6]]
-const HEAD_DIP = new THREE.Vector3(0.45, -1, 0).normalize()
-const HEAD_PULL = new THREE.Vector3(0.15, -1, 0).normalize()
 
 function ellipsoid(material, sx, sy, sz, segments = 40) {
   const g = new THREE.SphereGeometry(1, segments, Math.round(segments * 0.75))
@@ -94,46 +90,239 @@ function buildWing(side, cover, primary) {
   return wing
 }
 
-function buildHead(feather) {
+const smooth = (e0, e1, x) => {
+  const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)))
+  return t * t * (3 - 2 * t)
+}
+
+/**
+ * Loft a closed tube along +z: `section(t)` returns { a, b, y } — the
+ * half-width, half-height and vertical offset of the ellipse at t (0..1).
+ */
+function loft(length, section, segs = 48, radial = 28) {
+  const pos = []
+  const uv = []
+  const index = []
+  for (let i = 0; i <= segs; i++) {
+    const t = i / segs
+    const { a, b, y } = section(t)
+    for (let j = 0; j <= radial; j++) {
+      const th = (j / radial) * Math.PI * 2
+      pos.push(Math.cos(th) * a, y + Math.sin(th) * b, t * length)
+      uv.push(t, j / radial)
+    }
+  }
+  for (let i = 0; i < segs; i++) {
+    for (let j = 0; j < radial; j++) {
+      const p = i * (radial + 1) + j
+      const q = (i + 1) * (radial + 1) + j
+      index.push(p, p + 1, q, q, p + 1, q + 1)
+    }
+  }
+  const g = new THREE.BufferGeometry()
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
+  g.setIndex(index)
+  g.computeVertexNormals()
+  return g
+}
+
+/**
+ * Mute swan head, modelled from reference: a long wedge-shaped head that
+ * flows out of the neck, a black forehead knob, black facial skin in a
+ * triangle from the bill base back to a small dark eye, and a long
+ * orange-red bill with a black base, dark gape line, nostrils and a
+ * hooked black nail. Forward is +z.
+ */
+function buildHead() {
   const head = new THREE.Group()
-  const skull = ellipsoid(feather, 0.12, 0.13, 0.2)
-  skull.position.set(0, 0.02, 0.04)
+  const featherCol = new THREE.Color('#f4f0e7')
+  const skinCol = new THREE.Color('#050505')
+
+  // skull: deformed sphere tapering into the face, vertex-coloured facial skin
+  const sg = new THREE.SphereGeometry(1, 160, 120) // dense enough to carry the facial skin
+  const sp = sg.attributes.position
+  const colors = []
+  const v = new THREE.Vector3()
+  for (let i = 0; i < sp.count; i++) {
+    v.fromBufferAttribute(sp, i)
+    let x = v.x * 0.112
+    let y = v.y * 0.122
+    const z = v.z * 0.25
+    const front = Math.max(0, z / 0.25)
+    x *= 1 - 0.42 * front // narrows toward the bill
+    y *= 1 - 0.3 * front
+    y -= 0.03 * front * front // forehead slopes down into the bill
+    if (z < 0) y += 0.012 * (z / 0.25) // smooth join with the neck
+    sp.setXYZ(i, x, y, z)
+
+    // black lore skin: a triangle from the eye forward to the bill base
+    const k = (z - 0.06) / 0.19 // 0 at the eye, 1 at the bill base
+    const upper = 0.056 + k * 0.016
+    const lower = 0.024 - k * 0.09
+    const inBand = smooth(lower - 0.006, lower + 0.003, y) * (1 - smooth(upper - 0.003, upper + 0.006, y))
+    const mask = smooth(0.05, 0.068, z) * inBand
+    const c = featherCol.clone().lerp(skinCol, mask)
+    colors.push(c.r, c.g, c.b)
+  }
+  sg.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
+  sg.computeVertexNormals()
+  const skullMat = new THREE.MeshPhysicalMaterial({
+    vertexColors: true,
+    roughness: 0.6,
+    sheen: 0.45,
+    sheenRoughness: 0.6,
+    sheenColor: new THREE.Color('#ffffff'),
+  })
+  const skull = new THREE.Mesh(sg, skullMat)
+  skull.position.set(0, 0.012, 0)
+  skull.castShadow = true
   head.add(skull)
 
-  const beakMat = new THREE.MeshPhysicalMaterial({ color: BEAK, roughness: 0.38, clearcoat: 0.5, clearcoatRoughness: 0.3 })
-  const blackMat = new THREE.MeshPhysicalMaterial({ color: BLACK, roughness: 0.3, clearcoat: 0.6 })
+  // the bill: lofted, pitched down; black base → orange-red → black nail
+  const L = 0.4
+  const bg = loft(L, (t) => ({
+    a: 0.056 * Math.pow(1 - t, 0.55) + 0.014,
+    b: 0.046 * Math.pow(1 - t, 0.75) + 0.011,
+    y: -0.035 * t * t + 0.008 * Math.sin(t * Math.PI), // slight droop, gentle culmen
+  }))
+  const buv = bg.attributes.uv
+  const bcol = []
+  const orange = new THREE.Color('#ef5a2c')
+  const tipPink = new THREE.Color('#e4574a')
+  const black = new THREE.Color('#141414')
+  const gape = new THREE.Color('#6d2316')
+  for (let i = 0; i < buv.count; i++) {
+    const t = buv.getX(i)
+    const th = buv.getY(i) * Math.PI * 2
+    const c = orange.clone().lerp(tipPink, smooth(0.5, 0.9, t))
+    c.lerp(black, 1 - smooth(0.02, 0.06, t)) // facial skin runs onto the base
+    c.lerp(black, smooth(0.9, 0.95, t)) // the nail
+    const side = Math.abs(Math.cos(th))
+    const sn = Math.sin(th)
+    const gapeLine = (1 - smooth(0.04, 0.12, Math.abs(sn + 0.28))) * smooth(0.6, 0.9, side) * (1 - smooth(0.82, 0.92, t))
+    c.lerp(gape, gapeLine * 0.85)
+    bcol.push(c.r, c.g, c.b)
+  }
+  bg.setAttribute('color', new THREE.Float32BufferAttribute(bcol, 3))
+  const billMat = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.35, clearcoat: 0.6, clearcoatRoughness: 0.25 })
+  const bill = new THREE.Mesh(bg, billMat)
+  bill.position.set(0, -0.008, 0.19)
+  bill.rotation.x = 0.26 // the bill angles down from the forehead line
+  bill.castShadow = true
+  head.add(bill)
 
-  const beakGeo = new THREE.CylinderGeometry(0.016, 0.068, 0.34, 24, 4)
-  beakGeo.rotateX(Math.PI / 2)
-  beakGeo.scale(0.85, 0.7, 1)
-  const beak = new THREE.Mesh(beakGeo, beakMat)
-  beak.position.set(0, -0.025, 0.34)
-  beak.rotation.x = 0.12
-  beak.castShadow = true
-  head.add(beak)
+  const blackMat = new THREE.MeshPhysicalMaterial({ color: '#141414', roughness: 0.35, clearcoat: 0.5 })
 
-  const nail = ellipsoid(blackMat, 0.02, 0.016, 0.03, 16)
-  nail.position.set(0, -0.045, 0.505)
-  head.add(nail)
+  const nail = ellipsoid(blackMat, 0.016, 0.013, 0.024, 18)
+  nail.position.set(0, -0.022, L - 0.006)
+  nail.rotation.x = 0.35
+  bill.add(nail)
 
-  const knob = ellipsoid(blackMat, 0.045, 0.055, 0.05, 20)
-  knob.position.set(0, 0.04, 0.2)
+  for (const sx of [-1, 1]) {
+    const n = ellipsoid(blackMat, 0.005, 0.006, 0.022, 10)
+    n.position.set(sx * 0.03, 0.02, 0.16)
+    bill.add(n)
+  }
+
+  // the knob on the forehead at the bill base
+  const knob = ellipsoid(blackMat, 0.042, 0.034, 0.064, 32)
+  knob.position.set(0, 0.036, 0.205)
+  knob.rotation.x = 0.1
   head.add(knob)
 
-  const mask = ellipsoid(blackMat, 0.085, 0.06, 0.06, 20)
-  mask.position.set(0, -0.005, 0.18)
-  head.add(mask)
-
+  // small dark eyes at the back of the facial skin
+  const eyeMat = new THREE.MeshPhysicalMaterial({ color: '#1b0f0b', roughness: 0.08, clearcoat: 1 })
   const eyes = []
-  for (const s of [-1, 1]) {
-    const eye = ellipsoid(blackMat, 0.022, 0.022, 0.022, 16)
-    eye.position.set(s * 0.093, 0.045, 0.13)
+  for (const sx of [-1, 1]) {
+    const eye = ellipsoid(eyeMat, 0.014, 0.014, 0.012, 16)
+    eye.position.set(sx * 0.087, 0.04, 0.066)
     head.add(eye)
     eyes.push(eye)
   }
   head.userData.eyes = eyes
-  head.userData.beakTip = new THREE.Vector3(0, -0.05, 0.52)
+  head.userData.beakTip = new THREE.Vector3(0, -0.008 - Math.sin(0.26) * L - 0.03, 0.19 + Math.cos(0.26) * L)
   return head
+}
+
+/** A single flight feather: a thin vane from its base at the origin out along -x. */
+function featherMesh(material, len, width) {
+  const g = new THREE.SphereGeometry(1, 20, 10)
+  g.scale(len / 2, 0.009, width)
+  g.translate(-len / 2, 0, 0)
+  const m = new THREE.Mesh(g, material)
+  m.castShadow = true
+  return m
+}
+
+/**
+ * Articulated spreading wing (right side; mirror with scale.z = -1).
+ * Chain: shoulder → elbow → wrist, each carrying its feather tract —
+ * coverts on the arm, secondaries on the forearm, fanned primaries on
+ * the hand. Posed with setWing(u, flap).
+ */
+function buildSpreadWing(material, shadeMat) {
+  const root = new THREE.Group()
+  const shoulder = new THREE.Group()
+  shoulder.rotation.order = 'YXZ'
+  root.add(shoulder)
+
+  const LA = 0.4
+  const LF = 0.55
+  const LH = 0.45
+  const tracts = []
+
+  for (let i = 0; i < 5; i++) {
+    const f = featherMesh(material, 0.34 - i * 0.02, 0.1)
+    f.position.set(0, 0.012, 0.04 + i * 0.08)
+    f.rotation.y = 0.05 * i
+    shoulder.add(f)
+    tracts.push(f)
+  }
+  const elbow = new THREE.Group()
+  elbow.position.z = LA
+  shoulder.add(elbow)
+  for (let i = 0; i < 10; i++) {
+    const f = featherMesh(material, 0.56 + (i % 2) * 0.03, 0.09)
+    f.position.set(0, -0.004 * (i % 2), 0.02 + i * 0.056)
+    f.rotation.y = 0.012 * i
+    elbow.add(f)
+    tracts.push(f)
+    if (i % 2 === 0) {
+      const cov = featherMesh(material, 0.3, 0.085)
+      cov.position.set(0.02, 0.014, 0.03 + i * 0.056)
+      cov.rotation.y = 0.012 * i
+      elbow.add(cov)
+      tracts.push(cov)
+    }
+  }
+  const wrist = new THREE.Group()
+  wrist.position.z = LF
+  elbow.add(wrist)
+  for (let i = 0; i < 9; i++) {
+    const k = i / 8
+    const f = featherMesh(shadeMat, 0.56 + k * 0.26, 0.08)
+    f.position.set(0, -0.003 * (i % 2), 0.02 + k * LH)
+    f.rotation.y = 0.12 + k * 1.15 // fan from trailing back to pointing out
+    wrist.add(f)
+    tracts.push(f)
+  }
+  root.userData = { shoulder, elbow, wrist, tracts }
+  return root
+}
+
+/** u: 0 tucked under the folded coverts → 1 fully spread; flap: -1 up … 1 down. */
+function setWing(wing, u, flap) {
+  const { shoulder, elbow, wrist, tracts } = wing.userData
+  shoulder.rotation.y = lerp(-1.35, -0.12, u)
+  // raised high over the back like a displaying mute swan; beats sweep down from there
+  shoulder.rotation.x = lerp(0.12, -1.05, u) + flap * 0.55 * u
+  elbow.rotation.y = lerp(1.1, 0.02, u) - flap * 0.08 * u
+  wrist.rotation.y = lerp(-1.5, -0.1, u) + flap * 0.12 * u
+  wrist.rotation.x = flap * 0.18 * u // the hand lags through the stroke
+  const grow = smooth(0, 0.45, u)
+  tracts.forEach((f) => f.scale.setScalar(Math.max(0.001, grow)))
+  wing.visible = u > 0.01
 }
 
 /** Tube with a varying radius whose vertices are rewritten per frame. */
@@ -218,8 +407,7 @@ function waterTexture() {
   return t
 }
 
-export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' } = {}) {
-  const puller = mode === 'puller'
+export function createSwanScene(canvas, { reducedMotion = false } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75))
   renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -233,14 +421,9 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
   scene.environmentIntensity = 0.55
 
-  const camera = new THREE.PerspectiveCamera(puller ? 26 : 24, 1, 0.1, 60)
-  if (puller) {
-    camera.position.set(0.55, 1.15, 9)
-    camera.lookAt(0.55, 0.8, 0)
-  } else {
-    camera.position.set(0, 2.25, 10.5)
-    camera.lookAt(0, 1.0, 0)
-  }
+  const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 60)
+  camera.position.set(0, 2.25, 10.5)
+  camera.lookAt(0, 1.0, 0)
 
   // lighting: soft sky, warm key with shadows, brand-red rim from behind
   scene.add(new THREE.HemisphereLight('#ffffff', '#c9d2e3', 0.75))
@@ -277,7 +460,7 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
 
   // the swan
   const root = new THREE.Group()
-  root.rotation.y = puller ? -0.3 : -0.9
+  root.rotation.y = -0.9
   scene.add(root)
 
   const bodyGroup = new THREE.Group()
@@ -294,19 +477,33 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
   const wings = [buildWing(-1, feather, shade), buildWing(1, feather, shade)]
   wings.forEach((w) => bodyGroup.add(w))
 
+  // full wings that unfold from under the coverts for the display
+  const wingMat = feather.clone()
+  wingMat.side = THREE.DoubleSide
+  const wingShade = shade.clone()
+  wingShade.side = THREE.DoubleSide
+  const spread = [-1, 1].map((side) => {
+    const w = buildSpreadWing(wingMat, wingShade)
+    w.position.set(0.12, 0.66, side * 0.34)
+    w.scale.z = side
+    setWing(w, 0, 0)
+    bodyGroup.add(w)
+    return w
+  })
+
   const neck = new NeckTube(feather)
   bodyGroup.add(neck.mesh)
   const head = buildHead(feather)
   bodyGroup.add(head)
 
-  // water, shadow catcher and ripple pool (the puller only casts a shadow)
+  // water, shadow catcher and ripple pool
   const water = new THREE.Mesh(
     new THREE.CircleGeometry(3, 72),
     new THREE.MeshBasicMaterial({ map: waterTexture(), transparent: true, depthWrite: false }),
   )
   water.rotation.x = -Math.PI / 2
   water.renderOrder = 1
-  if (!puller) scene.add(water)
+  scene.add(water)
 
   const shadowCatcher = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.ShadowMaterial({ opacity: 0.16 }))
   shadowCatcher.rotation.x = -Math.PI / 2
@@ -317,7 +514,7 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
 
   const ringGeo = new THREE.RingGeometry(0.965, 1, 96)
   ringGeo.rotateX(-Math.PI / 2)
-  const ripples = Array.from({ length: puller ? 0 : 10 }, () => {
+  const ripples = Array.from({ length: 10 }, () => {
     const m = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: '#8f9bb3', transparent: true, opacity: 0, depthWrite: false }))
     m.position.y = 0.006
     m.visible = false
@@ -327,7 +524,6 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
     return m
   })
   const spawnRipple = (x, z, { from = 1.1, to = 3.2, dur = 3, peak = 0.32, color = '#8f9bb3' } = {}) => {
-    if (!ripples.length) return
     const r = ripples.find((m) => !m.visible) || ripples[0]
     r.position.x = x
     r.position.z = z
@@ -357,8 +553,7 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
   // the neck clone must share the live geometry
   pairs.forEach(([a, b]) => { if (a === neck.mesh) b.geometry = neck.geometry })
   reflection.renderOrder = 0
-  if (puller) pairs.length = 0
-  else scene.add(reflection)
+  scene.add(reflection)
 
   // ---------- behaviour state ----------
   const state = {
@@ -369,15 +564,16 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
     lookY: 0,
     lookYTarget: 0,
     spin: 0,
-    peck: null, // { t, onContact, fired }
+    display: null, // { t, onGust, beats, prevFlap, gusted }
+    unfold: 0,
+    flap: 0,
+    proud: 0,
     blink: 0,
     nextBlink: 2.5,
     nextIdleRipple: 0.5,
     ruffle: 0,
     nextRuffle: 6,
     lean: 0,
-    pull: 0,
-    pullTarget: 0,
   }
 
   const pts = [0, 1, 2, 3, 4].map(() => new THREE.Vector3())
@@ -391,45 +587,73 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
     const s = state
     s.t += dt
 
-    // peck timeline: anticipate → strike → contact → spring back
-    let reachTarget = 0
-    if (s.peck) {
-      s.peck.t += dt / 0.95
-      const p = s.peck.t
-      if (p < 0.18) reachTarget = -0.28 * Math.sin((p / 0.18) * Math.PI * 0.5)
-      else if (p < 0.42) reachTarget = lerp(-0.28, 1, easeOutBack((p - 0.18) / 0.24))
-      else reachTarget = lerp(1, 0, Math.min(1, (p - 0.42) / 0.58))
-      if (!s.peck.fired && p >= 0.42) {
-        s.peck.fired = true
-        head.updateWorldMatrix(true, false)
-        beakWorld.copy(head.userData.beakTip).applyMatrix4(head.matrixWorld)
-        spawnRipple(beakWorld.x, beakWorld.z, { from: 0.08, to: 1.5, dur: 1.4, peak: 0.55, color: '#de1b28' })
-        spawnRipple(beakWorld.x, beakWorld.z, { from: 0.04, to: 0.9, dur: 1.1, peak: 0.4, color: '#de1b28' })
-        s.ruffle = 1
-        s.peck.onContact?.()
+    // wing display: rise proud, unfold both wings, three full beats (the
+    // last downstroke throws the gust that sets the reel turning), fold away
+    let unfold = 0
+    let flap = 0
+    if (s.display) {
+      const d = s.display
+      d.t += dt
+      const t = d.t
+      const OPEN = 0.8
+      const BEATS_END = 2.9
+      const CLOSE = 3.7
+      if (t < OPEN) unfold = easeInOut(t / OPEN)
+      else if (t < BEATS_END) unfold = 1
+      else unfold = 1 - easeInOut(Math.min(1, (t - BEATS_END) / (CLOSE - BEATS_END)))
+
+      const start = OPEN * 0.55
+      if (t > start && t < BEATS_END + 0.2) {
+        const ph = ((t - start) / (BEATS_END - start)) * 3
+        const warped = ph + 0.13 * Math.sin(ph * Math.PI * 2) // quicker downstroke
+        const env = Math.min(1, (t - start) / 0.3) * Math.min(1, (BEATS_END + 0.2 - t) / 0.35)
+        flap = -Math.cos(warped * Math.PI * 2) * env
       }
-      if (p >= 1) s.peck = null
-      s.reach = reachTarget // the timeline is already eased
-    } else {
-      s.reach = damp(s.reach, 0, 6, dt)
+      // bottom of each downstroke: spray on the water, and the gust on the last
+      if (d.prevFlap < 0.85 && flap >= 0.85) {
+        d.beats++
+        spread.forEach((w) => {
+          w.userData.wrist.getWorldPosition(beakWorld)
+          spawnRipple(beakWorld.x, beakWorld.z, { from: 0.1, to: 1.2, dur: 1.3, peak: 0.5 })
+        })
+        spawnRipple(0, 0.1, { from: 0.9, to: 2.4, dur: 1.6, peak: 0.4 })
+        if (d.beats >= 3 && !d.gusted) {
+          d.gusted = true
+          d.onGust?.()
+        }
+      }
+      d.prevFlap = flap
+      if (t >= CLOSE) {
+        if (!d.gusted) d.onGust?.()
+        s.display = null
+        s.ruffle = 1 // settle the feathers
+      }
     }
+    s.unfold = unfold
+    s.flap = flap
+    s.proud = damp(s.proud, s.display ? 1 : 0, 3.5, dt)
+    // neck draws back and up into the proud display posture
+    s.reach = damp(s.reach, -0.28 * s.proud, 6, dt)
+    // turn broadside to show the spread wings, then swing back
+    root.rotation.y = -0.9 + 0.62 * easeInOut(Math.min(1, s.proud))
 
     // head turns toward the pointer, and leans into the reel's spin
     const spinLook = THREE.MathUtils.clamp(-s.spin / 120, -0.6, 0.6)
     const idleSway = Math.sin(s.t * 0.7) * 0.12 + Math.sin(s.t * 1.9) * 0.03
-    const yawGoal = s.peck ? 0 : s.yawTarget + spinLook + idleSway
+    const yawGoal = s.display ? 0 : s.yawTarget + spinLook + idleSway
     s.yaw = damp(s.yaw, yawGoal, 4, dt)
-    s.lookY = damp(s.lookY, s.peck ? 0 : s.lookYTarget, 4, dt)
+    s.lookY = damp(s.lookY, s.display ? 0.25 : s.lookYTarget, 4, dt)
     s.lean = damp(s.lean, THREE.MathUtils.clamp(-s.spin / 400, -0.08, 0.08), 3, dt)
 
     // body: breathing, bobbing and a forward rock on the strike
     const strike = Math.max(0, s.reach)
-    bodyGroup.position.y = Math.sin(s.t * 1.15) * 0.025 - strike * 0.03
-    bodyGroup.rotation.z = Math.sin(s.t * 0.9) * 0.015 - strike * 0.07
+    const lift = s.proud * 0.07 + Math.max(0, s.flap) * 0.05 * s.unfold
+    bodyGroup.position.y = Math.sin(s.t * 1.15) * 0.025 - strike * 0.03 + lift
+    bodyGroup.rotation.z = Math.sin(s.t * 0.9) * 0.015 - strike * 0.07 + s.proud * 0.1
     bodyGroup.rotation.x = Math.sin(s.t * 0.75) * 0.012 + s.lean
     body.scale.y = 1 + Math.sin(s.t * 1.6) * 0.014
 
-    // wings: idle feather drift + ruffle burst after a peck or now and then
+    // wings: idle feather drift + ruffle burst after a display or now and then
     s.nextRuffle -= dt
     if (s.nextRuffle <= 0) {
       s.ruffle = 0.7
@@ -440,16 +664,14 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
       const side = i === 0 ? -1 : 1
       const shiver = Math.sin(s.t * 38 + i) * 0.03 * s.ruffle
       w.rotation.x = side * (Math.sin(s.t * 1.3 + i) * 0.015 + s.ruffle * 0.12 + shiver)
-      w.rotation.z = -s.ruffle * 0.05
+      w.rotation.z = -s.ruffle * 0.05 - s.unfold * 0.12
+      w.rotation.x += side * s.unfold * 0.38
       w.userData.primaries.forEach((f, k) => {
         f.rotation.y = Math.sin(s.t * 2.1 + k * 0.6) * 0.02 + shiver * 0.6
       })
     })
 
-    if (puller) {
-      posePuller(dt)
-      return
-    }
+    spread.forEach((w) => setWing(w, s.unfold, s.flap))
 
     // neck: blend keyframes, lift for vertical look, rotate about its base
     const r = s.reach
@@ -513,47 +735,8 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
       b.position.copy(a.position)
       b.quaternion.copy(a.quaternion)
       b.scale.copy(a.scale)
+      b.visible = a.visible
     }
-  }
-
-  // Puller: the beak grips a page edge in front of the swan; `pull` (0..1)
-  // rears the neck back and lifts the edge, the body leaning into the haul.
-  function posePuller(dt) {
-    const s = state
-    s.pull = damp(s.pull, s.pullTarget, 7, dt)
-    const k = s.pull
-    bodyGroup.rotation.z += k * 0.1
-    bodyGroup.position.x = -k * 0.08
-    wings.forEach((w, i) => {
-      const side = i === 0 ? -1 : 1
-      w.rotation.x += side * k * 0.22 // wings flare with the effort
-    })
-    const sway = Math.sin(s.t * 0.8) * 0.04
-    for (let i = 0; i < 5; i++) {
-      const w = i / 4
-      const x = lerp(NECK_DIP[i][0], NECK_PULL[i][0], k) + Math.sin(s.t * 1.3) * 0.012 * w
-      const y = lerp(NECK_DIP[i][1], NECK_PULL[i][1], k) + Math.sin(s.t * 2.2) * 0.01 * w * (1 - k)
-      const bx = NECK_DIP[0][0]
-      const dx = x - bx
-      const yaw = sway * w
-      pts[i].set(bx + dx * Math.cos(yaw), y, -dx * Math.sin(yaw))
-    }
-    planeN.set(Math.sin(sway * 0.6), 0, Math.cos(sway * 0.6)).normalize()
-    neck.update(pts, planeN)
-    head.position.copy(neck.curve.getPointAt(1, tmpT))
-    headDir.copy(HEAD_DIP).lerp(HEAD_PULL, k).normalize()
-    m4.lookAt(headDir, ZERO, UP)
-    head.quaternion.setFromRotationMatrix(m4)
-    head.rotateZ(Math.sin(s.t * 0.6) * 0.05)
-
-    s.nextBlink -= dt
-    if (s.nextBlink <= 0) {
-      s.blink = 1
-      s.nextBlink = 2.5 + Math.random() * 3
-    }
-    s.blink = Math.max(0, s.blink - dt * 8)
-    const lid = 1 - Math.sin(s.blink * Math.PI) * 0.9
-    head.userData.eyes.forEach((e) => { e.scale.y = lid })
   }
 
   // ---------- sizing / loop ----------
@@ -600,28 +783,14 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
     return (1 - v.y) / 2
   }
 
-  const projected = new THREE.Vector3()
-  return {
+  const api = {
     resize,
-    /** Beak tip in canvas CSS pixels (from the last rendered pose). */
-    beakScreen() {
-      head.updateWorldMatrix(true, false)
-      projected.copy(head.userData.beakTip).applyMatrix4(head.matrixWorld).project(camera)
-      return { x: ((projected.x + 1) / 2) * width, y: ((1 - projected.y) / 2) * height }
-    },
-    setPull(v) {
-      state.pullTarget = THREE.MathUtils.clamp(v, 0, 1)
-    },
-    /** Render one frame on demand (used by the puller, which owns its loop). */
-    step(dt) {
-      pose(dt)
-      renderer.render(scene, camera)
-    },
     setActive,
     floorFraction,
-    peck(onContact) {
-      if (reducedMotion || state.peck) return false
-      state.peck = { t: 0, onContact, fired: false }
+    /** Spread and beat both wings; `onGust` fires on the last downstroke. */
+    display(onGust) {
+      if (reducedMotion || state.display) return false
+      state.display = { t: 0, onGust, beats: 0, prevFlap: 0, gusted: false }
       return true
     },
     setSpin(v) {
@@ -644,4 +813,12 @@ export function createSwanScene(canvas, { reducedMotion = false, mode = 'orbit' 
       })
     },
   }
+  // dev-only: step the simulation deterministically (stripped from builds)
+  if (import.meta.env.DEV) {
+    api.debugStep = (seconds, fps = 60) => {
+      for (let i = 0; i < Math.round(seconds * fps); i++) pose(1 / fps)
+      renderer.render(scene, camera)
+    }
+  }
+  return api
 }

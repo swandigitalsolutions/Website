@@ -17,7 +17,6 @@ import Intro from './components/Intro'
 import SmoothScroll from './components/SmoothScroll'
 import Cursor from './components/Cursor'
 import MoonSky from './components/MoonSky'
-import PagePuller from './components/PagePuller'
 
 // Each section choreographs its own entrance (split headings, staggered
 // cards, scroll-linked rails), so they are no longer wrapped in <Reveal>.
@@ -44,7 +43,6 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
-      <PagePuller />
       <ChatWidget />
     </div>
   )

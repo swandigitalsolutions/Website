@@ -20,15 +20,22 @@ const EASE = [0.22, 1, 0.36, 1]
 // shortest signed distance between two angles, in (-180, 180]
 const wrap = (deg) => ((((deg + 180) % 360) + 360) % 360) - 180
 
-const PECK_EVERY = 3.4 // seconds between the swan's nudges
+// reel physics, in degrees and seconds
+const CRUISE = -12 // steady turning speed
+const CRUISE_TIME = 6 // how long it cruises before the swan's next display
+const GUST = -95 // the kick the swan's last wingbeat gives the reel
+const SPIN_LAG = 0.85 // how quickly speed relaxes toward its target (inertia)
+const SETTLE_K = 2.4 // spring stiffness when coasting to a stop on a card
 
 /**
- * "Project orbit": every client site stands on a 3D carousel kept turning
- * by a real-time 3D swan at its hub: every few seconds it strikes with its
- * beak and the reel advances one card on contact. The swan watches the
- * pointer, leans into spins, and the ring still picks up speed from page
- * scroll, can be flung by dragging (with inertia), and eases to any card
- * that's tapped. The front-facing project is captioned below.
+ * "Project orbit": every client site stands on a 3D carousel driven by a
+ * real-time 3D swan at its hub. The reel cruises, then coasts to a stop on
+ * a card (a damped spring, so it slows the way a heavy wheel would); the
+ * swan rises, spreads both wings and beats them, and the last downstroke's
+ * gust kicks the reel back into motion, easing down to cruising speed.
+ * The swan watches the pointer and leans into spins; the ring also picks
+ * up speed from page scroll, can be flung by dragging (with inertia), and
+ * eases to any card that's tapped. The front-facing project is captioned.
  */
 export default function ProjectOrbit() {
   const stageRef = useRef(null)
@@ -40,8 +47,9 @@ export default function ProjectOrbit() {
   const canvasRef = useRef(null)
   const swan = useRef(null)
   const [floorFrac, setFloorFrac] = useState(0.72)
-  const idle = useRef(0)
   const lastRot = useRef(0)
+  const omega = useRef(0) // current reel speed, deg/s
+  const cycle = useRef({ phase: 'cruise', t: 0, stop: 0, wait: 0 })
 
   // interaction state lives in refs so the frame loop never re-renders
   const target = useRef(null)
@@ -116,47 +124,64 @@ export default function ProjectOrbit() {
     swan.current?.resize(swanW, swanH)
   }, [swanW, swanH])
 
+  const gust = () => {
+    cycle.current = { phase: 'cruise', t: 0, stop: 0, wait: 0 }
+    omega.current = GUST
+  }
+
   useAnimationFrame((_, delta) => {
     const dt = Math.min(delta, 50) / 1000
     if (drag.current?.active) return
+    const c = cycle.current
     let r = rot.get()
+
     if (target.current !== null) {
+      // a tapped card: ease straight to it, then resume the cycle from rest
       const diff = target.current - r
       r += diff * Math.min(1, dt * 7)
       if (Math.abs(diff) < 0.05) {
         r = target.current
         target.current = null
       }
-    } else {
-      if (!reduce.current) {
-        const fromScroll = -scrollVel.get() * 0.018
-        r += (fromScroll + fling.current) * dt
+    } else if (!reduce.current) {
+      if (c.phase === 'cruise') {
+        const want = hovering ? 0 : CRUISE
+        omega.current += (want - omega.current) * Math.min(1, dt * SPIN_LAG)
+        if (!hovering) c.t += dt
+        if (c.t >= CRUISE_TIME && fling.current === 0) {
+          // coast to a stop on the next card ahead in the direction of travel
+          const ahead = Math.ceil(-r / STEP + 0.35)
+          c.phase = 'settle'
+          c.stop = -ahead * STEP
+        }
+      } else if (c.phase === 'settle') {
+        const diff = c.stop - r
+        const damping = 2 * Math.sqrt(SETTLE_K)
+        omega.current += (SETTLE_K * diff - damping * omega.current) * dt
+        if (Math.abs(diff) < 0.05 && Math.abs(omega.current) < 0.3) {
+          r = c.stop
+          omega.current = 0
+          c.phase = 'display'
+          c.wait = 0
+          if (!swan.current?.display(gust)) c.wait = 1.6 // no swan: pause, then go
+        }
+      } else if (c.phase === 'display') {
+        omega.current = 0
+        if (c.wait > 0) {
+          c.wait -= dt
+          if (c.wait <= 0) gust()
+        }
       }
-      fling.current *= Math.pow(0.04, dt) // inertia decay
-      if (Math.abs(fling.current) < 0.5) fling.current = 0
+      const fromScroll = -scrollVel.get() * 0.018
+      r += (omega.current + fromScroll + fling.current) * dt
     }
+    fling.current *= Math.pow(0.04, dt) // inertia decay after a drag
+    if (Math.abs(fling.current) < 0.5) fling.current = 0
     rot.set(r)
 
     // the swan reads the ring's angular velocity to lean and look along it
     swan.current?.setSpin((r - lastRot.current) / Math.max(dt, 0.001))
     lastRot.current = r
-
-    // when the reel is at rest and nobody is hovering, the swan nudges it on
-    const resting = target.current === null && fling.current === 0 && Math.abs(scrollVel.get()) < 30
-    if (!reduce.current && !hovering && resting) {
-      idle.current += dt
-      if (idle.current >= PECK_EVERY) {
-        idle.current = 0
-        const next = Math.round(-r / STEP) + 1
-        const advance = () => {
-          const cur = rot.get()
-          target.current = cur + wrap(-next * STEP - cur)
-        }
-        if (!swan.current?.peck(advance)) advance()
-      }
-    } else {
-      idle.current = 0
-    }
   })
 
   useMotionValueEvent(rot, 'change', (r) => {
@@ -167,6 +192,8 @@ export default function ProjectOrbit() {
   const goTo = (i) => {
     const current = rot.get()
     fling.current = 0
+    omega.current = 0
+    cycle.current = { phase: 'cruise', t: 0, stop: 0, wait: 0 }
     target.current = current + wrap(-i * STEP - current)
   }
 
@@ -187,6 +214,8 @@ export default function ProjectOrbit() {
         d.active = true
         d.moved = true
         target.current = null
+        omega.current = 0
+        cycle.current = { phase: 'cruise', t: 0, stop: 0, wait: 0 }
         stageRef.current?.setPointerCapture?.(d.id)
       } else if (Math.abs(dy) > 10) {
         drag.current = null // vertical intent: let the page scroll
@@ -237,7 +266,7 @@ export default function ProjectOrbit() {
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
         <div className="flex flex-col items-center text-center">
           <p className="eyebrow text-mist">Selected projects across industries</p>
-          <p className="mt-2 text-xs text-mist/80">Our swan keeps the reel turning — or drag, scroll and tap the cards yourself</p>
+          <p className="mt-2 text-xs text-mist/80">Our swan beats its wings to set the reel turning — or drag, scroll and tap the cards yourself</p>
         </div>
 
         {/* 3D stage */}
