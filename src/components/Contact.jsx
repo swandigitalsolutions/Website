@@ -26,11 +26,38 @@ export default function Contact() {
     const { origin, pathname, search } = window.location
     setNextUrl(`${origin}${pathname}?sent=1#contact`)
 
+    const applyPlannerBrief = (brief) => {
+      if (typeof brief === 'string' && brief.trim()) {
+        setForm((current) => ({ ...current, message: brief }))
+      }
+    }
+    const onPlannerOutline = (event) => {
+      applyPlannerBrief(event.detail)
+      try {
+        sessionStorage.removeItem('sds_planner_brief')
+      } catch {
+        // The form is already updated by the event.
+      }
+    }
+    window.addEventListener('sds:outline-ready', onPlannerOutline)
+
+    try {
+      const savedBrief = sessionStorage.getItem('sds_planner_brief')
+      if (savedBrief) {
+        applyPlannerBrief(savedBrief)
+        sessionStorage.removeItem('sds_planner_brief')
+      }
+    } catch {
+      // The planner also sends the outline directly while the page is open.
+    }
+
     if (new URLSearchParams(search).get('sent') === '1') {
       setStatus('sent')
       window.history.replaceState({}, '', pathname + '#contact')
       document.getElementById('contact')?.scrollIntoView()
     }
+
+    return () => window.removeEventListener('sds:outline-ready', onPlannerOutline)
   }, [])
 
   const handleChange = (e) =>
@@ -170,7 +197,7 @@ export default function Contact() {
                   <textarea
                     id="message" name="message" rows={4} required
                     value={form.message} onChange={handleChange}
-                    placeholder="I need a website for..."
+                    placeholder="Share your goals, required features, or paste an outline from our website planner..."
                     className="mt-2 w-full rounded-xl bg-surface2 border border-line px-4 py-3 text-white placeholder:text-mist/50 focus:border-red/50 outline-none transition-colors resize-none"
                   />
                 </div>
