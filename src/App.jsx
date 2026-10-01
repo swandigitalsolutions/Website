@@ -16,14 +16,14 @@ import ScrollProgress from './components/ScrollProgress'
 import Intro from './components/Intro'
 import SmoothScroll from './components/SmoothScroll'
 import Cursor from './components/Cursor'
-import MoonSky from './components/MoonSky'
+import SkyBackdrop from './components/SkyBackdrop'
 
 // Each section choreographs its own entrance (split headings, staggered
 // cards, scroll-linked rails), so they are no longer wrapped in <Reveal>.
 export default function App() {
   return (
     <div className="text-fg font-body min-h-screen">
-      <MoonSky />
+      <SkyBackdrop />
       <Intro />
       <SmoothScroll />
       <ScrollProgress />
