@@ -1,9 +1,39 @@
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 
 const DEMO_URL = 'https://tile-visualizer-roan.vercel.app/'
 
 export default function TileVisualizerDemo() {
+  const videoRef = useRef(null)
+
+  // Fetch nothing until the clip is near the screen; play while visible,
+  // pause when scrolled away so it never competes with the rest of the page.
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    const play = () => {
+      const p = video.play()
+      if (p) p.catch(() => {})
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (video.preload !== 'auto') {
+            video.preload = 'auto'
+            video.load()
+          }
+          play()
+        } else if (!video.paused) {
+          video.pause()
+        }
+      },
+      { rootMargin: '200px 0px', threshold: 0.15 },
+    )
+    io.observe(video)
+    return () => io.disconnect()
+  }, [])
+
   return (
     <motion.figure
       initial={{ opacity: 0, y: 22 }}
@@ -40,22 +70,15 @@ export default function TileVisualizerDemo() {
       <div className="bg-surface2 p-2 sm:p-3">
         <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_18px_40px_-16px_rgba(16,24,40,0.45)]">
           <video
+            ref={videoRef}
             className="block aspect-video w-full bg-[#090909] object-contain"
-            autoPlay
             loop
             muted
             controls
             playsInline
-            preload="auto"
+            preload="none"
             poster="/work/tile-visualizer-preview.webp"
             aria-label="Current build screen recording of the SDS Tiles and Ceramics tile visualizer, playing in a muted loop"
-            onCanPlay={(event) => {
-              const video = event.currentTarget
-              if (video.paused && video.currentTime === 0) {
-                const playback = video.play()
-                if (playback) playback.catch(() => {})
-              }
-            }}
             onEnded={(event) => {
               const video = event.currentTarget
               video.currentTime = 0

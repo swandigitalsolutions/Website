@@ -119,7 +119,7 @@ export default function SwanPond() {
                 className="pond-bob pond-bob--reflect absolute left-0"
                 style={{
                   top: H * (WATERLINE * 2 - 1),
-                  width: W,
+                  width: W * 1.45, // room for the head when the neck stretches forward
                   height: H,
                   opacity: 0.38,
                   filter: 'url(#water-ripple) blur(0.4px)',
@@ -127,7 +127,7 @@ export default function SwanPond() {
                   maskImage: 'linear-gradient(to top, black, transparent 80%)',
                 }}
               >
-                <SwanSilhouette className="h-full w-full" />
+                <SwanSilhouette style={{ width: W, height: H }} />
               </div>
             </div>
           </div>

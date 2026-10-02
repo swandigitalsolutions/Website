@@ -18,63 +18,63 @@ const SERVICES = [
     title: 'Business Websites',
     desc: 'Fast, modern websites built to represent your brand and convert visitors into customers.',
     accent: 'from-[#3B82F6] to-[#0EA5E9]',
-    image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: UtensilsCrossed,
     title: 'Hotel & Restaurant Websites',
     desc: 'Booking-ready sites with menus, galleries and reservations built for hospitality.',
     accent: 'from-[#F43F5E] to-[#F59E0B]',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: GraduationCap,
     title: 'School Management Systems',
     desc: 'End-to-end platforms for admissions, attendance, fees and communication.',
     accent: 'from-[#8B5CF6] to-[#4F46E5]',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: BarChart3,
     title: 'Business Management Software',
     desc: 'Custom internal tools that streamline operations, inventory and reporting.',
     accent: 'from-[#10B981] to-[#0D9488]',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: TrendingUp,
     title: 'Business Analysis & Growth',
     desc: 'Review business goals, workflows and opportunities, then shape practical steps for sustainable growth.',
     accent: 'from-[#F97316] to-[#DC2626]',
-    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: Code2,
     title: 'Custom Web Applications',
     desc: 'Tailored web apps engineered around your exact workflow, not a template.',
     accent: 'from-[#D946EF] to-[#7C3AED]',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: Settings,
     title: 'Website Maintenance',
     desc: 'Ongoing updates, security patches and performance monitoring, handled for you.',
     accent: 'from-[#F59E0B] to-[#EF4444]',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: Bot,
     title: 'AI Solutions & Automation',
     desc: 'Practical AI features and automations that save your team real hours.',
     accent: 'from-[#22D3EE] to-[#2563EB]',
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=640&h=320&q=70',
   },
   {
     icon: Megaphone,
     title: 'Digital Marketing Support',
     desc: 'SEO, content and campaign support that brings the right traffic to your site.',
     accent: 'from-[#EC4899] to-[#E11D48]',
-    image: 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=640&h=320&q=70',
   },
 ]
 
@@ -120,6 +120,9 @@ export default function Services() {
                     src={s.image}
                     alt={s.title}
                     loading="lazy"
+                    decoding="async"
+                    width={640}
+                    height={320}
                     onError={(e) => { e.currentTarget.style.display = 'none' }}
                     className="absolute inset-0 h-full w-full object-cover scale-105 transition-transform duration-[1.2s] ease-out group-hover:scale-[1.18]"
                   />

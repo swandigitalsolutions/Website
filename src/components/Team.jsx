@@ -65,32 +65,42 @@ export default function Team() {
           {TEAM.map((person, index) => (
             <motion.div
               key={person.role}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.9, delay: index * 0.12, ease: EASE }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={{
+                hidden: { opacity: 0, y: 50 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.9, delay: index * 0.12, ease: EASE } },
+              }}
             >
               <Tilt max={6} scale={1.015}>
                 <article className="group relative isolate overflow-hidden rounded-3xl border border-line bg-surface shadow-card transition-shadow duration-500 hover:shadow-lift">
-                  <motion.div
-                    initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
-                    whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-                    viewport={{ once: true, margin: '-40px' }}
-                    transition={{ duration: 1.2, delay: 0.1 + index * 0.12, ease: [0.76, 0, 0.24, 1] }}
-                    className="aspect-[4/5] overflow-hidden bg-surface2"
-                  >
+                  {/* The photo is always rendered (never clipped), so it loads and
+                      shows on every device; a curtain slides off it as the reveal. */}
+                  <div className="relative aspect-[4/5] overflow-hidden bg-surface2">
                     <motion.img
                       src={person.image}
                       alt={person.alt}
+                      width={750}
+                      height={1000}
                       loading="lazy"
-                      initial={{ scale: 1.25 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true, margin: '-40px' }}
-                      transition={{ duration: 1.6, delay: 0.1 + index * 0.12, ease: EASE }}
+                      decoding="async"
+                      variants={{
+                        hidden: { scale: 1.2 },
+                        show: { scale: 1, transition: { duration: 1.6, delay: 0.1 + index * 0.12, ease: EASE } },
+                      }}
                       className="h-full w-full object-cover transition-[filter] duration-700 group-hover:saturate-[1.15]"
                       style={{ objectPosition: person.position }}
                     />
-                  </motion.div>
+                    <motion.div
+                      aria-hidden="true"
+                      className="absolute inset-0 origin-top bg-surface2"
+                      variants={{
+                        hidden: { scaleY: 1 },
+                        show: { scaleY: 0, transition: { duration: 1.1, delay: 0.1 + index * 0.12, ease: [0.76, 0, 0.24, 1] } },
+                      }}
+                    />
+                  </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night via-night/75 to-transparent px-5 pb-5 pt-16 sm:px-6 sm:pb-6">
                     <p className="eyebrow mb-2 text-[10px] text-red-soft">Swan Digital Solutions</p>
                     <div className="flex items-end justify-between gap-3">
