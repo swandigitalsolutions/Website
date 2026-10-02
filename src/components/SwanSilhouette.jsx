@@ -15,7 +15,7 @@ export default function SwanSilhouette({ className = '', style }) {
   const gloss = `ssg-${id}`
 
   return (
-    <svg viewBox="0 0 115 85" className={className} style={style} aria-hidden="true">
+    <svg viewBox="0 0 115 85" className={className} style={{ overflow: 'visible', ...style }} aria-hidden="true">
       <defs>
         <linearGradient id={body} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#ff5a62" />

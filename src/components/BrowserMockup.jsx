@@ -7,13 +7,16 @@ export default function BrowserMockup() {
   const [i, setI] = useState(0)
 
   useEffect(() => {
-    FEATURED_PROJECTS.forEach((project) => {
-      const image = new Image()
-      image.src = project.image
-    })
     const id = setInterval(() => setI((n) => (n + 1) % FEATURED_PROJECTS.length), 4200)
     return () => clearInterval(id)
   }, [])
+
+  // warm only the next slide, instead of fetching every capture at once
+  useEffect(() => {
+    const next = new Image()
+    next.decoding = 'async'
+    next.src = FEATURED_PROJECTS[(i + 1) % FEATURED_PROJECTS.length].image
+  }, [i])
 
   const project = FEATURED_PROJECTS[i]
   const host = new URL(project.href).hostname

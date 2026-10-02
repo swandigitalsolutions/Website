@@ -2,7 +2,7 @@
 // can hold its entrance animation until the curtain has lifted.
 let decision = null
 
-export const INTRO_MS = 2100
+export const INTRO_MS = 1300
 
 export function shouldPlayIntro() {
   if (decision !== null) return decision
