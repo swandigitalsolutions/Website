@@ -9,12 +9,13 @@ const LINKS = [
   { label: 'Work', href: '#work' },
   { label: 'Planner', href: '#planner' },
   { label: 'Team', href: '#team' },
+  { label: 'Internships', href: '#internships' },
   { label: 'Why Us', href: '#why-us' },
   { label: 'Process', href: '#process' },
   { label: 'Contact', href: '#contact' },
 ]
 
-const SECTION_IDS = ['services', 'work', 'planner', 'team', 'why-us', 'process', 'contact']
+const SECTION_IDS = ['services', 'work', 'planner', 'team', 'internships', 'why-us', 'process', 'contact']
 const EASE = [0.22, 1, 0.36, 1]
 
 export default function Navbar() {

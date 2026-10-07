@@ -9,6 +9,7 @@ import AIStudio from './components/AIStudio'
 import WhyChooseUs from './components/WhyChooseUs'
 import Process from './components/Process'
 import Team from './components/Team'
+import Internships from './components/Internships'
 import CTA from './components/CTA'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
@@ -46,6 +47,7 @@ export default function App() {
         <WhyChooseUs />
         <Process />
         <Team />
+        <Internships />
         <CTA />
         <Contact />
       </main>
