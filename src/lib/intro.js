@@ -4,21 +4,15 @@ let decision = null
 
 export const INTRO_MS = 1300
 
+// The brand curtain used to hold every device on a "Loading experience…"
+// screen for over a second before any content painted. Removed so the page
+// renders straight away everywhere; this always returns false but keeps its
+// shape so Intro.jsx (now permanently inert) and callers need no changes.
 export function shouldPlayIntro() {
-  if (decision !== null) return decision
-  if (typeof window === 'undefined') return (decision = false)
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  let seen = false
-  try {
-    seen = sessionStorage.getItem('sds_intro_seen') === '1'
-  } catch {
-    seen = false
-  }
-  decision = !reduce && !seen
-  return decision
+  return (decision = false)
 }
 
 // Seconds the hero should wait before its entrance choreography starts.
 export function heroDelay() {
-  return shouldPlayIntro() ? INTRO_MS / 1000 - 0.25 : 0.15
+  return 0.15
 }

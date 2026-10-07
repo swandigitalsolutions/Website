@@ -13,7 +13,6 @@ import CTA from './components/CTA'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import ScrollProgress from './components/ScrollProgress'
-import Intro from './components/Intro'
 import SmoothScroll from './components/SmoothScroll'
 import Cursor from './components/Cursor'
 import SkyBackdrop from './components/SkyBackdrop'
@@ -33,7 +32,6 @@ export default function App() {
   return (
     <div className="text-fg font-body min-h-screen">
       <SkyBackdrop />
-      <Intro />
       <SmoothScroll />
       <ScrollProgress />
       <Cursor />

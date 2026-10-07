@@ -5,11 +5,19 @@ import { FEATURED_PROJECTS } from '../data/projects'
 
 export default function BrowserMockup() {
   const [i, setI] = useState(0)
+  // which way the card turns: +1 forward (auto-advance, next dot), -1 back
+  const [dir, setDir] = useState(1)
+
+  const go = (next) => {
+    setDir(next > i || (i === FEATURED_PROJECTS.length - 1 && next === 0) ? 1 : -1)
+    setI(next)
+  }
 
   useEffect(() => {
-    const id = setInterval(() => setI((n) => (n + 1) % FEATURED_PROJECTS.length), 4200)
+    const id = setInterval(() => go((i + 1) % FEATURED_PROJECTS.length), 4200)
     return () => clearInterval(id)
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i])
 
   // warm only the next slide, instead of fetching every capture at once
   useEffect(() => {
@@ -51,17 +59,19 @@ export default function BrowserMockup() {
           </div>
         </div>
 
-        <div className="relative aspect-[2/1] bg-ink">
-          <AnimatePresence mode="wait">
+        <div className="relative aspect-[2/1] bg-ink" style={{ perspective: 1400 }}>
+          <AnimatePresence mode="wait" initial={false} custom={dir}>
             <motion.img
               key={project.image}
               src={project.image}
               alt={`${project.title} — ${project.category}`}
               decoding="async"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              custom={dir}
+              initial={(d) => ({ opacity: 0, rotateY: d * 90, scale: 0.92 })}
+              animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+              exit={(d) => ({ opacity: 0, rotateY: d * -90, scale: 0.92 })}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
               className="absolute inset-0 h-full w-full object-contain"
             />
           </AnimatePresence>
@@ -79,7 +89,7 @@ export default function BrowserMockup() {
             <button
               key={item.title}
               type="button"
-              onClick={() => setI(index)}
+              onClick={() => go(index)}
               aria-label={`Show ${item.title} in the project preview`}
               aria-pressed={index === i}
               className={`h-1.5 rounded-full transition-all ${index === i ? 'w-6 bg-red' : 'w-1.5 bg-line hover:bg-mist'}`}
