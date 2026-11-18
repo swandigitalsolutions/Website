@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
 import SwanPond from './SwanPond'
+import { PUBLISHED_LIST } from '../data/service-list'
 
 const EASE = [0.22, 1, 0.36, 1]
 const PROMOS = ['Innovate', 'Build', 'Grow']
@@ -33,6 +34,19 @@ export default function Footer() {
             </a>
           </div>
         </div>
+
+        {/* location + crawlable links to the service pages */}
+        <nav
+          aria-label="Services"
+          className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-mist"
+        >
+          <span>Devanahalli, Karnataka</span>
+          {PUBLISHED_LIST.map((s) => (
+            <a key={s.slug} href={`/services/${s.slug}/`} className="hover:text-white transition-colors">
+              {s.name}
+            </a>
+          ))}
+        </nav>
 
         {/* brand promise, each marked with the swan */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
