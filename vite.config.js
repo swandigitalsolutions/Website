@@ -13,6 +13,8 @@ const serviceInputs = fs.existsSync(servicesDir)
       fs.readdirSync(servicesDir).map((slug) => [`service-${slug}`, path.join(servicesDir, slug, 'index.html')]),
     )
   : {}
+const privacyHtml = path.resolve(__dirname, 'privacy-policy', 'index.html')
+const privacyInput = fs.existsSync(privacyHtml) ? { privacy: privacyHtml } : {}
 
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react()],
@@ -23,7 +25,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         cssCodeSplit: true,
         reportCompressedSize: false,
         rollupOptions: {
-          input: { main: path.resolve(__dirname, 'index.html'), ...serviceInputs },
+          input: { main: path.resolve(__dirname, 'index.html'), ...serviceInputs, ...privacyInput },
           output: {
             // split heavy, rarely-changing vendors so they cache independently
             manualChunks: {

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
 import SwanPond from './SwanPond'
 import { PUBLISHED_LIST } from '../data/service-list'
+import { openAnalyticsPreferences } from '../lib/analytics'
 
 const EASE = [0.22, 1, 0.36, 1]
 const PROMOS = ['Innovate', 'Build', 'Grow']
@@ -19,10 +20,11 @@ export default function Footer() {
             </span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-mist">
-            <a href="mailto:swandigitalsolutions@gmail.com" className="hover:text-white transition-colors">
+            {/* min-h-6 + -my-1: 24px-tall tap target without changing the layout */}
+            <a href="mailto:swandigitalsolutions@gmail.com" className="inline-flex min-h-6 -my-1 items-center hover:text-white transition-colors">
               swandigitalsolutions@gmail.com
             </a>
-            <a href="tel:+918310579306" className="hover:text-white transition-colors">
+            <a href="tel:+918310579306" className="inline-flex min-h-6 -my-1 items-center hover:text-white transition-colors">
               +91 83105 79306
             </a>
             <a
@@ -42,7 +44,7 @@ export default function Footer() {
         >
           <span>Devanahalli, Karnataka</span>
           {PUBLISHED_LIST.map((s) => (
-            <a key={s.slug} href={`/services/${s.slug}/`} className="hover:text-white transition-colors">
+            <a key={s.slug} href={`/services/${s.slug}/`} className="inline-flex min-h-6 -my-1 items-center hover:text-white transition-colors">
               {s.name}
             </a>
           ))}
@@ -81,8 +83,21 @@ export default function Footer() {
 
         <SwanPond />
 
-        <p className="mt-2 border-t border-line pt-6 text-xs text-mist text-center">
+        {/* leading-6 + inline-block links: 24px-tall tap targets that never overlap when the line wraps */}
+        <p className="mt-2 border-t border-line pt-6 text-xs leading-6 text-mist text-center">
           &copy; {new Date().getFullYear()} Swan Digital Solutions. All rights reserved.
+          <span aria-hidden="true" className="mx-2">&middot;</span>
+          <a href="/privacy-policy/" className="inline-block underline-offset-2 hover:text-white hover:underline transition-colors">
+            Privacy Policy
+          </a>
+          <span aria-hidden="true" className="mx-2">&middot;</span>
+          <button
+            type="button"
+            onClick={openAnalyticsPreferences}
+            className="inline-block underline-offset-2 hover:text-white hover:underline transition-colors"
+          >
+            Analytics preferences
+          </button>
         </p>
       </div>
     </footer>

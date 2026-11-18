@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import { initAnalytics } from './lib/analytics'
 import './index.css'
 
 // In production the HTML is pre-rendered at build time (scripts/prerender.mjs),
@@ -14,3 +15,6 @@ const tree = (
 )
 if (root.hasChildNodes()) ReactDOM.hydrateRoot(root, tree)
 else ReactDOM.createRoot(root).render(tree)
+
+// Google Analytics: production host only, and only after consent.
+initAnalytics()

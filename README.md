@@ -65,8 +65,30 @@ npm run check:seo
   draft vs published) in `src/data/service-list.js`. Drafts get no URL, no
   links and no sitemap entry. Only publish claims the business has confirmed.
 - `public/robots.txt` points crawlers to the sitemap.
-- No analytics or Search Console tags yet — add them once the property IDs
-  are confirmed.
+- No Search Console tag in the code (verify the property separately).
+
+## Analytics (Google Analytics 4)
+- Measurement ID `G-FK2EM3ZH1P`, set in `src/lib/analytics.js`.
+- Loaded only on `www.swandigitalsolutions.com` and only after the visitor
+  clicks "Allow" in the consent notice (`src/components/ConsentBanner.jsx`).
+  Before that, nothing is requested from Google and no cookie is set.
+- Visitors can change their choice from "Analytics preferences" in the footer.
+- One page_view per page load (the automatic one). Google signals and ad
+  personalisation are off; no user IDs, form data or custom events are sent.
+- The site never puts personal data in URLs. GA4 redacts email addresses in
+  URLs automatically; to redact other query parameters, use GA4 Admin >
+  Data streams > (web stream) > Redact data.
+- `npm run check:seo` fails if a Google tag is ever added to the HTML directly.
+- Required GA4 property settings (data redaction, retention, Google signals):
+  see `docs/ga4-admin-settings.md`.
+- Privacy Policy page: `/privacy-policy/` (`src/components/PrivacyPage.jsx`),
+  linked from the footer and the consent notice, and listed in the sitemap.
+  **Release step:** set `PRIVACY_LAST_UPDATED` to the date the policy goes live
+  in production, and update it whenever the policy text changes.
+- Testing the consent notice off production (localhost, Vercel previews):
+  add `?consent-preview` to any page URL to see it as a first-time visitor
+  would, or use "Analytics preferences" in the footer. Google Analytics never
+  loads off production, so Allow/Decline there send nothing.
 
 ## Editing content
 - Colors, fonts: `tailwind.config.js`

@@ -118,7 +118,7 @@ export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS })
           </a>
           <Magnetic strength={0.3}>
             <a
-              href="#contact"
+              href={resolve('#contact')}
               className="btn-shine group inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red text-plainwhite text-sm font-medium hover:bg-red-soft transition-colors shadow-glow"
             >
               Get a Quote
@@ -185,7 +185,7 @@ export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS })
                 <Phone size={15} className="text-red" /> +91 83105 79306
               </motion.a>
               <motion.a
-                href="#contact"
+                href={resolve('#contact')}
                 onClick={() => setOpen(false)}
                 variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
                 className="mt-4 px-5 py-3 rounded-xl bg-red text-plainwhite text-sm font-medium text-center shadow-glow"

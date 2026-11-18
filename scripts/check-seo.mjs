@@ -18,6 +18,8 @@ const check = (cond, msg) => (cond ? ok(msg) : fail(msg))
 const pages = [
   { path: '/', file: 'index.html' },
   ...PUBLISHED_SERVICES.map((s) => ({ path: `/services/${s.slug}/`, file: `services/${s.slug}/index.html`, service: s })),
+  // Listed in the sitemap after the main pages.
+  { path: '/privacy-policy/', file: 'privacy-policy/index.html' },
 ]
 const drafts = ALL_SERVICES.filter((s) => s.status !== 'published')
 
@@ -68,6 +70,8 @@ for (const p of pages) {
   check(words > 300, `pre-rendered text in HTML (${words} words)`)
   const imgs = [...body.matchAll(/<img\b[^>]*>/g)].map((m) => m[0])
   check(imgs.every((i) => /\balt="/.test(i)), `all ${imgs.length} <img> have alt`)
+  // Analytics must load only after consent (src/lib/analytics.js), never from the HTML.
+  check(!/googletagmanager|google-analytics|gtag\(|G-FK2EM3ZH1P/.test(html), 'no Google tag in HTML (loaded only after consent)')
   if (p.service) {
     check(/aria-label="Breadcrumb"/.test(body), 'visible breadcrumb')
     check(text.includes('Devanahalli') && text.includes('Bengaluru'), 'mentions Devanahalli and Bengaluru')
