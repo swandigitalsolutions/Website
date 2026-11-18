@@ -18,13 +18,21 @@ const LINKS = [
 const SECTION_IDS = ['services', 'work', 'planner', 'team', 'internships', 'why-us', 'process', 'contact']
 const EASE = [0.22, 1, 0.36, 1]
 
-export default function Navbar() {
+/**
+ * `localIds` lists the sections present on the current page. Links to any
+ * other section point back to the home page (/#id). Defaults to all, so the
+ * home page keeps plain #id links (and Lenis smooth scrolling).
+ * `spyIds` lists every section on the page for the active-link highlight
+ * (must be a stable array); sections without a nav link highlight nothing.
+ */
+export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS }) {
+  const resolve = (href) => (localIds.includes(href.slice(1)) ? href : `/${href}`)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(null)
   const lastY = useRef(0)
-  const active = useScrollSpy(SECTION_IDS)
+  const active = useScrollSpy(spyIds)
 
   useEffect(() => {
     const onScroll = () => {
@@ -76,7 +84,7 @@ export default function Navbar() {
             return (
               <a
                 key={link.href}
-                href={link.href}
+                href={resolve(link.href)}
                 onMouseEnter={() => setHovered(link.href)}
                 aria-current={isActive ? 'true' : undefined}
                 className={`relative px-3 xl:px-4 py-2 text-sm rounded-full transition-colors duration-300 ${
@@ -158,7 +166,7 @@ export default function Navbar() {
               {LINKS.map((link) => (
                 <motion.a
                   key={link.href}
-                  href={link.href}
+                  href={resolve(link.href)}
                   onClick={() => setOpen(false)}
                   variants={{ hidden: { opacity: 0, x: -14 }, show: { opacity: 1, x: 0 } }}
                   className={`flex items-center justify-between py-3 border-b border-line/70 font-display text-lg ${

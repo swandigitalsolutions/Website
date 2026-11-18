@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
+import { servicePath } from '../data/service-list'
 import {
   ArrowRight, Globe, UtensilsCrossed, GraduationCap, BarChart3,
   Code2, Settings, Bot, Megaphone, TrendingUp,
@@ -16,6 +17,7 @@ const SERVICES = [
   {
     icon: Globe,
     title: 'Business Websites',
+    slug: 'website-development',
     desc: 'Fast, modern websites built to represent your brand and convert visitors into customers.',
     accent: 'from-[#3B82F6] to-[#0EA5E9]',
     image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=640&h=320&q=70',
@@ -23,6 +25,7 @@ const SERVICES = [
   {
     icon: UtensilsCrossed,
     title: 'Hotel & Restaurant Websites',
+    slug: 'website-development',
     desc: 'Booking-ready sites with menus, galleries and reservations built for hospitality.',
     accent: 'from-[#F43F5E] to-[#F59E0B]',
     image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=640&h=320&q=70',
@@ -30,6 +33,7 @@ const SERVICES = [
   {
     icon: GraduationCap,
     title: 'School Management Systems',
+    slug: 'software-development',
     desc: 'End-to-end platforms for admissions, attendance, fees and communication.',
     accent: 'from-[#8B5CF6] to-[#4F46E5]',
     image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=640&h=320&q=70',
@@ -37,6 +41,7 @@ const SERVICES = [
   {
     icon: BarChart3,
     title: 'Business Management Software',
+    slug: 'software-development',
     desc: 'Custom internal tools that streamline operations, inventory and reporting.',
     accent: 'from-[#10B981] to-[#0D9488]',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&h=320&q=70',
@@ -51,6 +56,7 @@ const SERVICES = [
   {
     icon: Code2,
     title: 'Custom Web Applications',
+    slug: 'software-development',
     desc: 'Tailored web apps engineered around your exact workflow, not a template.',
     accent: 'from-[#D946EF] to-[#7C3AED]',
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&h=320&q=70',
@@ -72,6 +78,7 @@ const SERVICES = [
   {
     icon: Megaphone,
     title: 'Digital Marketing Support',
+    slug: 'digital-marketing',
     desc: 'SEO, content and campaign support that brings the right traffic to your site.',
     accent: 'from-[#EC4899] to-[#E11D48]',
     image: 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=640&h=320&q=70',
@@ -137,7 +144,15 @@ export default function Services() {
                 </div>
 
                 <div className="relative p-6">
-                  <h3 className="font-display text-lg font-semibold">{s.title}</h3>
+                  <h3 className="font-display text-lg font-semibold">
+                    {servicePath(s.slug) ? (
+                      <a href={servicePath(s.slug)} className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/60">
+                        {s.title}
+                      </a>
+                    ) : (
+                      s.title
+                    )}
+                  </h3>
                   <p className="mt-2 text-sm text-mist leading-relaxed">{s.desc}</p>
                   <a href="#contact" className="relative z-40 mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-red">
                     Discuss this
