@@ -103,6 +103,25 @@ alongside GA4 data, once the Search Console property for
 
 ---
 
+## 8. Consent settings page — what to expect
+
+Path: **Admin → Data collection and modification → Consent settings**.
+
+The website uses **Basic Consent Mode v2**: Google Analytics loads only after a
+visitor clicks **Allow**, and each hit then carries consent signals
+(all four types denied by default, `analytics_storage` updated to granted;
+ads types stay denied).
+
+- "Consent signals inactive" should change to active only **after the release
+  is live in production** and consenting visitors arrive; allow a day or more.
+- Visitors who decline send nothing at all, so GA4 cannot measure a true
+  consent rate or model their behaviour. Some consent-rate notices (especially
+  per region, e.g. EEA) may keep showing or report insufficient data. This is
+  expected with Basic mode and does not indicate a fault.
+- Ads-related signals will show as denied by design.
+- If warnings persist, check **Realtime** with the **Hostname** dimension for
+  any other site sending data to `G-FK2EM3ZH1P` without consent signals.
+
 ## Verifying after deployment
 
 1. Open the website in a private window, click **Allow** in the analytics notice.

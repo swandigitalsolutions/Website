@@ -73,6 +73,10 @@ npm run check:seo
   clicks "Allow" in the consent notice (`src/components/ConsentBanner.jsx`).
   Before that, nothing is requested from Google and no cookie is set.
 - Visitors can change their choice from "Analytics preferences" in the footer.
+- Google Consent Mode v2 (Basic): when the tag loads, all consent types are
+  set to denied by default and `analytics_storage` is updated to granted from
+  the visitor's choice; `ad_storage`, `ad_user_data` and `ad_personalization`
+  stay denied.
 - One page_view per page load (the automatic one). Google signals and ad
   personalisation are off; no user IDs, form data or custom events are sent.
 - The site never puts personal data in URLs. GA4 redacts email addresses in

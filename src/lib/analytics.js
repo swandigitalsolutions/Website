@@ -58,12 +58,17 @@ function loadGoogleTag() {
 
   window.dataLayer = window.dataLayer || []
   window.gtag = gtag
+  // Basic Consent Mode v2: everything denied by default, then the visitor's
+  // explicit "Allow" is applied as an update. Both are queued before gtag.js
+  // loads and before 'config', so the first (and only) page_view already
+  // carries analytics_storage=granted. Ad signals stay denied.
   gtag('consent', 'default', {
-    analytics_storage: 'granted',
+    analytics_storage: 'denied',
     ad_storage: 'denied',
     ad_user_data: 'denied',
     ad_personalization: 'denied',
   })
+  gtag('consent', 'update', { analytics_storage: 'granted' })
   gtag('js', new Date())
   // Exactly one page_view per page load: the automatic one sent by 'config'.
   // (Tested: this property's Google tag sends that automatic page_view even with
