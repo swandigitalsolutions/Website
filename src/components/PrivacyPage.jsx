@@ -15,14 +15,17 @@ const ChatWidget = lazy(() => import('./ChatWidget'))
 // Publication date of the current policy text. Set it to the day the release
 // goes live in production (not the build date), and update it whenever the
 // policy text changes.
-export const PRIVACY_LAST_UPDATED = '18 November 2026'
+export const PRIVACY_LAST_UPDATED = '21 November 2026'
 
 const NO_LOCAL_SECTIONS = []
 const SPY_IDS = ['top', 'policy']
 
+// Google Analytics requests a 2-year lifetime; Chromium browsers cap cookies at 400 days.
+const COOKIE_LIFETIME = 'Up to 2 years (some browsers, such as Chrome, limit this to about 13 months).'
+
 const COOKIES = [
-  { name: '_ga', purpose: 'Distinguishes one visitor from another with a random identifier.', duration: '2 years' },
-  { name: '_ga_FK2EM3ZH1P', purpose: 'Keeps track of your visit (session) for our Google Analytics property.', duration: '2 years' },
+  { name: '_ga', purpose: 'Distinguishes one visitor from another with a random identifier.', duration: COOKIE_LIFETIME },
+  { name: '_ga_FK2EM3ZH1P', purpose: 'Keeps track of your visit (session) for our Google Analytics property.', duration: COOKIE_LIFETIME },
 ]
 
 function H2({ id, children }) {
@@ -165,15 +168,21 @@ export default function PrivacyPage() {
                   <tr>
                     <th scope="col" className="px-4 py-3 font-semibold">Cookie</th>
                     <th scope="col" className="px-4 py-3 font-semibold">Purpose</th>
-                    <th scope="col" className="px-4 py-3 font-semibold whitespace-nowrap">Expires after</th>
+                    {/* On phones the expiry moves under the purpose so nothing is cut off */}
+                    <th scope="col" className="hidden sm:table-cell px-4 py-3 font-semibold whitespace-nowrap">Expires after</th>
                   </tr>
                 </thead>
                 <tbody className="text-mist">
                   {COOKIES.map((c) => (
                     <tr key={c.name} className="border-b border-line last:border-0 align-top">
                       <td className="px-4 py-3 font-mono text-xs text-fg whitespace-nowrap">{c.name}</td>
-                      <td className="px-4 py-3">{c.purpose}</td>
-                      <td className="px-4 py-3 whitespace-nowrap">{c.duration}</td>
+                      <td className="px-4 py-3">
+                        {c.purpose}
+                        <span className="sm:hidden mt-2 block">
+                          <span className="text-fg">Expires after:</span> {c.duration}
+                        </span>
+                      </td>
+                      <td className="hidden sm:table-cell px-4 py-3 min-w-[9rem]">{c.duration}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -217,7 +226,7 @@ export default function PrivacyPage() {
             <UL
               items={[
                 'Enquiries: we keep messages and contact details for as long as needed to respond to you, provide our services and keep reasonable business records, and then delete them.',
-                'Google Analytics: data is kept for the retention period set in our Google Analytics account and then deleted automatically by Google. The analytics cookies expire after 2 years, or earlier if you withdraw consent or clear them.',
+                'Google Analytics: data is kept for the retention period set in our Google Analytics account and then deleted automatically by Google. The analytics cookies last up to 2 years (some browsers, such as Chrome, limit this to about 13 months), or less if you withdraw consent or clear them.',
               ]}
             />
 
