@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { motion } from 'motion/react'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 
 const DEMO_URL = 'https://tile-visualizer-roan.vercel.app/'
@@ -35,12 +34,7 @@ export default function TileVisualizerDemo() {
   }, [])
 
   return (
-    <motion.figure
-      initial={{ opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -3 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+    <figure
       className="group relative isolate overflow-hidden rounded-3xl border border-line bg-surface shadow-card hover:shadow-lift transition-shadow duration-500"
     >
       <div
@@ -55,7 +49,7 @@ export default function TileVisualizerDemo() {
           <p className="truncate text-sm font-semibold text-white">Tile visualizer · current build</p>
           <p className="truncate text-xs text-mist">SDS Tiles &amp; Ceramics</p>
         </div>
-        <span className="hidden items-center gap-2 rounded-full border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-1 text-[10px] font-medium text-[#b45309] sm:inline-flex">
+        <span className="hidden items-center gap-2 rounded-full border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-1 text-[10px] font-medium text-[#92400e] sm:inline-flex">
           <span className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]" />
           IN DEVELOPMENT
         </span>
@@ -99,6 +93,6 @@ export default function TileVisualizerDemo() {
           Open the current live build <ArrowUpRight size={14} />
         </a>
       </figcaption>
-    </motion.figure>
+    </figure>
   )
 }

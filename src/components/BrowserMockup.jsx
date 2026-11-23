@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useInView } from 'motion/react'
+import { motion, AnimatePresence, useInView } from '../lib/motion'
 import { Lock, Circle, ArrowUpRight } from 'lucide-react'
 import { FEATURED_PROJECTS } from '../data/projects'
 
@@ -62,7 +62,7 @@ export default function BrowserMockup() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="absolute inset-0 h-full w-full object-contain"
+              className={`absolute inset-0 h-full w-full object-contain ${i ? 'fade-swap' : ''}`}
             />
           </AnimatePresence>
           <a

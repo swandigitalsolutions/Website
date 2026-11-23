@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from '../lib/motion'
 import { Menu, X, Phone, ArrowUpRight } from 'lucide-react'
 import useScrollSpy from '../hooks/useScrollSpy'
 import Magnetic from './Magnetic'
@@ -63,12 +63,10 @@ export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS })
         }`}
       >
         <a href="#top" className="flex items-center gap-2.5 group" onClick={() => setOpen(false)}>
-          <motion.img
+          <img
             src="/swan-mark.webp"
             alt="Swan Digital Solutions"
             className="h-8 sm:h-9 w-auto"
-            whileHover={{ rotate: -8, scale: 1.06 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 14 }}
           />
           <span className="font-display font-semibold text-base sm:text-lg tracking-tight">
             SWAN <span className="text-red">DIGITAL</span>

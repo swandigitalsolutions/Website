@@ -6,7 +6,7 @@ import {
   useMotionValue,
   useMotionValueEvent,
   useTransform,
-} from 'motion/react'
+} from '../lib/motion'
 import { ArrowUpRight, ChevronLeft, ChevronRight, Lock } from 'lucide-react'
 import { PROJECTS } from '../data/projects'
 import ProjectMark from './ProjectMark'

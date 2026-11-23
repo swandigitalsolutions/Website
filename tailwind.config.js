@@ -22,7 +22,7 @@ export default {
       fontFamily: {
         display: ['"Space Grotesk Variable"', '"Space Grotesk"', 'system-ui', 'sans-serif'],
         body: ['"Inter Variable"', '"Inter"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'monospace'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace'],
       },
       backgroundImage: {
         'red-gradient': 'linear-gradient(135deg, #FF4B54 0%, #E9202A 45%, #8C0F16 100%)',

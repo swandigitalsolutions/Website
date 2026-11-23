@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from '../lib/motion'
 import { Phone, Mail, MapPin, Send, Check, ArrowUpRight, AlertCircle } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -129,7 +129,7 @@ export default function Contact() {
         <div className="on-night relative isolate overflow-hidden bg-night p-6 sm:p-8 lg:p-9">
           <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 -z-10 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgb(var(--red)/0.35),transparent)]" />
           <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 -left-20 -z-10 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgb(99_102_241/0.22),transparent)]" />
-          <SectionEyebrow>Contact</SectionEyebrow>
+          <SectionEyebrow className="!text-[#ff8a91]">Contact</SectionEyebrow>
           <SplitText
             className="font-display text-3xl font-semibold tracking-tight text-plainwhite sm:text-4xl"
             segments={['Let’s start your', { text: 'project.', className: 'text-gradient' }]}

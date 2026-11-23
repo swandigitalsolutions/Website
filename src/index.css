@@ -67,7 +67,7 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: rgb(var(--red)); }
 
 .eyebrow {
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-size: 0.72rem;
@@ -306,7 +306,8 @@ body {
    the biggest cost of the initial load ("Style & Layout") on phones.
    `auto` makes the browser remember each section's real height after it
    has rendered once, so the scrollbar settles quickly. */
-main > section:nth-of-type(n + 2),
+main > section:not(#top),
+main > [data-island] > section:not(#top),
 body > #root footer {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
@@ -338,6 +339,15 @@ body > #root footer {
   /* decorative masked layers are the most expensive part of the first paint */
   #top > .pointer-events-none { display: none; }
 }
+
+/* Scroll progress runs on the browser's compositor with no JavaScript. */
+.scroll-progress { display: none; }
+@supports (animation-timeline: scroll()) {
+  .scroll-progress { display: block; animation: scroll-grow linear both; animation-timeline: scroll(root); }
+}
+@keyframes scroll-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes fade-swap { from { opacity: 0; } to { opacity: 1; } }
+.fade-swap { animation: fade-swap 0.25s ease-out both; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {

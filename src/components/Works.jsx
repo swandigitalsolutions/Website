@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { motion } from 'motion/react'
+import { motion } from '../lib/motion'
 import { ArrowRight, ArrowUpRight, Bot, Briefcase } from 'lucide-react'
 import { PROJECTS } from '../data/projects'
 import TileVisualizerDemo from './TileVisualizerDemo'
@@ -59,11 +59,7 @@ export default function Works() {
 
         <div className="mb-6 grid grid-cols-1 gap-6 lg:mb-16 lg:grid-cols-[minmax(0,1.35fr)_minmax(250px,0.65fr)] lg:items-center lg:gap-10">
           <TileVisualizerDemo />
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          <div
             className="spotlight relative isolate overflow-hidden rounded-3xl border border-red/20 bg-gradient-to-br from-red/[0.07] via-surface to-surface p-5 shadow-card sm:p-7 lg:p-8"
           >
             <div className="pointer-events-none absolute -right-12 -top-12 -z-10 h-48 w-48 rounded-full bg-red/15 blur-3xl" />
@@ -97,7 +93,7 @@ export default function Works() {
             <p className="mt-4 text-xs leading-relaxed text-mist/70">
               Featured team work: the SDS Tiles &amp; Ceramics visualizer shown here, now being refined for more accurate previews.
             </p>
-          </motion.div>
+          </div>
         </div>
 
         <div className="mb-6 flex flex-col gap-4 border-t border-line pt-8 sm:mb-8 lg:flex-row lg:items-center lg:justify-between">
@@ -147,12 +143,8 @@ export default function Works() {
 
         <div key={activeFilter} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {shownProjects.map((project, index) => (
-            <motion.article
+            <article
               key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.5, delay: (index % 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
               className={`${!expanded && index >= INITIAL_PHONE ? 'max-sm:hidden ' : ''}group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift`}
             >
               <div className={`relative aspect-[2/1] overflow-hidden border-b border-line bg-gradient-to-br ${project.accent}`}>
@@ -198,7 +190,7 @@ export default function Works() {
                 </p>
                 <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-mist">{project.description}</p>
               </div>
-            </motion.article>
+            </article>
           ))}
         </div>
 

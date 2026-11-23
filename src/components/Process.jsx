@@ -1,5 +1,3 @@
-import { useRef, useState } from 'react'
-import { motion, useScroll, useSpring, useMotionValueEvent } from 'motion/react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
 
@@ -10,21 +8,7 @@ const STEPS = [
   { n: '04', title: 'Deliver', desc: 'Launch, then ongoing maintenance and support so things keep running smoothly.' },
 ]
 
-/**
- * The connecting rail fills as the section scrolls through the viewport;
- * each step lights up once the fill reaches it.
- */
 export default function Process() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 75%', 'end 55%'] })
-  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
-  const [reached, setReached] = useState(0)
-
-  useMotionValueEvent(fill, 'change', (v) => {
-    const next = Math.min(STEPS.length, Math.floor(v * (STEPS.length - 1) + 1.02))
-    setReached((r) => (r === next ? r : next))
-  })
-
   return (
     <section id="process" className="sheet sheet-alt py-20 sm:py-28 md:py-36">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
@@ -36,47 +20,17 @@ export default function Process() {
           />
         </div>
 
-        <div ref={ref} className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 relative">
-          <div className="hidden md:block absolute top-8 left-8 right-8 h-[2px] rounded-full bg-line" />
-          <motion.div
-            style={{ scaleX: fill }}
-            className="hidden md:block absolute top-8 left-8 right-8 h-[2px] rounded-full bg-red-gradient origin-left"
-          />
-          {STEPS.map((s, i) => {
-            const lit = i < reached
-            return (
-              <motion.div
-                key={s.n}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                className="relative group"
-              >
-                <motion.div
-                  animate={{ scale: lit ? 1 : 0.92 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-                  className={`relative z-10 w-16 h-16 rounded-2xl border flex items-center justify-center font-display font-semibold transition-colors duration-500 ${
-                    lit
-                      ? 'bg-red border-red text-plainwhite shadow-glow'
-                      : 'bg-surface border-line text-red shadow-card'
-                  }`}
-                >
-                  {s.n}
-                  {lit && (
-                    <motion.span
-                      className="absolute inset-0 rounded-2xl border-2 border-red"
-                      initial={{ scale: 1, opacity: 0.8 }}
-                      animate={{ scale: 1.5, opacity: 0 }}
-                      transition={{ duration: 1 }}
-                    />
-                  )}
-                </motion.div>
-                <h3 className="mt-6 font-display text-xl font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-mist leading-relaxed">{s.desc}</p>
-              </motion.div>
-            )
-          })}
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 relative">
+          <div className="hidden md:block absolute top-8 left-8 right-8 h-[2px] rounded-full bg-red-gradient" />
+          {STEPS.map((s) => (
+            <div key={s.n} className="relative">
+              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-red bg-red font-display font-semibold text-plainwhite shadow-glow">
+                {s.n}
+              </div>
+              <h3 className="mt-6 font-display text-xl font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm text-mist leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

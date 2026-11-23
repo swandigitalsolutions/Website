@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from '../lib/motion'
 import { MessageCircle, X, Send, Mic, Volume2, VolumeX } from 'lucide-react'
 import { getAnswer } from '../lib/knowledge'
 
@@ -99,7 +99,6 @@ export default function ChatWidget() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: 'spring', stiffness: 260, damping: 20 }}
-        whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
         aria-label={open ? 'Close chat assistant' : 'Open chat assistant'}
         className="fixed bottom-5 right-5 z-[60] w-[4.25rem] h-[4.25rem] rounded-full bg-red text-plainwhite shadow-glow flex items-center justify-center hover:bg-red-soft transition-colors"
