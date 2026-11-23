@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useMotionValue, useSpring } from 'motion/react'
 
 const RING = 28 // px at rest
 const RING_HOVER = 40 // px over links and buttons

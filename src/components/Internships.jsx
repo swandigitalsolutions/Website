@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { motion, useScroll, useSpring, useMotionValueEvent, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { ArrowRight, GraduationCap, Building2, Phone } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -7,7 +7,7 @@ import Magnetic from './Magnetic'
 import CountUp from './CountUp'
 import InternshipReel from './InternshipReel'
 import {
-  DIFFERENTIATORS, JOURNEY, DOMAINS, COMPANY_BENEFITS,
+  DIFFERENTIATORS, DOMAINS, COMPANY_BENEFITS,
   RESPONSIBILITIES, CREDENTIALS, PILOT_STEPS, AUDIENCES,
 } from '../data/internship'
 
@@ -27,7 +27,7 @@ export default function Internships() {
   const a = AUDIENCES[audience]
 
   return (
-    <section id="internships" className="sheet sheet-alt overflow-hidden py-20 sm:py-28 md:py-36">
+    <section id="internships" className="sheet sheet-alt overflow-hidden py-16 sm:py-20 md:py-24">
       <div className="absolute inset-0 noise-grid opacity-40 pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
 
@@ -113,147 +113,77 @@ export default function Internships() {
           <InternshipReel />
         </div>
 
-        {/* -------------------------------------------------- differentiators */}
-        <div className="mt-20 sm:mt-28 md:mt-32">
-          <p className="eyebrow mb-8 text-mist sm:mb-10">Four things that make it different</p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-            {DIFFERENTIATORS.map((d, i) => (
-              <motion.div
-                key={d.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
-                whileHover={{ y: -6 }}
-                className="spotlight group relative flex h-full flex-col rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow duration-500 hover:shadow-lift sm:p-6"
-              >
-                <span className="eyebrow mb-4 text-[10px] text-mist/70">{String(i + 1).padStart(2, '0')}</span>
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-red/30 bg-red/10 text-red transition-all duration-500 group-hover:bg-red group-hover:text-[#fff]">
-                  <d.icon size={18} />
-                </div>
-                <h3 className="font-display text-base font-semibold leading-snug sm:text-lg">{d.title}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-mist sm:text-sm">{d.desc}</p>
-                {d.footnote && <p className="mt-3 text-[10px] leading-relaxed text-mist/60">{d.footnote}</p>}
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        {/* ------------------------------------------ what makes it different */}
+        <ul className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line shadow-card sm:mt-16 sm:grid-cols-2 lg:grid-cols-4">
+          {DIFFERENTIATORS.map((d) => (
+            <li key={d.title} className="flex items-start gap-3.5 bg-surface p-5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red/10 text-red">
+                <d.icon size={18} />
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-display text-[0.95rem] font-semibold leading-snug">{d.title}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-mist">{d.desc}</p>
+                {d.footnote && <p className="mt-1.5 text-[10px] leading-relaxed text-mist">{d.footnote}</p>}
+              </div>
+            </li>
+          ))}
+        </ul>
 
-        {/* -------------------------------------------------------- journey */}
-        <JourneyRail />
-
-        {/* --------------------------------------------------------- domains */}
-        <div className="mt-20 sm:mt-28 md:mt-32">
-          <div className="max-w-2xl">
-            <p className="eyebrow mb-3 text-mist">Where interns work</p>
-            <h3 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-              Various domains, various industries.
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-mist sm:text-base">
-              Matched to each student&rsquo;s branch and skills. Indicative, subject to partner availability.
-            </p>
-          </div>
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-            {DOMAINS.map((d, i) => (
-              <motion.div
-                key={d.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
-                className="spotlight rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6"
-              >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface2 text-fg">
-                  <d.icon size={18} />
-                </div>
-                <h4 className="font-display text-base font-semibold leading-snug">{d.title}</h4>
-                <p className="mt-2 text-xs leading-relaxed text-mist sm:text-sm">{d.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* ------------------------------------------- company benefits + split */}
-        <div className="mt-20 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16 sm:mt-28 md:mt-32">
-          <div>
-            <p className="eyebrow mb-3 text-mist">Why it matters to your company</p>
-            <h3 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-              How your company benefits.
-            </h3>
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {COMPANY_BENEFITS.map((b, i) => (
-                <motion.div
-                  key={b.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.6, delay: (i % 2) * 0.08, ease: EASE }}
-                  className="flex items-start gap-3"
-                >
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-red/30 bg-red/10 text-red">
-                    <b.icon size={15} />
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">{b.title}</h4>
-                    <p className="mt-0.5 text-xs leading-relaxed text-mist">{b.desc}</p>
+        {/* ------------------------------------ where interns work + benefits */}
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <div className="rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6">
+            <p className="eyebrow text-red">Where interns work</p>
+            <p className="mt-1 text-sm text-mist">Matched to each student&rsquo;s branch and skills.</p>
+            <ul className="mt-4 divide-y divide-line border-t border-line">
+              {DOMAINS.map((d) => (
+                <li key={d.title} className="flex items-start gap-3 py-3">
+                  <d.icon size={17} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-fg">{d.title}</p>
+                    <p className="text-xs leading-relaxed text-mist">{d.desc}</p>
                   </div>
-                </motion.div>
+                </li>
               ))}
-            </div>
+            </ul>
+            <p className="mt-3 text-[11px] text-mist">Indicative, subject to partner availability.</p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.8, ease: EASE }}
-            className="rounded-3xl border border-line bg-surface p-6 shadow-card sm:p-8"
-          >
-            <p className="eyebrow mb-1 text-mist">How we work together</p>
-            <h4 className="font-display text-xl font-semibold">Clear roles, clear paperwork.</h4>
-            <div className="mt-6 space-y-6">
-              {Object.values(RESPONSIBILITIES).map((group) => (
-                <div key={group.label}>
-                  <p className="eyebrow mb-3 text-[10px] text-red">{group.label}</p>
-                  <ul className="space-y-2">
-                    {group.items.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5 text-xs leading-relaxed text-mist sm:text-sm">
-                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-red" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ------------------------------------------------------- credentials */}
-        <div className="mt-20 sm:mt-28 md:mt-32">
-          <p className="eyebrow mb-8 text-mist sm:mb-10">What we offer</p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
-            {CREDENTIALS.map((c, i) => (
-              <motion.div
-                key={c.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
-                className="spotlight relative overflow-hidden rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6"
-              >
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-red/30 bg-red/10 text-red">
-                    <c.icon size={18} />
+          <div className="flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6">
+            <p className="eyebrow text-red">How your company benefits</p>
+            <p className="mt-1 text-sm text-mist">Real work done, with none of the hiring overhead.</p>
+            <ul className="mt-4 grid grid-cols-1 gap-x-5 gap-y-3.5 border-t border-line pt-4 sm:grid-cols-2">
+              {COMPANY_BENEFITS.map((b) => (
+                <li key={b.title} className="flex items-start gap-2.5">
+                  <b.icon size={16} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-snug text-fg">{b.title}</p>
+                    <p className="text-xs leading-relaxed text-mist">{b.desc}</p>
                   </div>
-                  <span className="eyebrow rounded-full border border-line bg-surface2 px-2.5 py-1 text-[9px] text-mist">
-                    {c.status}
-                  </span>
-                </div>
-                <h4 className="font-display text-base font-semibold leading-snug">{c.title}</h4>
-                <p className="mt-2 text-xs leading-relaxed text-mist sm:text-sm">{c.desc}</p>
-              </motion.div>
-            ))}
+                </li>
+              ))}
+            </ul>
+
+            <details className="group mt-auto border-t border-line pt-1 [&_summary::-webkit-details-marker]:hidden">
+              <summary className="mt-3 flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-3 rounded-lg text-sm font-medium text-fg">
+                How we work together &mdash; who does what
+                <ArrowRight size={15} className="shrink-0 text-red transition-transform duration-200 group-open:rotate-90" aria-hidden="true" />
+              </summary>
+              <div className="grid grid-cols-1 gap-5 pb-1 pt-2 sm:grid-cols-2">
+                {Object.values(RESPONSIBILITIES).map((group) => (
+                  <div key={group.label}>
+                    <p className="eyebrow mb-2 text-[10px] text-red">{group.label}</p>
+                    <ul className="space-y-1.5">
+                      {group.items.map((item) => (
+                        <li key={item} className="flex items-start gap-2 text-xs leading-relaxed text-mist">
+                          <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-red" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </details>
           </div>
         </div>
 
@@ -263,7 +193,7 @@ export default function Internships() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.8, ease: EASE }}
-          className="on-night relative isolate mt-20 overflow-hidden rounded-[1.75rem] bg-night px-6 py-12 shadow-lift sm:mt-28 sm:rounded-[2rem] sm:px-10 sm:py-16 md:mt-32"
+          className="on-night relative isolate mt-5 overflow-hidden rounded-[1.75rem] bg-night px-6 py-10 shadow-lift sm:rounded-[2rem] sm:px-10 sm:py-12"
         >
           <div className="pointer-events-none absolute inset-0 noise-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
           <div className="relative grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
@@ -274,7 +204,20 @@ export default function Internships() {
               <p className="mt-3 max-w-md text-sm leading-relaxed text-mist sm:text-base">
                 A small pilot, run well, is the best way to see the value. We handle the paperwork, the stipend and the follow-up.
               </p>
-              <div className="mt-8 flex flex-wrap gap-6 sm:gap-8">
+              <ul className="mt-5 flex flex-wrap gap-2" aria-label="Credentials">
+                {CREDENTIALS.map((c) => (
+                  <li
+                    key={c.title}
+                    title={c.desc}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-plainwhite"
+                  >
+                    <c.icon size={13} className="text-red-soft" aria-hidden="true" />
+                    {c.title}
+                    <span className="text-mist">· {c.status}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-7 flex flex-wrap gap-6 sm:gap-8">
                 {PILOT_STEPS.map((s) => (
                   <div key={s.n} className="flex items-start gap-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-plainwhite">
@@ -309,73 +252,5 @@ export default function Internships() {
         </motion.div>
       </div>
     </section>
-  )
-}
-
-/**
- * The six-step journey, with the connecting rail filling as it scrolls
- * through view — same mechanism as the Process section, reused here with
- * two extra steps and its own copy.
- */
-function JourneyRail() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] })
-  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
-  const [reached, setReached] = useState(0)
-
-  useMotionValueEvent(fill, 'change', (v) => {
-    const next = Math.min(JOURNEY.length, Math.floor(v * (JOURNEY.length - 1) + 1.02))
-    setReached((r) => (r === next ? r : next))
-  })
-
-  return (
-    <div className="mt-20 sm:mt-28 md:mt-32">
-      <div className="max-w-2xl">
-        <p className="eyebrow mb-3 text-mist">The journey</p>
-        <h3 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-          From registration to a permanent role.
-        </h3>
-      </div>
-
-      <div ref={ref} className="relative mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:grid-cols-6 md:gap-8">
-        <div className="hidden md:block absolute top-6 left-[8.33%] right-[8.33%] h-[2px] rounded-full bg-line" />
-        <motion.div
-          style={{ scaleX: fill }}
-          className="hidden md:block absolute top-6 left-[8.33%] right-[8.33%] h-[2px] rounded-full bg-red-gradient origin-left"
-        />
-        {JOURNEY.map((s, i) => {
-          const lit = i < reached
-          return (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.6, delay: i * 0.08, ease: EASE }}
-              className="relative"
-            >
-              <motion.div
-                animate={{ scale: lit ? 1 : 0.92 }}
-                transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-                className={`relative z-10 flex h-12 w-12 items-center justify-center rounded-xl border font-display text-xs font-semibold transition-colors duration-500 ${
-                  lit ? 'border-red bg-red text-plainwhite shadow-glow' : 'border-line bg-surface text-red shadow-card'
-                }`}
-              >
-                <s.icon size={18} />
-                {lit && (
-                  <motion.span
-                    className="absolute inset-0 rounded-xl border-2 border-red"
-                    initial={{ scale: 1, opacity: 0.8 }}
-                    animate={{ scale: 1.4, opacity: 0 }}
-                    transition={{ duration: 1 }}
-                  />
-                )}
-              </motion.div>
-              <p className="mt-3 text-xs font-medium leading-snug text-white sm:text-sm">{s.title}</p>
-            </motion.div>
-          )
-        })}
-      </div>
-    </div>
   )
 }

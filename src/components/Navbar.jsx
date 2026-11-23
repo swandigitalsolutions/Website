@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
 import { Menu, X, Phone, ArrowUpRight } from 'lucide-react'
 import useScrollSpy from '../hooks/useScrollSpy'
 import Magnetic from './Magnetic'
@@ -34,20 +34,17 @@ export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS })
   const lastY = useRef(0)
   const active = useScrollSpy(spyIds)
 
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY
-      setScrolled(y > 24)
-      // tuck the bar away while reading downwards, bring it back on scroll up
-      if (Math.abs(y - lastY.current) > 6) {
-        setHidden(y > lastY.current && y > 480)
-        lastY.current = y
-      }
+  // framer reads scroll once per frame, before any writes — a raw
+  // window.scrollY read in a scroll listener forced a style recalc each event
+  const { scrollY } = useScroll()
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    setScrolled(y > 24)
+    // tuck the bar away while reading downwards, bring it back on scroll up
+    if (Math.abs(y - lastY.current) > 6) {
+      setHidden(y > lastY.current && y > 480)
+      lastY.current = y
     }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  })
 
   const pill = hovered ?? `#${active}`
 
@@ -61,7 +58,7 @@ export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS })
       <div
         className={`mx-auto max-w-7xl flex items-center justify-between h-14 sm:h-16 pl-4 pr-2 sm:pl-5 rounded-2xl border transition-all duration-500 ${
           scrolled || open
-            ? 'bg-white/80 backdrop-blur-xl border-line shadow-card'
+            ? 'bg-white/[0.97] border-line shadow-card'
             : 'bg-white/0 border-transparent'
         }`}
       >
@@ -155,7 +152,7 @@ export default function Navbar({ localIds = SECTION_IDS, spyIds = SECTION_IDS })
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ duration: 0.35, ease: EASE }}
-            className="lg:hidden mx-auto mt-2 max-w-7xl rounded-2xl border border-line bg-white/95 backdrop-blur-xl shadow-lift overflow-hidden"
+            className="lg:hidden mx-auto mt-2 max-w-7xl rounded-2xl border border-line bg-white/[0.98] shadow-lift overflow-hidden"
           >
             <motion.div
               className="px-5 py-4 flex flex-col"

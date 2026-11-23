@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
 import SplitText from './SplitText'
 import Magnetic from './Magnetic'
@@ -10,17 +10,13 @@ export default function CTA() {
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
         <div className="on-night relative isolate overflow-hidden rounded-[1.75rem] sm:rounded-[2.5rem] bg-night px-6 py-14 sm:px-8 sm:py-20 md:px-16 md:py-24 text-center shadow-lift">
           {/* drifting brand glows */}
-          <motion.div
+          <div
             aria-hidden="true"
-            className="absolute -top-32 -left-20 -z-10 h-80 w-80 rounded-full bg-red/40 blur-[90px]"
-            animate={{ x: [0, 80, 0], y: [0, 40, 0] }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute -top-56 -left-44 -z-10 h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(closest-side,rgb(var(--red)/0.4),transparent)]"
           />
-          <motion.div
+          <div
             aria-hidden="true"
-            className="absolute -bottom-32 -right-16 -z-10 h-96 w-96 rounded-full bg-[#6366f1]/30 blur-[100px]"
-            animate={{ x: [0, -70, 0], y: [0, -30, 0] }}
-            transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute -bottom-56 -right-40 -z-10 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgb(99_102_241/0.3),transparent)]"
           />
           <div className="absolute inset-0 -z-10 noise-grid opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
           <SwanMark className="absolute -z-10 right-6 top-1/2 -translate-y-1/2 hidden md:block h-[120%] w-auto opacity-25" strokeWidth={2} />

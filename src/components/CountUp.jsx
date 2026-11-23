@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useInView } from 'framer-motion'
+import { useInView } from 'motion/react'
 
 /**
  * Counts from 0 up to `end` the first time it scrolls into view.

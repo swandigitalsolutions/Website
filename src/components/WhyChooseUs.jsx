@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { CheckCircle2, Code2, Layout, Sparkles, Wrench } from 'lucide-react'
 import SwanMark from './SwanMark'
 import SplitText from './SplitText'

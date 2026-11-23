@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
 import { servicePath } from '../data/service-list'
@@ -7,163 +7,117 @@ import {
   Code2, Settings, Bot, Megaphone, TrendingUp,
 } from 'lucide-react'
 
-/**
- * `image` — a relevant photo shown as the card banner. These point to
- * Unsplash CDN URLs so they work out of the box; swap any of them for a
- * local file (drop it in `public/services/` and use "/services/name.jpg").
- * If an image fails to load, the `accent` gradient shows instead.
- */
-const SERVICES = [
+// The nine services, grouped into three areas so the section stays compact.
+const GROUPS = [
   {
+    title: 'Websites',
     icon: Globe,
-    title: 'Business Websites',
     slug: 'website-development',
-    desc: 'Fast, modern websites built to represent your brand and convert visitors into customers.',
-    accent: 'from-[#3B82F6] to-[#0EA5E9]',
-    image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=640&h=320&q=70',
+    blurb: 'Fast, modern sites that turn visitors into customers.',
+    items: [
+      { icon: Globe, title: 'Business Websites', slug: 'website-development', desc: 'Built to represent your brand and convert.' },
+      { icon: UtensilsCrossed, title: 'Hotel & Restaurant Websites', slug: 'hotel-restaurant-websites', desc: 'Menus, galleries and reservations.' },
+      { icon: Settings, title: 'Website Maintenance', desc: 'Updates, security and monitoring, handled.' },
+    ],
   },
   {
-    icon: UtensilsCrossed,
-    title: 'Hotel & Restaurant Websites',
-    slug: 'website-development',
-    desc: 'Booking-ready sites with menus, galleries and reservations built for hospitality.',
-    accent: 'from-[#F43F5E] to-[#F59E0B]',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=640&h=320&q=70',
-  },
-  {
-    icon: GraduationCap,
-    title: 'School Management Systems',
-    slug: 'software-development',
-    desc: 'End-to-end platforms for admissions, attendance, fees and communication.',
-    accent: 'from-[#8B5CF6] to-[#4F46E5]',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=640&h=320&q=70',
-  },
-  {
-    icon: BarChart3,
-    title: 'Business Management Software',
-    slug: 'software-development',
-    desc: 'Custom internal tools that streamline operations, inventory and reporting.',
-    accent: 'from-[#10B981] to-[#0D9488]',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&h=320&q=70',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Business Analysis & Growth',
-    desc: 'Review business goals, workflows and opportunities, then shape practical steps for sustainable growth.',
-    accent: 'from-[#F97316] to-[#DC2626]',
-    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=640&h=320&q=70',
-  },
-  {
+    title: 'Software',
     icon: Code2,
-    title: 'Custom Web Applications',
     slug: 'software-development',
-    desc: 'Tailored web apps engineered around your exact workflow, not a template.',
-    accent: 'from-[#D946EF] to-[#7C3AED]',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&h=320&q=70',
+    blurb: 'Custom tools engineered around how you actually work.',
+    items: [
+      { icon: GraduationCap, title: 'School Management Systems', slug: 'school-management-software', desc: 'Admissions, attendance, fees and messages.' },
+      { icon: BarChart3, title: 'Business Management Software', slug: 'erp-software', desc: 'Operations, inventory and reporting.' },
+      { icon: Code2, title: 'Custom Web Applications', slug: 'software-development', desc: 'Your exact workflow — not a template.' },
+    ],
   },
   {
-    icon: Settings,
-    title: 'Website Maintenance',
-    desc: 'Ongoing updates, security patches and performance monitoring, handled for you.',
-    accent: 'from-[#F59E0B] to-[#EF4444]',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=640&h=320&q=70',
-  },
-  {
-    icon: Bot,
-    title: 'AI Solutions & Automation',
-    desc: 'Practical AI features and automations that save your team real hours.',
-    accent: 'from-[#22D3EE] to-[#2563EB]',
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=640&h=320&q=70',
-  },
-  {
-    icon: Megaphone,
-    title: 'Digital Marketing Support',
-    slug: 'digital-marketing',
-    desc: 'SEO, content and campaign support that brings the right traffic to your site.',
-    accent: 'from-[#EC4899] to-[#E11D48]',
-    image: 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=640&h=320&q=70',
+    title: 'Growth & AI',
+    icon: TrendingUp,
+    blurb: 'Bring in the right customers and save your team hours.',
+    items: [
+      { icon: Bot, title: 'AI Solutions & Automation', slug: 'ai-solutions', desc: 'Practical AI features and automations.' },
+      { icon: Megaphone, title: 'Digital Marketing Support', slug: 'digital-marketing', desc: 'SEO, content and campaigns.' },
+      { icon: TrendingUp, title: 'Business Analysis & Growth', desc: 'Clear, practical steps to grow.' },
+    ],
   },
 ]
 
+const COUNT = GROUPS.reduce((n, g) => n + g.items.length, 0)
+
 export default function Services() {
   return (
-    <section id="services" className="sheet sheet-alt py-20 sm:py-28 md:py-36">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <section id="services" className="sheet sheet-alt py-16 sm:py-20 md:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <SectionEyebrow>Our Services</SectionEyebrow>
             <SplitText
-              className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight"
+              className="font-display text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
               segments={['Everything your business needs,', { text: 'built in-house.', className: 'text-gradient' }]}
             />
           </div>
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="max-w-sm text-sm sm:text-base text-mist leading-relaxed"
-          >
-            {SERVICES.length} services, one team — from first website to full business software.
-          </motion.p>
+          <p className="max-w-sm text-sm leading-relaxed text-mist sm:text-base">
+            {COUNT} services, one team — from first website to full business software.
+          </p>
         </div>
 
-        <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {SERVICES.map((s, index) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 40, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.75, delay: (index % 3) * 0.1, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <motion.div
-                whileHover={{ y: -8, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
-                className="spotlight group relative h-full rounded-2xl border border-line bg-surface overflow-hidden shadow-card hover:shadow-lift transition-shadow duration-500"
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 lg:grid-cols-3">
+          {GROUPS.map((g, gi) => {
+            const page = g.slug ? servicePath(g.slug) : null
+            return (
+              <motion.article
+                key={g.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.6, delay: gi * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6"
               >
-                {/* photo banner with brand-colour wash */}
-                <div className={`relative h-40 bg-gradient-to-br ${s.accent} overflow-hidden`}>
-                  <img
-                    src={s.image}
-                    alt={s.title}
-                    loading="lazy"
-                    decoding="async"
-                    width={640}
-                    height={320}
-                    onError={(e) => { e.currentTarget.style.display = 'none' }}
-                    className="absolute inset-0 h-full w-full object-cover scale-105 transition-transform duration-[1.2s] ease-out group-hover:scale-[1.18]"
-                  />
-                  <div className={`absolute inset-0 bg-gradient-to-br ${s.accent} mix-blend-multiply opacity-55 transition-opacity duration-500 group-hover:opacity-35`} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/5 to-transparent" />
-                  <div className="absolute left-5 bottom-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/25 border border-white/40 backdrop-blur-md shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
-                    <s.icon size={22} className="text-plainwhite" />
-                  </div>
-                  <span className="absolute right-4 top-4 font-mono text-[11px] text-plainwhite bg-black/25 backdrop-blur px-2 py-0.5 rounded-md">
-                    {String(index + 1).padStart(2, '0')}
+                <header className="flex items-start gap-3.5">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red text-plainwhite shadow-glow">
+                    <g.icon size={20} />
                   </span>
-                </div>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-xl font-semibold leading-tight">{g.title}</h3>
+                    <p className="mt-1 text-sm leading-snug text-mist">{g.blurb}</p>
+                  </div>
+                </header>
 
-                <div className="relative p-6">
-                  <h3 className="font-display text-lg font-semibold">
-                    {servicePath(s.slug) ? (
-                      <a href={servicePath(s.slug)} className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red/60">
-                        {s.title}
-                      </a>
-                    ) : (
-                      s.title
-                    )}
-                  </h3>
-                  <p className="mt-2 text-sm text-mist leading-relaxed">{s.desc}</p>
-                  <a href="#contact" className="relative z-40 mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-red">
-                    Discuss this
-                    <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
+                <ul className="mt-5 flex-1 divide-y divide-line border-t border-line">
+                  {g.items.map((it) => (
+                    <li key={it.title} className="flex items-start gap-3 py-3.5">
+                      <it.icon size={17} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <p className="text-[0.95rem] font-medium leading-snug text-fg">
+                          {servicePath(it.slug) ? (
+                            <a href={servicePath(it.slug)} className="underline decoration-transparent underline-offset-4 transition-colors hover:text-red hover:decoration-red">
+                              {it.title}
+                            </a>
+                          ) : (
+                            it.title
+                          )}
+                        </p>
+                        <p className="mt-0.5 text-xs leading-snug text-mist sm:text-sm">{it.desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-sm font-medium">
+                  <a href="#contact" className="group inline-flex min-h-[44px] items-center gap-1.5 text-red">
+                    Discuss a project
+                    <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-1" />
                   </a>
+                  {page && (
+                    <a href={page} className="inline-flex min-h-[44px] items-center text-mist underline decoration-line underline-offset-4 transition-colors hover:text-fg hover:decoration-red">
+                      Learn more<span className="sr-only"> about {g.title.toLowerCase()}</span>
+                    </a>
+                  )}
                 </div>
-
-                <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-red-gradient group-hover:w-full transition-all duration-700 ease-out" />
-              </motion.div>
-            </motion.div>
-          ))}
+              </motion.article>
+            )
+          })}
         </div>
       </div>
     </section>

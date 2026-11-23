@@ -5,10 +5,8 @@ import {
   useAnimationFrame,
   useMotionValue,
   useMotionValueEvent,
-  useScroll,
   useTransform,
-  useVelocity,
-} from 'framer-motion'
+} from 'motion/react'
 import { ArrowUpRight, ChevronLeft, ChevronRight, Lock } from 'lucide-react'
 import { PROJECTS } from '../data/projects'
 import ProjectMark from './ProjectMark'
@@ -21,32 +19,29 @@ const EASE = [0.22, 1, 0.36, 1]
 const wrap = (deg) => ((((deg + 180) % 360) + 360) % 360) - 180
 
 // reel physics, in degrees and seconds
-const CRUISE = -12 // steady turning speed
-const SPIN_LAG = 0.85 // how quickly speed relaxes toward its target (inertia)
+const AUTOPLAY_MS = 3800 // the reel steps to the next project, then rests
 const TOP = 40 // space above the cards inside the stage
 
 /**
- * "Project orbit": every client site stands on a 3D carousel that turns
- * with real inertia. It cruises on its own and eases to a stop while
- * hovered, picks up speed from page scroll, can be flung by dragging, and
- * eases to any card that's tapped. The front-facing project is captioned.
+ * "Project orbit": client sites in a flat cover-flow reel — the front card
+ * large, neighbours fanned to each side. It steps to the next project every
+ * few seconds while on screen (pausing on hover), can be dragged or flung,
+ * and eases to any card that's tapped. The front project is captioned.
  */
 export default function ProjectOrbit() {
   const stageRef = useRef(null)
   const rot = useMotionValue(0)
   const [front, setFront] = useState(0)
   const [cardW, setCardW] = useState(340)
-  const [hovering, setHovering] = useState(false)
+  const hovering = useRef(false)
   const reduce = useRef(false)
-  const omega = useRef(0) // current reel speed, deg/s
+  const visible = useRef(false) // the reel only turns while on screen
 
   // interaction state lives in refs so the frame loop never re-renders
   const target = useRef(null)
   const fling = useRef(0)
   const drag = useRef(null)
 
-  const { scrollY } = useScroll()
-  const scrollVel = useVelocity(scrollY)
 
   useEffect(() => {
     reduce.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -57,34 +52,58 @@ export default function ProjectOrbit() {
       setCardW(Math.round(Math.min(400, Math.max(200, w * 0.3))))
     })
     ro.observe(el)
-    return () => ro.disconnect()
+    const io = new IntersectionObserver(([e]) => { visible.current = e.isIntersecting })
+    io.observe(el)
+    return () => {
+      ro.disconnect()
+      io.disconnect()
+    }
   }, [])
 
-  const radius = Math.round((cardW / 2) / Math.tan(Math.PI / N) * 1.12)
+  const floorW = Math.round(cardW * 3) // width of the glow and track under the cards
   const cardH = Math.round(cardW * 0.5) + 58
   useAnimationFrame((_, delta) => {
     const dt = Math.min(delta, 50) / 1000
-    if (drag.current?.active) return
+    if (drag.current?.active || !visible.current) return
     let r = rot.get()
 
+    // The reel only moves while easing to a card or coasting after a fling;
+    // the rest of the time it is completely still, so it costs nothing to
+    // render (a nonstop spin made this the slowest section on the page).
     if (target.current !== null) {
-      // a tapped card: ease straight to it, then pick up speed again
       const diff = target.current - r
-      r += diff * Math.min(1, dt * 7)
+      r += diff * Math.min(1, dt * 6)
       if (Math.abs(diff) < 0.05) {
         r = target.current
         target.current = null
       }
-    } else if (!reduce.current) {
-      const want = hovering ? 0 : CRUISE
-      omega.current += (want - omega.current) * Math.min(1, dt * SPIN_LAG)
-      const fromScroll = -scrollVel.get() * 0.018
-      r += (omega.current + fromScroll + fling.current) * dt
+    } else if (fling.current !== 0) {
+      r += fling.current * dt
+      fling.current *= Math.pow(0.04, dt) // inertia decay after a drag
+      if (Math.abs(fling.current) < 8) {
+        // settle on the nearest card
+        fling.current = 0
+        target.current = Math.round(r / STEP) * STEP
+      }
+    } else {
+      return
     }
-    fling.current *= Math.pow(0.04, dt) // inertia decay after a drag
-    if (Math.abs(fling.current) < 0.5) fling.current = 0
     rot.set(r)
   })
+
+  // autoplay: step to the next project while the reel is on screen and idle
+  const frontRef = useRef(0)
+  frontRef.current = front
+  useEffect(() => {
+    if (reduce.current) return
+    const id = setInterval(() => {
+      const busy = target.current !== null || fling.current !== 0 || drag.current?.active
+      if (!visible.current || hovering.current || busy || document.hidden) return
+      goTo((frontRef.current + 1) % N)
+    }, AUTOPLAY_MS)
+    return () => clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useMotionValueEvent(rot, 'change', (r) => {
     const i = ((Math.round(-r / STEP) % N) + N) % N
@@ -94,7 +113,6 @@ export default function ProjectOrbit() {
   const goTo = (i) => {
     const current = rot.get()
     fling.current = 0
-    omega.current = 0
     target.current = current + wrap(-i * STEP - current)
   }
 
@@ -111,8 +129,7 @@ export default function ProjectOrbit() {
         d.active = true
         d.moved = true
         target.current = null
-        omega.current = 0
-        stageRef.current?.setPointerCapture?.(d.id)
+            stageRef.current?.setPointerCapture?.(d.id)
       } else if (Math.abs(dy) > 10) {
         drag.current = null // vertical intent: let the page scroll
       }
@@ -120,7 +137,7 @@ export default function ProjectOrbit() {
     }
     const now = performance.now()
     const step = e.clientX - d.last
-    const deg = step * (180 / (Math.PI * radius)) * 1.1
+    const deg = step * (STEP / (cardW * 0.62))
     rot.set(rot.get() + deg)
     d.v = (deg / Math.max(1, now - d.t)) * 1000
     d.last = e.clientX
@@ -128,7 +145,10 @@ export default function ProjectOrbit() {
   }
   const endDrag = () => {
     const d = drag.current
-    if (d?.active) fling.current = Math.max(-400, Math.min(400, d.v))
+    if (d?.active) {
+      fling.current = Math.max(-400, Math.min(400, d.v))
+      if (fling.current === 0) target.current = Math.round(rot.get() / STEP) * STEP
+    }
     // keep `moved` around for the click handler that fires right after
     if (d) d.active = false
     setTimeout(() => { if (drag.current === d) drag.current = null }, 0)
@@ -161,8 +181,8 @@ export default function ProjectOrbit() {
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 md:px-10">
         <div className="flex flex-col items-center text-center">
-          <p className="eyebrow text-mist">Selected projects across industries</p>
-          <p className="mt-2 text-xs text-mist/80">Drag, scroll or tap a card to turn the reel</p>
+          <h2 className="eyebrow text-mist">Selected projects across industries</h2>
+          <p className="mt-2 text-xs text-mist/80">Drag, swipe or tap a card to browse</p>
         </div>
 
         {/* 3D stage */}
@@ -177,38 +197,35 @@ export default function ProjectOrbit() {
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
+          onMouseEnter={() => { hovering.current = true }}
+          onMouseLeave={() => { hovering.current = false }}
           className="relative mx-auto mt-6 select-none touch-pan-y cursor-grab active:cursor-grabbing focus-visible:outline-none"
-          style={{ height: TOP + cardH + 120, perspective: 1100, perspectiveOrigin: `50% ${TOP + cardH / 2}px` }}
+          style={{ height: TOP + cardH + 120 }}
         >
           {/* floor: glow, orbit track and travelling light */}
           <div
             className="pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgb(var(--red)/0.14),transparent)]"
-            style={{ width: radius * 2.6, height: 110, top: TOP + cardH - 40 }}
+            style={{ width: floorW * 1.15, height: 110, top: TOP + cardH - 40 }}
           />
           <svg
             aria-hidden="true"
             className="pointer-events-none absolute left-1/2 -translate-x-1/2 overflow-visible"
-            style={{ width: radius * 2.2, height: 56, top: TOP + cardH - 24 }}
+            style={{ width: floorW, height: 56, top: TOP + cardH - 24 }}
             viewBox="0 0 200 40"
             preserveAspectRatio="none"
           >
             <ellipse cx="100" cy="20" rx="99" ry="19" fill="none" stroke="rgb(var(--fg) / 0.12)" strokeWidth="0.6" vectorEffect="non-scaling-stroke" />
-            <ellipse cx="100" cy="20" rx="99" ry="19" fill="none" stroke="rgb(var(--red))" strokeWidth="1.6" strokeDasharray="14 300" strokeLinecap="round" vectorEffect="non-scaling-stroke" className="orbit-dash" pathLength="314" />
           </svg>
+          {/* marker under the front card */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 h-[3px] w-10 -translate-x-1/2 rounded-full bg-red"
+            style={{ top: TOP + cardH + 29 }}
+          />
 
-          <motion.div
+          <div
             className="absolute left-1/2"
-            style={{
-              top: TOP,
-              width: cardW,
-              height: cardH,
-              marginLeft: -cardW / 2,
-              transformStyle: 'preserve-3d',
-              rotateY: rot,
-              z: -radius,
-            }}
+            style={{ top: TOP, width: cardW, height: cardH, marginLeft: -cardW / 2 }}
           >
             {PROJECTS.map((p, i) => (
               <OrbitCard
@@ -216,14 +233,13 @@ export default function ProjectOrbit() {
                 project={p}
                 index={i}
                 rot={rot}
-                radius={radius}
                 width={cardW}
                 height={cardH}
                 isFront={i === front}
                 onClick={(e) => onCardClick(e, i)}
               />
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* caption for the front project */}
@@ -241,9 +257,9 @@ export default function ProjectOrbit() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={project.title}
-                initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.35, ease: EASE }}
                 className="flex items-center gap-4"
               >
@@ -282,7 +298,7 @@ export default function ProjectOrbit() {
         </div>
 
         {/* index rail */}
-        <div className="mt-6 flex justify-center gap-1.5">
+        <div className="mt-6 flex justify-center">
           {PROJECTS.map((p, i) => (
             <button
               key={p.title}
@@ -290,7 +306,7 @@ export default function ProjectOrbit() {
               onClick={() => goTo(i)}
               aria-label={`Turn to ${p.title}`}
               aria-current={i === front ? 'true' : undefined}
-              className="group relative h-6 px-0.5"
+              className="group relative flex h-8 min-w-[24px] items-center justify-center px-[3px]"
             >
               <span className={`block h-1 rounded-full transition-all duration-500 ${i === front ? 'w-8 bg-red' : 'w-3 bg-line group-hover:bg-mist'}`} />
             </button>
@@ -301,13 +317,31 @@ export default function ProjectOrbit() {
   )
 }
 
-function OrbitCard({ project, index, rot, radius, width, height, isFront, onClick }) {
+/**
+ * A flat "cover-flow" card. `rot` is still measured in degrees (one card =
+ * STEP), but cards are laid out in 2D — front card large, neighbours
+ * smaller and fanned to each side. An earlier true-3D version (preserve-3d
+ * + perspective) made the browser re-sort and blend every card layer on
+ * each scroll frame, which was the slowest thing on the page.
+ */
+function OrbitCard({ project, index, rot, width, height, isFront, onClick }) {
   const base = index * STEP
-  // how directly the card faces the viewer: 1 = front, -1 = back
-  const facing = useTransform(rot, (r) => Math.cos(((base + r) * Math.PI) / 180))
-  const opacity = useTransform(facing, [-1, 0, 1], [0.28, 0.55, 1])
-  const brightness = useTransform(facing, [-1, 1], [0.55, 1])
-  const filter = useTransform(brightness, (b) => `brightness(${b}) saturate(${0.6 + b * 0.4})`)
+  // signed distance from the front slot, in cards (0 = front)
+  const d = useTransform(rot, (r) => wrap(base + r) / STEP)
+  const x = useTransform(d, (v) => {
+    const a = Math.abs(v)
+    const off = a <= 1 ? a * 0.62 : 0.62 + (a - 1) * 0.42
+    return Math.sign(v) * off * width
+  })
+  const scale = useTransform(d, (v) => 1 - Math.min(Math.abs(v), 3) * 0.13)
+  const opacity = useTransform(d, (v) => {
+    const a = Math.abs(v)
+    return a <= 2 ? 1 - a * 0.15 : Math.max(0, 0.7 - (a - 2) * 0.9)
+  })
+  const visibility = useTransform(d, (v) => (Math.abs(v) > 2.8 ? 'hidden' : 'visible'))
+  const zIndex = useTransform(d, (v) => 100 - Math.round(Math.abs(v) * 10))
+  // side cards dim under a navy veil (opacity only — compositor-friendly)
+  const shade = useTransform(d, (v) => Math.min(Math.abs(v), 3) * 0.14)
   const host = new URL(project.href).hostname
 
   return (
@@ -321,9 +355,11 @@ function OrbitCard({ project, index, rot, radius, width, height, isFront, onClic
       aria-label={isFront ? `Open ${project.title} in a new tab` : `Turn to ${project.title}`}
       className="orbit-card group absolute inset-0 block overflow-hidden rounded-2xl border border-line bg-surface"
       style={{
-        transform: `rotateY(${base}deg) translateZ(${radius}px)`,
+        x,
+        scale,
+        zIndex,
         opacity,
-        filter,
+        visibility,
         width,
         height,
         boxShadow: isFront
@@ -355,6 +391,7 @@ function OrbitCard({ project, index, rot, radius, width, height, isFront, onClic
         />
         <span className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>
+      <motion.span aria-hidden="true" style={{ opacity: shade }} className="pointer-events-none absolute inset-0 z-10 bg-night" />
       <div className="flex h-[30px] items-center gap-2 px-2.5">
         <ProjectMark project={project} size={20} />
         <span className="truncate font-display text-xs font-semibold text-fg">{project.title}</span>

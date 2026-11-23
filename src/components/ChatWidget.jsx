@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { MessageCircle, X, Send, Mic, Volume2, VolumeX } from 'lucide-react'
 import { getAnswer } from '../lib/knowledge'
 

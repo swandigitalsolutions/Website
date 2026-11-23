@@ -9,10 +9,8 @@ Vite, Tailwind CSS and Framer Motion.
   CTA, footer) use the `.on-night` class to flip the tokens locally.
 - **Motion system** — brand intro with loading counter and curtain wipe
   (once per session), masked word-by-word headings (`SplitText`),
-  magnetic buttons (`Magnetic`), pointer spotlight on cards, trailing cursor
-  ring (`Cursor`), hide-on-scroll glass navbar with sliding active pill,
-  scroll-linked hero parallax and banner reveal (`BrandBanner`), a process
-  rail that fills as you scroll, clip-path team portraits.
+  hide-on-scroll navbar with sliding active pill, a flat project reel, a
+  process rail that fills as you scroll, and native browser scrolling.
 - Everything respects `prefers-reduced-motion`.
 
 ## What's inside

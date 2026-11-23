@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 
 const DEMO_URL = 'https://tile-visualizer-roan.vercel.app/'
@@ -43,11 +43,9 @@ export default function TileVisualizerDemo() {
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className="group relative isolate overflow-hidden rounded-3xl border border-line bg-surface shadow-card hover:shadow-lift transition-shadow duration-500"
     >
-      <motion.div
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-red to-transparent"
-        animate={{ opacity: [0.25, 0.9, 0.25], scaleX: [0.72, 1, 0.72] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-red/70 to-transparent"
       />
       <div className="flex items-center gap-3 border-b border-line bg-surface2 px-4 py-3 sm:px-5">
         <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-red/30 bg-red/10 text-red">
@@ -58,11 +56,7 @@ export default function TileVisualizerDemo() {
           <p className="truncate text-xs text-mist">SDS Tiles &amp; Ceramics</p>
         </div>
         <span className="hidden items-center gap-2 rounded-full border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-1 text-[10px] font-medium text-[#b45309] sm:inline-flex">
-          <motion.span
-            className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]"
-            animate={{ opacity: [0.45, 1, 0.45], scale: [0.85, 1.15, 0.85] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          <span className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]" />
           IN DEVELOPMENT
         </span>
       </div>
