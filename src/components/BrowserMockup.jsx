@@ -87,7 +87,7 @@ export default function BrowserMockup() {
               <span className={`block h-1.5 rounded-full transition-all ${index === i ? 'w-5 bg-red' : 'w-1.5 bg-line group-hover:bg-mist'}`} />
             </button>
           ))}
-          <span className="ml-auto hidden min-w-0 items-center gap-1.5 eyebrow xl:inline-flex text-[10px] text-mist">
+          <span className="ml-auto hidden min-w-0 items-center gap-1.5 eyebrow text-[10px] text-mist">
             <span className="truncate">{project.title}</span>
             <ArrowUpRight size={12} className="shrink-0" />
           </span>

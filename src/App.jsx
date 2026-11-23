@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import BrandBanner from './components/BrandBanner'
 import ProjectOrbit from './components/ProjectOrbit'
 import Services from './components/Services'
 import Works from './components/Works'
@@ -37,7 +36,6 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <BrandBanner />
         <ProjectOrbit />
         <Services />
         <Works />
