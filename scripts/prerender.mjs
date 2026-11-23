@@ -9,8 +9,19 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 const { render } = await import(pathToFileURL(path.join(root, 'dist-ssr', 'entry-server.js')).href)
 
+// Preload the two text fonts so they arrive before the first paint instead of
+// swapping in afterwards (each late swap re-lays-out the whole page). The
+// mono font only styles small labels, so it is left to load normally.
+const PRELOAD_FONTS = /^(inter|space-grotesk)-latin-wght-normal-.*\.woff2$/
+const fontLinks = fs
+  .readdirSync(path.join(dist, 'assets'))
+  .filter((f) => PRELOAD_FONTS.test(f))
+  .map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin />`)
+  .join('\n    ')
+
 function bake(file, slug) {
-  const html = fs.readFileSync(file, 'utf8')
+  let html = fs.readFileSync(file, 'utf8')
+  if (fontLinks && !html.includes('as="font"')) html = html.replace('</head>', `    ${fontLinks}\n  </head>`)
   const marker = slug ? `<div id="root" data-service="${slug}"></div>` : '<div id="root"></div>'
   if (!html.includes(marker)) throw new Error(`Root marker not found in ${file}`)
   const filled = marker.replace('></div>', `>${render(slug)}</div>`)

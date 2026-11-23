@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ArrowRight, ArrowUpRight, Phone, MapPin, Globe, Code2, Megaphone, ChevronDown } from 'lucide-react'
 import Navbar from './Navbar'
 import SplitText from './SplitText'
@@ -74,7 +74,7 @@ export default function ServicePage({ service }) {
               initial="hidden"
               animate="show"
               variants={fadeUp}
-              className="eyebrow inline-flex items-center gap-2.5 rounded-2xl border border-red/20 bg-white/70 backdrop-blur px-3.5 py-2 text-red mb-6 sm:mb-7 shadow-card !tracking-[0.12em] !text-[0.66rem] leading-relaxed"
+              className="eyebrow inline-flex items-center gap-2.5 rounded-2xl border border-red/20 bg-white/90 px-3.5 py-2 text-red mb-6 sm:mb-7 shadow-card !tracking-[0.12em] !text-[0.66rem] leading-relaxed"
             >
               <Icon size={14} />
               {service.name}
@@ -112,7 +112,7 @@ export default function ServicePage({ service }) {
               <Magnetic className="w-full sm:w-auto">
                 <a
                   href="tel:+918310579306"
-                  className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border border-line bg-white/80 backdrop-blur text-white/90 font-medium hover:border-red/50 hover:text-white hover:shadow-card transition-all"
+                  className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border border-line bg-white/90 text-white/90 font-medium hover:border-red/50 hover:text-white hover:shadow-card transition-all"
                 >
                   <Phone size={16} className="text-red" />
                   +91 83105 79306

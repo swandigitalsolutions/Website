@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { Sparkles, Wand2, RefreshCw, ArrowRight, Layout, Palette, Clock, Layers } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -18,7 +18,7 @@ const BUSINESSES = {
     pages: ['Home', 'Rooms', 'Amenities', 'Gallery', 'Contact'],
     components: ['Booking integration', 'Room availability', 'Content editing'],
     aiOpportunity: 'A guest-support assistant can answer common questions and route booking enquiries to your team.',
-    weeks: [4, 6],
+    days: [7, 10],
   },
   school: {
     label: 'School / Institute',
@@ -29,7 +29,7 @@ const BUSINESSES = {
     pages: ['Home', 'Admissions', 'Academics', 'Campus Life', 'Contact'],
     components: ['Admissions enquiry flow', 'Parent portal', 'Content editing'],
     aiOpportunity: 'An admissions assistant can help families find programme information and direct questions to staff.',
-    weeks: [6, 9],
+    days: [9, 12],
   },
   restaurant: {
     label: 'Restaurant / Cafe',
@@ -40,7 +40,7 @@ const BUSINESSES = {
     pages: ['Home', 'Menu', 'Reservations', 'About', 'Contact'],
     components: ['Digital menu', 'Reservation enquiries', 'Local search setup'],
     aiOpportunity: 'A menu and FAQ assistant can help guests discover dishes, opening hours and reservation options.',
-    weeks: [3, 5],
+    days: [5, 8],
   },
   retail: {
     label: 'Retail / Store',
@@ -51,7 +51,7 @@ const BUSINESSES = {
     pages: ['Home', 'Shop', 'Offers', 'About', 'Contact'],
     components: ['Product catalogue', 'Checkout integration', 'Inventory connection'],
     aiOpportunity: 'Product discovery can be improved with guided recommendations based on a shopper’s needs.',
-    weeks: [5, 8],
+    days: [8, 11],
   },
   startup: {
     label: 'Startup / SaaS',
@@ -62,7 +62,7 @@ const BUSINESSES = {
     pages: ['Home', 'Features', 'Pricing', 'Docs', 'Contact'],
     components: ['Product marketing site', 'Sign-up flow', 'Analytics setup'],
     aiOpportunity: 'A focused AI feature can support your product workflow, customer experience or internal operations.',
-    weeks: [3, 6],
+    days: [6, 9],
   },
   stone: {
     label: 'Stone / Manufacturing',
@@ -73,7 +73,7 @@ const BUSINESSES = {
     pages: ['Home', 'Products', 'Projects', 'Process', 'Contact'],
     components: ['Product catalogue', 'Project gallery', 'Quote enquiry flow'],
     aiOpportunity: 'Image-based product matching or an internal workflow assistant may help; feasibility depends on your catalogue and data.',
-    weeks: [4, 7],
+    days: [7, 10],
   },
   services: {
     label: 'Professional services',
@@ -84,7 +84,7 @@ const BUSINESSES = {
     pages: ['Home', 'Services', 'Case studies', 'About', 'Contact'],
     components: ['Service pages', 'Case study collection', 'Consultation enquiry flow'],
     aiOpportunity: 'A knowledge assistant or enquiry triage flow could reduce repetitive work after we review your processes.',
-    weeks: [3, 6],
+    days: [5, 8],
   },
   other: {
     label: 'Other business',
@@ -95,17 +95,17 @@ const BUSINESSES = {
     pages: ['Home', 'Services', 'About', 'Work', 'Contact'],
     components: ['Responsive website', 'Content editing', 'Enquiry flow'],
     aiOpportunity: 'We can first map a repetitive or customer-facing workflow, then assess whether a custom AI solution is a good fit.',
-    weeks: [3, 6],
+    days: [5, 8],
   },
 }
 
 const GOALS = {
-  bookings: { label: 'Get more bookings', line: 'built to turn interest into booking enquiries', addWeeks: 1 },
-  sell: { label: 'Sell online', line: 'designed to guide shoppers from discovery to checkout', addWeeks: 2 },
-  operations: { label: 'Run operations', line: 'with tools that help your team manage day-to-day work', addWeeks: 3 },
-  premium: { label: 'Look premium', line: 'with a distinctive design that builds trust', addWeeks: 0 },
-  leads: { label: 'Generate leads', line: 'with clear paths from discovery to enquiry', addWeeks: 1 },
-  ai: { label: 'Explore AI solutions', line: 'mapped to a real workflow and a clear business outcome', addWeeks: 2 },
+  bookings: { label: 'Get more bookings', line: 'built to turn interest into booking enquiries', addDays: 1 },
+  sell: { label: 'Sell online', line: 'designed to guide shoppers from discovery to checkout', addDays: 2 },
+  operations: { label: 'Run operations', line: 'with tools that help your team manage day-to-day work', addDays: 2 },
+  premium: { label: 'Look premium', line: 'with a distinctive design that builds trust', addDays: 0 },
+  leads: { label: 'Generate leads', line: 'with clear paths from discovery to enquiry', addDays: 1 },
+  ai: { label: 'Explore AI solutions', line: 'mapped to a real workflow and a clear business outcome', addDays: 2 },
 }
 
 const HEADLINES = [
@@ -137,9 +137,7 @@ function buildEnquiryBrief(business, goal, result) {
     `Suggested pages: ${result.pages.join(', ')}`,
     `Suggested home page sections: ${result.sections.join('; ')}`,
     `Possible components: ${result.components.join(', ')}`,
-    ...(result.goalKey === 'ai'
-      ? ['Schedule: to be scoped after workflow and technical discovery']
-      : [`Indicative planning range: ${result.timeline} (to be confirmed after discovery)`]),
+    `Indicative planning range: ${result.timeline} (to be confirmed after discovery)`,
     ...(goal === 'ai' ? [`AI opportunity to explore: ${result.aiOpportunity}`] : []),
   ].join('\n')
 }
@@ -180,7 +178,10 @@ export default function AIStudio() {
           : goal === 'operations'
             ? `A clearer system for ${b.label} operations.`
             : pick(HEADLINES, seed)(b)
-        const [lo, hi] = b.weeks
+        // every estimate stays within two weeks (14 days)
+        const MAX_DAYS = 14
+        const hi = Math.min(MAX_DAYS, b.days[1] + g.addDays)
+        const lo = Math.min(hi - 2, b.days[0] + g.addDays)
         const workflowFocused = goal === 'operations' || goal === 'ai'
         const pages = workflowFocused
           ? ['Overview', 'Core workflow', 'Team dashboard', 'Reports', 'Settings & access']
@@ -207,7 +208,7 @@ export default function AIStudio() {
           components,
           aiOpportunity: b.aiOpportunity,
           goalKey: goal,
-          timeline: goal === 'ai' ? 'Scope after discovery' : `${lo + g.addWeeks}–${hi + g.addWeeks} weeks`,
+          timeline: `${lo}–${hi} days`,
         })
         setPhase('done')
       }, 480 * (PLANNING_STEPS.length + 1) + 200)
@@ -405,7 +406,7 @@ export default function AIStudio() {
                         </div>
                       </Block>
 
-                      <Block icon={Clock} title={result.goalKey === 'ai' ? 'Schedule' : 'Planning estimate'}>
+                      <Block icon={Clock} title="Planning estimate">
                         <div className="font-display text-2xl font-semibold text-white">{result.timeline}</div>
                         <div className="text-xs text-mist mt-1">
                           {result.goalKey === 'ai' ? 'Depends on workflow review and feasibility' : 'A starting range; confirmed after discovery'}

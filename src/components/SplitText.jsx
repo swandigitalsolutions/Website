@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 const EASE = [0.22, 1, 0.36, 1]
 
@@ -6,7 +6,9 @@ const EASE = [0.22, 1, 0.36, 1]
  * Masked word-by-word reveal: every word rises out of its own clipping
  * box. `segments` is a list of strings or { text, className } objects;
  * use '\n' as a segment to force a line break. Animates on mount when
- * `onMount` is set, otherwise the first time it scrolls into view.
+ * `onMount` is set (a pure-CSS animation, so it starts with the first
+ * paint instead of waiting for JavaScript — used above the fold), otherwise
+ * the first time it scrolls into view.
  * The full sentence is kept as the accessible label.
  */
 export default function SplitText({
@@ -17,7 +19,7 @@ export default function SplitText({
   stagger = 0.06,
   onMount = false,
 }) {
-  const Tag = motion[as]
+  const Tag = onMount ? as : motion[as]
   const label = segments
     .map((s) => (typeof s === 'string' ? s : s.text))
     .join(' ')
@@ -26,7 +28,7 @@ export default function SplitText({
 
   let index = 0
   const trigger = onMount
-    ? { initial: 'hidden', animate: 'show' }
+    ? {}
     : { initial: 'hidden', whileInView: 'show', viewport: { once: true, margin: '-60px' } }
 
   return (
@@ -40,14 +42,22 @@ export default function SplitText({
           .filter(Boolean)
           .map((word, wi) => {
             const i = index++
-            return (
+            // a real space between words (not just a margin) keeps the
+            // heading's text readable for search engines and copy-paste
+            return [
+              i > 0 ? ' ' : null,
               <span
                 key={`${si}-${wi}`}
                 aria-hidden="true"
-                className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em] mr-[0.24em]"
+                className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]"
               >
+                {onMount ? (
+                  <span className={`word-rise ${cls}`} style={{ '--d': `${delay + i * stagger}s` }}>
+                    {word}
+                  </span>
+                ) : (
                 <motion.span
-                  className={`inline-block will-change-transform ${cls}`}
+                  className={`inline-block ${cls}`}
                   variants={{
                     hidden: { y: '110%', rotate: 4, opacity: 0 },
                     show: {
@@ -60,8 +70,9 @@ export default function SplitText({
                 >
                   {word}
                 </motion.span>
-              </span>
-            )
+                )}
+              </span>,
+            ]
           })
       })}
     </Tag>

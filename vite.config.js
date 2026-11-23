@@ -28,8 +28,8 @@ export default defineConfig(({ isSsrBuild }) => ({
             // split heavy, rarely-changing vendors so they cache independently
             manualChunks: {
               react: ['react', 'react-dom'],
-              motion: ['framer-motion'],
-              vendor: ['lenis', 'lucide-react'],
+              motion: ['motion/react'],
+              vendor: ['lucide-react'],
             },
           },
         },

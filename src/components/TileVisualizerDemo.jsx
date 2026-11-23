@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 
 const DEMO_URL = 'https://tile-visualizer-roan.vercel.app/'

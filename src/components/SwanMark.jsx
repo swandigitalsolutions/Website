@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 /**
  * The signature element: a single continuous line tracing the swan's

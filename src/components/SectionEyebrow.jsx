@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 /**
  * Section label: a red rule draws in, then the mono eyebrow text fades

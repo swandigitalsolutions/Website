@@ -1,0 +1,19 @@
+# Swan Digital Solutions
+
+> Swan Digital Solutions is a website, software and digital-growth studio in Devanahalli, Bengaluru (Karnataka, India). It builds business websites, custom business software (ERP, school management portals, web applications), AI solutions and automation, and provides digital marketing support for hotels, schools, restaurants, retailers, manufacturers and growing businesses.
+
+- Phone: +91 83105 79306
+- Email: swandigitalsolutions@gmail.com
+- Location: Devanahalli, Karnataka, India
+
+## Services
+
+- [Website Development](https://www.swandigitalsolutions.com/services/website-development/): fast, modern business, hotel and restaurant websites, plus ongoing maintenance.
+- [Software Development](https://www.swandigitalsolutions.com/services/software-development/): school management systems, business management software and custom web applications.
+
+## Company
+
+- [Home page](https://www.swandigitalsolutions.com/): services, client projects, website planner, team, internship programme and contact form.
+- [Client projects](https://www.swandigitalsolutions.com/#work): live websites and software delivered for clients.
+- [Industry Internship Programme](https://www.swandigitalsolutions.com/#internships): paid, industry-placed internships for students, with a stipend paid by Swan.
+- [Contact](https://www.swandigitalsolutions.com/#contact): send a project enquiry.

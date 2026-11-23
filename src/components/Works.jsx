@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ArrowRight, ArrowUpRight, Bot, Briefcase } from 'lucide-react'
 import { PROJECTS } from '../data/projects'
 import TileVisualizerDemo from './TileVisualizerDemo'
@@ -13,14 +13,29 @@ const FILTERS = [
   'Websites & commerce',
 ]
 
+const INITIAL = 6
+const INITIAL_PHONE = 3
+
 export default function Works() {
   const [activeFilter, setActiveFilter] = useState(FILTERS[0])
+  const [expanded, setExpanded] = useState(false)
   const visibleProjects = useMemo(
     () => activeFilter === FILTERS[0]
       ? PROJECTS
       : PROJECTS.filter((project) => project.group === activeFilter),
     [activeFilter],
   )
+  // keep the section short: two rows first, the rest on request
+  const shownProjects = expanded ? visibleProjects : visibleProjects.slice(0, INITIAL)
+  // phones show 3 before the button, larger screens 6
+  const moreOnPhone = !expanded && visibleProjects.length > INITIAL_PHONE
+  const moreOnDesktop = !expanded && visibleProjects.length > INITIAL
+  const countFor = (filter) =>
+    filter === FILTERS[0] ? PROJECTS.length : PROJECTS.filter((p) => p.group === filter).length
+  const selectFilter = (filter) => {
+    setActiveFilter(filter)
+    setExpanded(false)
+  }
 
   return (
     <section id="work" className="sheet py-20 sm:py-28 md:py-36">
@@ -85,89 +100,120 @@ export default function Works() {
           </motion.div>
         </div>
 
-        <div className="mb-7 flex flex-col gap-4 border-t border-line pt-7 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="eyebrow text-mist">Browse the work</p>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter projects by type">
-            {FILTERS.map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                aria-pressed={activeFilter === filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`relative rounded-full border px-3.5 py-2 text-xs transition-colors duration-300 sm:px-4 sm:text-sm ${
-                  activeFilter === filter
-                    ? 'border-transparent text-plainwhite'
-                    : 'border-line bg-surface text-mist hover:border-red/40 hover:text-white'
-                }`}
-              >
-                {activeFilter === filter && (
-                  <motion.span
-                    layoutId="work-filter"
-                    className="absolute inset-0 rounded-full bg-fg shadow-card"
-                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                  />
-                )}
-                <span className="relative">{filter}</span>
-              </button>
-            ))}
+        <div className="mb-6 flex flex-col gap-4 border-t border-line pt-8 sm:mb-8 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="eyebrow text-red">Browse the work</p>
+            <p className="mt-1 text-sm text-mist">Live sites and software we&rsquo;ve shipped for our clients.</p>
+          </div>
+          <div
+            className="scrollbar-none -mx-5 flex gap-1 overflow-x-auto px-5 sm:mx-0 sm:px-0"
+            role="group"
+            aria-label="Filter projects by type"
+          >
+            <div className="flex shrink-0 gap-1 rounded-full border border-line bg-surface p-1 shadow-card">
+              {FILTERS.map((filter) => {
+                const on = activeFilter === filter
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => selectFilter(filter)}
+                    className={`relative inline-flex min-h-[40px] shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 text-sm transition-colors duration-200 ${
+                      on ? 'text-plainwhite' : 'text-mist hover:text-fg'
+                    }`}
+                  >
+                    {on && (
+                      <motion.span
+                        layoutId="work-filter"
+                        className="absolute inset-0 rounded-full bg-fg"
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <span className="relative">{filter === FILTERS[0] ? 'All' : filter}</span>
+                    <span
+                      className={`relative rounded-full px-1.5 py-px font-mono text-[10px] tabular-nums ${
+                        on ? 'bg-white/20 text-plainwhite' : 'bg-surface2 text-mist'
+                      }`}
+                    >
+                      {countFor(filter)}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
 
-        <motion.div layout className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
-          {visibleProjects.map((project, index) => (
+        <div key={activeFilter} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {shownProjects.map((project, index) => (
             <motion.article
               key={project.title}
-              layout
-              initial={{ opacity: 0, y: 28, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.6, delay: (index % 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -8 }}
-              className="spotlight group relative overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-shadow duration-500 hover:shadow-lift"
+              transition={{ duration: 0.5, delay: (index % 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              className={`${!expanded && index >= INITIAL_PHONE ? 'max-sm:hidden ' : ''}group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift`}
             >
-              <a
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Open ${project.title} project website in a new tab`}
-                className="absolute inset-0 z-40 rounded-2xl focus-visible:outline-none"
-              />
-              <div className={`relative aspect-[2/1] overflow-hidden bg-gradient-to-br ${project.accent}`}>
-                <div className="absolute inset-0 noise-grid opacity-10" />
+              <div className={`relative aspect-[2/1] overflow-hidden border-b border-line bg-gradient-to-br ${project.accent}`}>
                 <img
                   src={project.image}
-                  alt={`${project.title} project website`}
+                  alt={`${project.title} website`}
                   loading="lazy"
                   decoding="async"
+                  width={1600}
+                  height={800}
                   onError={(event) => { event.currentTarget.style.display = 'none' }}
-                  className="absolute inset-0 h-full w-full object-contain transition-transform duration-[1.1s] ease-out group-hover:scale-[1.06]"
+                  className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
+                <span className="absolute bottom-3 right-3 inline-flex translate-y-1 items-center gap-1 rounded-full bg-fg px-3 py-1.5 text-xs font-medium text-plainwhite opacity-0 shadow-lift transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                  Visit site <ArrowUpRight size={13} />
+                </span>
               </div>
 
-              <div className="p-4 sm:p-5">
-                <div className="mb-2 flex items-start justify-between gap-2">
-                  <p className="text-[11px] text-mist">{project.product}</p>
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line bg-surface2 text-fg transition-all duration-300 group-hover:rotate-45 group-hover:border-red group-hover:bg-red group-hover:text-[#fff]">
-                    <ArrowUpRight size={14} />
+              <div className="flex flex-1 flex-col p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-display text-lg font-semibold leading-snug text-fg">
+                    <a
+                      href={project.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none"
+                    >
+                      {project.title}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </h3>
+                  <span
+                    aria-hidden="true"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-fg transition-colors duration-300 group-hover:border-red group-hover:bg-red group-hover:text-[#fff]"
+                  >
+                    <ArrowUpRight size={15} />
                   </span>
                 </div>
-                <p className="eyebrow mb-1 text-[9px] text-red">{project.category}</p>
-                <h3 className="font-display text-base font-semibold leading-snug text-white sm:text-lg">{project.title}</h3>
-                <p className="mt-2.5 min-h-[4.5em] text-xs leading-relaxed text-mist sm:text-sm">{project.description}</p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {project.tags.map((tag) => (
-                    <span key={tag} className="rounded-full border border-line bg-surface2 px-2.5 py-1 text-[10px] text-white/75">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <p className="mt-4 truncate border-t border-line pt-3 font-mono text-[10px] text-mist/70">
-                  {new URL(project.href).hostname}
+                <p className="mt-1 truncate text-xs text-mist">
+                  <span className="font-medium text-red">{project.category}</span>
+                  <span aria-hidden="true"> · </span>
+                  {project.product}
                 </p>
+                <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-mist">{project.description}</p>
               </div>
             </motion.article>
           ))}
-        </motion.div>
+        </div>
+
+        {moreOnPhone && (
+          <div className={`mt-8 flex justify-center ${moreOnDesktop ? '' : 'sm:hidden'}`}>
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-line bg-surface px-6 text-sm font-medium text-fg shadow-card transition-colors hover:border-red/50"
+            >
+              Show all {visibleProjects.length} projects
+              <ArrowRight size={15} className="rotate-90 text-red" aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )

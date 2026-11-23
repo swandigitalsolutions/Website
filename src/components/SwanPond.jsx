@@ -6,6 +6,7 @@
  * swaying its neck (some dip their heads to the water), trailing a V-shaped
  * wake from the chest and mirrored in the water.
  */
+import { useEffect, useRef } from 'react'
 import SwanSilhouette from './SwanSilhouette'
 
 const ASPECT = 115 / 85 // swan drawing width / height
@@ -30,14 +31,23 @@ const GLINTS = [
 const WORDMARK = 'font-display font-semibold tracking-tighter leading-[0.85] text-[18vw] md:text-[14vw] xl:text-[11.5rem] text-center'
 
 export default function SwanPond() {
+  // run the pond's CSS animations only while it is on screen
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('is-live', e.isIntersecting), { rootMargin: '100px 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
   return (
-    <div aria-hidden="true" className="pond relative left-1/2 w-[100vw] -translate-x-1/2 h-[150px] sm:h-[190px] [overflow-x:clip] [overflow-y:visible]">
+    <div ref={ref} aria-hidden="true" className="pond relative left-1/2 w-[100vw] -translate-x-1/2 h-[150px] sm:h-[190px] [overflow-x:clip] [overflow-y:visible]">
       {/* the water ripple: turbulence slowly evolving, displacing what it filters */}
       <svg className="absolute h-0 w-0">
         <filter id="water-ripple" x="-5%" y="-20%" width="110%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.004 0.07" numOctaves="2" seed="7" result="noise">
-            <animate attributeName="baseFrequency" dur="11s" values="0.004 0.07;0.006 0.09;0.004 0.07" repeatCount="indefinite" />
-          </feTurbulence>
+          {/* static noise: animating baseFrequency re-runs the filter on the CPU every frame */}
+          <feTurbulence type="fractalNoise" baseFrequency="0.004 0.07" numOctaves="2" seed="7" result="noise" />
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </svg>
@@ -112,7 +122,7 @@ export default function SwanPond() {
               <span className="pond-ring pond-ring--late" style={{ width: W * 1.1, height: W * 0.2, left: W * -0.1, top: H * WATERLINE - W * 0.1 }} />
               {/* the swan, bobbing */}
               <div className="pond-bob absolute inset-0">
-                <SwanSilhouette className="h-full w-full drop-shadow-[0_3px_8px_rgba(222,27,40,0.35)]" />
+                <SwanSilhouette className="h-full w-full" />
               </div>
               {/* its reflection, starting at the waterline */}
               <div
@@ -122,7 +132,6 @@ export default function SwanPond() {
                   width: W * 1.45, // room for the head when the neck stretches forward
                   height: H,
                   opacity: 0.38,
-                  filter: 'url(#water-ripple) blur(0.4px)',
                   WebkitMaskImage: 'linear-gradient(to top, black, transparent 80%)',
                   maskImage: 'linear-gradient(to top, black, transparent 80%)',
                 }}

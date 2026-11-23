@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { Sparkles, Circle, Lock } from 'lucide-react'
 import { JOURNEY } from '../data/internship'
 
@@ -23,14 +23,24 @@ const STAGE_DETAIL = [
  */
 export default function InternshipReel() {
   const [stage, setStage] = useState(0)
+  const ref = useRef(null)
 
+  // advance only while the reel is on screen
   useEffect(() => {
-    const id = setInterval(() => setStage((s) => (s + 1) % JOURNEY.length), STAGE_MS)
-    return () => clearInterval(id)
+    let id = 0
+    const io = new IntersectionObserver(([e]) => {
+      clearInterval(id)
+      if (e.isIntersecting) id = setInterval(() => setStage((s) => (s + 1) % JOURNEY.length), STAGE_MS)
+    })
+    io.observe(ref.current)
+    return () => {
+      io.disconnect()
+      clearInterval(id)
+    }
   }, [])
 
   return (
-    <div className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-line bg-night shadow-lift">
+    <div ref={ref} className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-line bg-night shadow-lift">
       <div className="on-night">
         {/* chrome bar, matching the hero's browser-mockup motif */}
         <div className="flex h-11 items-center gap-3 border-b border-line bg-surface2 px-4">
@@ -39,11 +49,11 @@ export default function InternshipReel() {
             <Circle size={10} className="fill-[#F59E0B]/70 text-[#F59E0B]/70" />
             <Circle size={10} className="fill-[#10B981]/70 text-[#10B981]/70" />
           </div>
-          <div className="flex h-6 min-w-0 flex-1 items-center gap-2 rounded-md border border-line bg-ink px-3 text-[11px] text-mist">
+          <div className="flex h-6 min-w-0 flex-1 items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-3 text-[11px] text-[#c9d0de]">
             <Lock size={11} className="shrink-0 text-red" />
             <span className="truncate font-mono">swan-internship-engine.live</span>
           </div>
-          <span className="eyebrow inline-flex shrink-0 items-center gap-1.5 text-[10px] text-red">
+          <span className="eyebrow inline-flex shrink-0 items-center gap-1.5 text-[10px] text-[#ff7a82]">
             <Sparkles size={12} className="animate-pulse" />
             <span className="hidden sm:inline">LIVE PREVIEW</span>
           </span>
@@ -54,7 +64,7 @@ export default function InternshipReel() {
           <div className="pointer-events-none absolute inset-0 noise-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red/15 blur-3xl transition-all duration-700"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--red)/0.18),transparent)] transition-transform duration-700"
             style={{ transform: `translate(-50%, -50%) scale(${1 + stage * 0.08})` }}
           />
 
@@ -62,10 +72,10 @@ export default function InternshipReel() {
           <div className="relative flex items-center justify-between">
             <div className="absolute left-5 right-5 top-1/2 h-px -translate-y-1/2 bg-line" />
             <motion.div
-              className="absolute left-5 top-1/2 h-px -translate-y-1/2 bg-red-gradient"
-              animate={{ width: `${(stage / (JOURNEY.length - 1)) * 100}%` }}
+              className="absolute left-5 right-5 top-1/2 h-px -translate-y-1/2 origin-left bg-red-gradient"
+              initial={false}
+              animate={{ scaleX: stage / (JOURNEY.length - 1) }}
               transition={{ duration: 0.6, ease: EASE }}
-              style={{ maxWidth: 'calc(100% - 2.5rem)' }}
             />
             {JOURNEY.map(({ icon: Icon }, i) => {
               const lit = i <= stage
@@ -101,17 +111,17 @@ export default function InternshipReel() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={stage}
-                initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.4, ease: EASE }}
               >
                 <p className="eyebrow text-[10px] text-red">
                   Stage {String(stage + 1).padStart(2, '0')} / {String(JOURNEY.length).padStart(2, '0')}
                 </p>
-                <h4 className="mt-1.5 font-display text-lg font-semibold text-plainwhite sm:text-xl">
+                <h3 className="mt-1.5 font-display text-lg font-semibold text-plainwhite sm:text-xl">
                   {JOURNEY[stage].title}
-                </h4>
+                </h3>
                 <p className="mx-auto mt-1.5 max-w-sm text-xs leading-relaxed text-mist sm:text-sm">
                   {STAGE_DETAIL[stage]}
                 </p>

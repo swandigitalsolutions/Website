@@ -1,5 +1,4 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { motion } from 'motion/react'
 
 /**
  * The brand banner, framed as a cinematic panel that widens and
@@ -7,20 +6,15 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
  * copy, where its own text collided with the headline).
  */
 export default function BrandBanner() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] })
-  const p = useSpring(scrollYProgress, { stiffness: 110, damping: 28, mass: 0.4 })
-  const scale = useTransform(p, [0, 1], [0.86, 1])
-  const rotateX = useTransform(p, [0, 1], [22, 0])
-  const radius = useTransform(p, [0, 1], [40, 24])
-  const imgScale = useTransform(p, [0, 1], [1.12, 1])
 
   return (
     <section aria-label="Swan Digital Solutions — your partner in digital growth" className="relative px-3 sm:px-5 pb-10 sm:pb-16">
       <motion.div
-        ref={ref}
-        style={{ scale, rotateX, borderRadius: radius, transformPerspective: 1400 }}
-        className="group relative mx-auto max-w-[1400px] overflow-hidden bg-night shadow-lift"
+        initial={{ opacity: 0, y: 40, scale: 0.96 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="group relative mx-auto max-w-[1400px] overflow-hidden rounded-3xl bg-night shadow-lift"
       >
         {/* The banner is a single wide (≈4.7:1) flattened graphic. Shrunk to
             viewport width on a phone its text becomes unreadably small, so
@@ -28,12 +22,11 @@ export default function BrandBanner() {
             horizontally instead of shrinking; sm+ shows it full-width as
             before. Edge fades + a one-time swipe hint signal it scrolls. */}
         <div className="scrollbar-none overflow-x-auto overscroll-x-contain sm:overflow-visible">
-          <motion.img
+          <img
             src="/work/swan-home-banner.webp"
             alt="Swan Digital Solutions — Your partner in digital growth. Core capabilities: Web Development, Custom Software, Digital Marketing, AI Solutions, Business Analysis & Growth. Let's build something great together."
             loading="lazy"
             decoding="async"
-            style={{ scale: imgScale }}
             className="block h-auto w-[720px] max-w-none sm:w-full"
           />
         </div>

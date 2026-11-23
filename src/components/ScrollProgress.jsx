@@ -1,4 +1,4 @@
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { motion, useScroll } from 'motion/react'
 
 /**
  * Thin gradient bar pinned under the navbar that fills as the page is
@@ -6,7 +6,7 @@ import { motion, useScroll, useSpring } from 'framer-motion'
  */
 export default function ScrollProgress() {
   const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 })
+  const scaleX = scrollYProgress
 
   return (
     <motion.div

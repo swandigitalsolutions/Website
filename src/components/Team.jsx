@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ArrowUpRight } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -14,23 +14,17 @@ const TEAM = [
     position: '50% 37%',
   },
   {
-    name: 'Yeshwanth',
-    role: 'Experienced Senior Software Developer',
-    image: '/work/team-senior-developer.webp',
-    alt: 'Senior Software Developer at Swan Digital Solutions',
-    position: '50% 35%',
+    name: 'Yaswanth Kumar',
+    role: 'Software Developer',
+    image: '/work/team-yaswanth.webp',
+    alt: 'Yaswanth Kumar, Software Developer at Swan Digital Solutions',
+    position: '50% 18%',
   },
   {
-    name: 'Indra',
-    role: 'Software Developer & AI-Powered Solutions Developer',
-    image: '/work/team-ai-developer.webp',
-    alt: 'Software Developer and AI-Powered Solutions Developer at Swan Digital Solutions',
-    position: '50% 35%',
-  },
-  {
+    name: 'Harshith',
     role: 'Digital Marketing',
     image: '/work/team-digital-marketing.webp',
-    alt: 'Digital Marketing at Swan Digital Solutions',
+    alt: 'Harshith, Digital Marketing at Swan Digital Solutions',
     position: '50% 30%',
   },
 ]
@@ -61,7 +55,7 @@ export default function Team() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TEAM.map((person, index) => (
             <motion.div
               key={person.role}
@@ -69,8 +63,8 @@ export default function Team() {
               whileInView="show"
               viewport={{ once: true, amount: 0.15 }}
               variants={{
-                hidden: { opacity: 0, y: 50 },
-                show: { opacity: 1, y: 0, transition: { duration: 0.9, delay: index * 0.12, ease: EASE } },
+                hidden: { opacity: 0, y: 30 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.08, ease: EASE } },
               }}
             >
               <Tilt max={6} scale={1.015}>
@@ -78,18 +72,14 @@ export default function Team() {
                   {/* The photo is always rendered (never clipped), so it loads and
                       shows on every device; a curtain slides off it as the reveal. */}
                   <div className="relative aspect-[4/5] overflow-hidden bg-surface2">
-                    <motion.img
+                    <img
                       src={person.image}
                       alt={person.alt}
                       width={750}
                       height={1000}
                       loading="lazy"
                       decoding="async"
-                      variants={{
-                        hidden: { scale: 1.2 },
-                        show: { scale: 1, transition: { duration: 1.6, delay: 0.1 + index * 0.12, ease: EASE } },
-                      }}
-                      className="h-full w-full object-cover transition-[filter] duration-700 group-hover:saturate-[1.15]"
+                      className="h-full w-full object-cover"
                       style={{ objectPosition: person.position }}
                     />
                     <motion.div
@@ -97,7 +87,7 @@ export default function Team() {
                       className="absolute inset-0 origin-top bg-surface2"
                       variants={{
                         hidden: { scaleY: 1 },
-                        show: { scaleY: 0, transition: { duration: 1.1, delay: 0.1 + index * 0.12, ease: [0.76, 0, 0.24, 1] } },
+                        show: { scaleY: 0, transition: { duration: 0.8, delay: 0.05 + index * 0.08, ease: [0.76, 0, 0.24, 1] } },
                       }}
                     />
                   </div>
@@ -117,7 +107,7 @@ export default function Team() {
                       <a
                         href="#contact"
                         aria-label={`Contact Swan Digital Solutions about ${person.role}`}
-                        className="mb-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/30 text-plainwhite backdrop-blur transition-all duration-300 hover:border-red hover:bg-red group-hover:rotate-45"
+                        className="mb-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/30 bg-black/20 text-plainwhite transition-all duration-300 hover:border-red hover:bg-red group-hover:rotate-45"
                       >
                         <ArrowUpRight size={16} />
                       </a>
