@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from '../lib/motion'
 import { Sparkles, Wand2, RefreshCw, ArrowRight, Layout, Palette, Clock, Layers } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'

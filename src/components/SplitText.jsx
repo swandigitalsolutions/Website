@@ -1,38 +1,21 @@
-import { motion } from 'motion/react'
-
-const EASE = [0.22, 1, 0.36, 1]
-
 /**
- * Masked word-by-word reveal: every word rises out of its own clipping
- * box. `segments` is a list of strings or { text, className } objects;
- * use '\n' as a segment to force a line break. Animates on mount when
- * `onMount` is set (a pure-CSS animation, so it starts with the first
- * paint instead of waiting for JavaScript — used above the fold), otherwise
- * the first time it scrolls into view.
- * The full sentence is kept as the accessible label.
+ * Section heading. `segments` is a list of strings or { text, className }
+ * objects; use '\n' as a segment to force a line break. With `onMount`
+ * (above the fold) each word rises in with a CSS animation that starts at
+ * first paint. Other headings are plain text, so they never wait on anything.
  */
 export default function SplitText({
-  as = 'h2',
+  as: Tag = 'h2',
   segments,
   className = '',
   delay = 0,
   stagger = 0.06,
   onMount = false,
 }) {
-  const Tag = onMount ? as : motion[as]
-  const label = segments
-    .map((s) => (typeof s === 'string' ? s : s.text))
-    .join(' ')
-    .replace(/\s*\n\s*/g, ' ')
-    .trim()
-
   let index = 0
-  const trigger = onMount
-    ? {}
-    : { initial: 'hidden', whileInView: 'show', viewport: { once: true, margin: '-60px' } }
 
   return (
-    <Tag className={className} aria-label={label} {...trigger}>
+    <Tag className={className}>
       {segments.map((seg, si) => {
         if (seg === '\n') return <br key={`br-${si}`} />
         const text = typeof seg === 'string' ? seg : seg.text
@@ -42,36 +25,19 @@ export default function SplitText({
           .filter(Boolean)
           .map((word, wi) => {
             const i = index++
-            // a real space between words (not just a margin) keeps the
-            // heading's text readable for search engines and copy-paste
             return [
               i > 0 ? ' ' : null,
-              <span
-                key={`${si}-${wi}`}
-                aria-hidden="true"
-                className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]"
-              >
-                {onMount ? (
+              onMount ? (
+                <span key={`${si}-${wi}`} className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]">
                   <span className={`word-rise ${cls}`} style={{ '--d': `${delay + i * stagger}s` }}>
                     {word}
                   </span>
-                ) : (
-                <motion.span
-                  className={`inline-block ${cls}`}
-                  variants={{
-                    hidden: { y: '110%', rotate: 4, opacity: 0 },
-                    show: {
-                      y: '0%',
-                      rotate: 0,
-                      opacity: 1,
-                      transition: { duration: 0.9, ease: EASE, delay: delay + i * stagger },
-                    },
-                  }}
-                >
+                </span>
+              ) : (
+                <span key={`${si}-${wi}`} className={`inline-block ${cls}`}>
                   {word}
-                </motion.span>
-                )}
-              </span>,
+                </span>
+              ),
             ]
           })
       })}

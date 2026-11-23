@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
 import { servicePath } from '../data/service-list'
@@ -66,12 +65,8 @@ export default function Services() {
           {GROUPS.map((g, gi) => {
             const page = g.slug ? servicePath(g.slug) : null
             return (
-              <motion.article
+              <article
                 key={g.title}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.6, delay: gi * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6"
               >
                 <header className="flex items-start gap-3.5">
@@ -115,7 +110,7 @@ export default function Services() {
                     </a>
                   )}
                 </div>
-              </motion.article>
+              </article>
             )
           })}
         </div>

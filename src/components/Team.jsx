@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { ArrowUpRight } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -29,7 +28,6 @@ const TEAM = [
   },
 ]
 
-const EASE = [0.22, 1, 0.36, 1]
 
 export default function Team() {
   return (
@@ -44,33 +42,18 @@ export default function Team() {
               segments={['Skilled hands.', { text: 'Thoughtful software.', className: 'text-gradient' }]}
             />
           </div>
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+          <p
             className="max-w-md text-sm leading-relaxed text-mist sm:text-base"
           >
             Software engineering, product delivery, AI-powered solutions and digital marketing, built by the team at Swan Digital Solutions.
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TEAM.map((person, index) => (
-            <motion.div
-              key={person.role}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.15 }}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                show: { opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.08, ease: EASE } },
-              }}
-            >
+            <div key={person.role}>
               <Tilt max={6} scale={1.015}>
                 <article className="group relative isolate overflow-hidden rounded-3xl border border-line bg-surface shadow-card transition-shadow duration-500 hover:shadow-lift">
-                  {/* The photo is always rendered (never clipped), so it loads and
-                      shows on every device; a curtain slides off it as the reveal. */}
                   <div className="relative aspect-[4/5] overflow-hidden bg-surface2">
                     <img
                       src={person.image}
@@ -81,14 +64,6 @@ export default function Team() {
                       decoding="async"
                       className="h-full w-full object-cover"
                       style={{ objectPosition: person.position }}
-                    />
-                    <motion.div
-                      aria-hidden="true"
-                      className="absolute inset-0 origin-top bg-surface2"
-                      variants={{
-                        hidden: { scaleY: 1 },
-                        show: { scaleY: 0, transition: { duration: 0.8, delay: 0.05 + index * 0.08, ease: [0.76, 0, 0.24, 1] } },
-                      }}
                     />
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night via-night/75 to-transparent px-5 pb-5 pt-16 sm:px-6 sm:pb-6">
@@ -116,7 +91,7 @@ export default function Team() {
                   </div>
                 </article>
               </Tilt>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

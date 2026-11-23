@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from '../lib/motion'
 import { Sparkles, Circle, Lock } from 'lucide-react'
 import { JOURNEY } from '../data/internship'
 

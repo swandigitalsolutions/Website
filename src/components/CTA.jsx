@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
 import SplitText from './SplitText'
 import Magnetic from './Magnetic'
@@ -25,21 +24,13 @@ export default function CTA() {
             className="relative font-display text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tight max-w-3xl mx-auto"
             segments={['Ready to make', { text: 'waves online?', className: 'text-gradient-live' }]}
           />
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.35 }}
+          <p
             className="relative mt-5 text-mist max-w-lg mx-auto"
           >
             Tell us about your business — we&rsquo;ll put together a clear plan
             and pricing within a day.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.5 }}
+          </p>
+          <div
             className="relative mt-9"
           >
             <Magnetic strength={0.4}>
@@ -51,7 +42,7 @@ export default function CTA() {
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </a>
             </Magnetic>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

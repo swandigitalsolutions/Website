@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { motion } from 'motion/react'
+import { motion } from '../lib/motion'
 import { ArrowRight, ArrowUpRight, Phone, MapPin, Globe, Code2, Megaphone, ChevronDown, GraduationCap, BarChart3, UtensilsCrossed, Bot } from 'lucide-react'
 import Navbar from './Navbar'
 import SplitText from './SplitText'
@@ -137,12 +137,8 @@ export default function ServicePage({ service }) {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {service.features.map((f, i) => (
-                <motion.div
+                <div
                   key={f.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.7, delay: (i % 3) * 0.1, ease: EASE }}
                   className="spotlight group relative rounded-2xl border border-line bg-surface p-6 shadow-card hover:shadow-lift transition-shadow duration-500"
                 >
                   <span className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-red/10 text-red font-mono text-xs">
@@ -150,7 +146,7 @@ export default function ServicePage({ service }) {
                   </span>
                   <h3 className="font-display text-lg font-semibold">{f.title}</h3>
                   <p className="mt-2 text-sm text-mist leading-relaxed">{f.desc}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -169,13 +165,8 @@ export default function ServicePage({ service }) {
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
                 {related.map((project, index) => (
-                  <motion.article
+                  <article
                     key={project.title}
-                    initial={{ opacity: 0, y: 28, scale: 0.97 }}
-                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: true, margin: '-30px' }}
-                    transition={{ duration: 0.6, delay: (index % 4) * 0.08, ease: EASE }}
-                    whileHover={{ y: -8 }}
                     className="spotlight group relative overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-shadow duration-500 hover:shadow-lift"
                   >
                     <a
@@ -208,7 +199,7 @@ export default function ServicePage({ service }) {
                       <h3 className="font-display text-base font-semibold leading-snug text-white sm:text-lg">{project.title}</h3>
                       <p className="mt-2.5 text-xs leading-relaxed text-mist sm:text-sm">{project.description}</p>
                     </div>
-                  </motion.article>
+                  </article>
                 ))}
               </div>
             </div>

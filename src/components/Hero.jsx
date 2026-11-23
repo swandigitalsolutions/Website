@@ -125,7 +125,7 @@ export default function Hero() {
                   <defs>
                     <path id="badge-circle" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
                   </defs>
-                  <text className="fill-fg" style={{ fontSize: 6.2, fontFamily: "'JetBrains Mono Variable', ui-monospace, monospace" }}>
+                  <text className="fill-fg" style={{ fontSize: 6.2, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
                     <textPath href="#badge-circle" textLength="230" lengthAdjust="spacing">{BADGE_TEXT}</textPath>
                   </text>
                 </svg>

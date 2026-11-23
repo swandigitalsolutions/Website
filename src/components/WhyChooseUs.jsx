@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { CheckCircle2, Code2, Layout, Sparkles, Wrench } from 'lucide-react'
 import SwanMark from './SwanMark'
 import SplitText from './SplitText'
@@ -39,40 +38,27 @@ export default function WhyChooseUs() {
             />
             <ul className="space-y-5">
               {POINTS.map((point, i) => (
-                <motion.li
+                <li
                   key={point}
-                  initial={{ opacity: 0, x: -24 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.7, delay: 0.15 + i * 0.1, ease: EASE }}
                   className="group flex items-start gap-3 text-base sm:text-lg"
                 >
-                  <motion.span
-                    initial={{ scale: 0, rotate: -90 }}
-                    whileInView={{ scale: 1, rotate: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.3 + i * 0.1 }}
+                  <span
                     className="mt-0.5 shrink-0"
                   >
                     <CheckCircle2 size={22} className="text-red" />
-                  </motion.span>
+                  </span>
                   <span className="bg-[linear-gradient(rgb(var(--red)),rgb(var(--red)))] bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_1px]">
                     {point}
                   </span>
-                </motion.li>
+                </li>
               ))}
             </ul>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {CAPABILITIES.map(({ icon: Icon, title, text }, i) => (
-              <motion.article
+              <article
                 key={title}
-                initial={{ opacity: 0, y: 30, rotateX: 12 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.8, delay: i * 0.1, ease: EASE }}
-                whileHover={{ y: -6 }}
                 style={{ transformPerspective: 900 }}
                 className={`spotlight group rounded-2xl border border-line bg-ink p-5 shadow-card transition-shadow duration-500 hover:shadow-lift sm:p-6 ${
                   i % 2 === 1 ? 'sm:mt-8 sm:-mb-8' : ''
@@ -83,7 +69,7 @@ export default function WhyChooseUs() {
                 </div>
                 <h3 className="font-display text-lg font-semibold text-white">{title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-mist">{text}</p>
-              </motion.article>
+              </article>
             ))}
           </div>
         </div>

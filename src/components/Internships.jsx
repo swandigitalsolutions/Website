@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from '../lib/motion'
 import { ArrowRight, GraduationCap, Building2, Phone } from 'lucide-react'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -188,11 +188,7 @@ export default function Internships() {
         </div>
 
         {/* -------------------------------------------------------------- CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.8, ease: EASE }}
+        <div
           className="on-night relative isolate mt-5 overflow-hidden rounded-[1.75rem] bg-night px-6 py-10 shadow-lift sm:rounded-[2rem] sm:px-10 sm:py-12"
         >
           <div className="pointer-events-none absolute inset-0 noise-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
@@ -249,7 +245,7 @@ export default function Internships() {
               </a>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
