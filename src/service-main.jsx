@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { startTransition } from 'react'
 import ReactDOM from 'react-dom/client'
 import ServiceRoot from './service-root'
 import './index.css'
@@ -12,5 +12,7 @@ const tree = (
     <ServiceRoot slug={root.dataset.service} />
   </React.StrictMode>
 )
-if (root.hasChildNodes()) ReactDOM.hydrateRoot(root, tree)
+// startTransition splits hydration into short tasks, so taps and scrolling
+// stay responsive while the page becomes interactive.
+if (root.hasChildNodes()) startTransition(() => { ReactDOM.hydrateRoot(root, tree) })
 else ReactDOM.createRoot(root).render(tree)

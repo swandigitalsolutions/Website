@@ -37,7 +37,6 @@ export default function Hero() {
             className="hero-in eyebrow inline-flex items-center gap-2.5 rounded-2xl border border-red/20 bg-white/90 px-3.5 py-2 text-red mb-6 sm:mb-7 shadow-card !tracking-[0.12em] !text-[0.66rem] leading-relaxed"
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-red" />
             </span>
             Websites &middot; Business Software &middot; AI &middot; Business Analysis &amp; Growth
@@ -50,12 +49,11 @@ export default function Hero() {
             stagger={0.07}
             className="font-display text-[2.6rem] leading-[1.06] sm:text-6xl lg:text-7xl sm:leading-[1.04] font-semibold tracking-tight"
             segments={[
-              'We build digital',
+              'Software company',
               '\n',
-              'things that',
-              { text: 'glide ahead', className: 'text-gradient-live' },
+              'in Devanahalli,',
               '\n',
-              'of the rest.',
+              { text: 'Bengaluru.', className: 'text-gradient-live' },
             ]}
           />
 
@@ -63,9 +61,9 @@ export default function Hero() {
             style={delay(4)}
             className="hero-in mt-7 text-base sm:text-lg text-mist max-w-lg leading-relaxed"
           >
-            Swan Digital Solutions designs premium websites, business software
-            and digital growth systems for hotels, schools and modern
-            businesses — engineered to launch fast and scale further.
+            Swan Digital Solutions is a software and website development company
+            in Devanahalli, Bengaluru (Bangalore), building custom software, ERP,
+            school management systems, AI solutions and business websites.
           </p>
 
           <div
@@ -123,7 +121,7 @@ export default function Hero() {
             {/* rotating brand badge */}
             <div style={delay(8)} className="hero-pop absolute -top-14 -left-2 sm:-left-8 z-20 hidden sm:block">
               <div className="relative h-28 w-28 rounded-full bg-white/95 border border-line shadow-card">
-                <svg viewBox="0 0 100 100" className="spin-slow absolute inset-0 h-full w-full" aria-hidden="true">
+                <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden="true">
                   <defs>
                     <path id="badge-circle" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
                   </defs>

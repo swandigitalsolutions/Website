@@ -9,11 +9,7 @@ const COMPANY = [
   { label: 'How we work', href: '/#process' },
 ]
 
-const SERVICE_LINKS = [
-  ...PUBLISHED_LIST.map((s) => ({ label: s.name, href: `/services/${s.slug}/` })),
-  { label: 'Digital Marketing', href: '/#services' },
-  { label: 'AI Solutions & Automation', href: '/#services' },
-]
+const SERVICE_LINKS = PUBLISHED_LIST.map((s) => ({ label: s.name, href: `/services/${s.slug}/` }))
 
 /**
  * A conventional, professional footer: brand + call to action, three link
@@ -35,7 +31,7 @@ export default function Footer() {
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-relaxed">
-              Websites, business software and digital growth for businesses in Devanahalli, Bengaluru and beyond.
+              Software and website development company in Devanahalli, Bengaluru (Bangalore), serving businesses across Karnataka and beyond.
             </p>
             <a
               href="#contact"

@@ -54,7 +54,7 @@ export default function InternshipReel() {
             <span className="truncate font-mono">swan-internship-engine.live</span>
           </div>
           <span className="eyebrow inline-flex shrink-0 items-center gap-1.5 text-[10px] text-[#ff7a82]">
-            <Sparkles size={12} className="animate-pulse" />
+            <Sparkles size={12} />
             <span className="hidden sm:inline">LIVE PREVIEW</span>
           </span>
         </div>
@@ -97,7 +97,7 @@ export default function InternshipReel() {
                         className="absolute inset-0 rounded-full border-2 border-red"
                         initial={{ scale: 1, opacity: 0.8 }}
                         animate={{ scale: 1.6, opacity: 0 }}
-                        transition={{ duration: 1.1, repeat: Infinity, ease: 'easeOut' }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
                     )}
                   </motion.div>

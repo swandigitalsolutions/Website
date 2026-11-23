@@ -9,19 +9,17 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 const { render } = await import(pathToFileURL(path.join(root, 'dist-ssr', 'entry-server.js')).href)
 
-// Preload the two text fonts so they arrive before the first paint instead of
-// swapping in afterwards (each late swap re-lays-out the whole page). The
-// mono font only styles small labels, so it is left to load normally.
-const PRELOAD_FONTS = /^(inter|space-grotesk)-latin-wght-normal-.*\.woff2$/
-const fontLinks = fs
-  .readdirSync(path.join(dist, 'assets'))
-  .filter((f) => PRELOAD_FONTS.test(f))
-  .map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin />`)
-  .join('\n    ')
-
 function bake(file, slug) {
-  let html = fs.readFileSync(file, 'utf8')
-  if (fontLinks && !html.includes('as="font"')) html = html.replace('</head>', `    ${fontLinks}\n  </head>`)
+  const html = fs
+    .readFileSync(file, 'utf8')
+    .replace(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"[^>]*>/g, (_, href) => {
+      const css = fs.readFileSync(path.join(dist, href), 'utf8').replace(/<\/style/gi, '<\\/style')
+      return `<style>${css}</style>`
+    })
+    // Paint the pre-rendered page first. The app starts once the page has
+    // loaded and the browser is idle, or at once on the first tap or key press.
+    .replace(/\s*<link rel="modulepreload"[^>]*>/g, '')
+    .replace(/<script type="module"[^>]*src="(\/assets\/[^"]+\.js)"[^>]*><\/script>/, (_, src) => `<script>(function(){var d=0;function g(){if(d)return;d=1;import(${JSON.stringify(src)})}addEventListener('pointerdown',g,{once:true,passive:true});addEventListener('keydown',g,{once:true});function i(){(window.requestIdleCallback||function(f){setTimeout(f,200)})(g,{timeout:1500})}document.readyState==='complete'?i():addEventListener('load',i,{once:true})})()</script>`)
   const marker = slug ? `<div id="root" data-service="${slug}"></div>` : '<div id="root"></div>'
   if (!html.includes(marker)) throw new Error(`Root marker not found in ${file}`)
   const filled = marker.replace('></div>', `>${render(slug)}</div>`)

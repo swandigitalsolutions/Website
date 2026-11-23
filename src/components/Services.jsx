@@ -15,8 +15,8 @@ const GROUPS = [
     slug: 'website-development',
     blurb: 'Fast, modern sites that turn visitors into customers.',
     items: [
-      { icon: Globe, title: 'Business Websites', desc: 'Built to represent your brand and convert.' },
-      { icon: UtensilsCrossed, title: 'Hotel & Restaurant Websites', desc: 'Menus, galleries and reservations.' },
+      { icon: Globe, title: 'Business Websites', slug: 'website-development', desc: 'Built to represent your brand and convert.' },
+      { icon: UtensilsCrossed, title: 'Hotel & Restaurant Websites', slug: 'hotel-restaurant-websites', desc: 'Menus, galleries and reservations.' },
       { icon: Settings, title: 'Website Maintenance', desc: 'Updates, security and monitoring, handled.' },
     ],
   },
@@ -26,9 +26,9 @@ const GROUPS = [
     slug: 'software-development',
     blurb: 'Custom tools engineered around how you actually work.',
     items: [
-      { icon: GraduationCap, title: 'School Management Systems', desc: 'Admissions, attendance, fees and messages.' },
-      { icon: BarChart3, title: 'Business Management Software', desc: 'Operations, inventory and reporting.' },
-      { icon: Code2, title: 'Custom Web Applications', desc: 'Your exact workflow — not a template.' },
+      { icon: GraduationCap, title: 'School Management Systems', slug: 'school-management-software', desc: 'Admissions, attendance, fees and messages.' },
+      { icon: BarChart3, title: 'Business Management Software', slug: 'erp-software', desc: 'Operations, inventory and reporting.' },
+      { icon: Code2, title: 'Custom Web Applications', slug: 'software-development', desc: 'Your exact workflow — not a template.' },
     ],
   },
   {
@@ -36,8 +36,8 @@ const GROUPS = [
     icon: TrendingUp,
     blurb: 'Bring in the right customers and save your team hours.',
     items: [
-      { icon: Bot, title: 'AI Solutions & Automation', desc: 'Practical AI features and automations.' },
-      { icon: Megaphone, title: 'Digital Marketing Support', desc: 'SEO, content and campaigns.' },
+      { icon: Bot, title: 'AI Solutions & Automation', slug: 'ai-solutions', desc: 'Practical AI features and automations.' },
+      { icon: Megaphone, title: 'Digital Marketing Support', slug: 'digital-marketing', desc: 'SEO, content and campaigns.' },
       { icon: TrendingUp, title: 'Business Analysis & Growth', desc: 'Clear, practical steps to grow.' },
     ],
   },
@@ -89,7 +89,15 @@ export default function Services() {
                     <li key={it.title} className="flex items-start gap-3 py-3.5">
                       <it.icon size={17} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
                       <div className="min-w-0">
-                        <p className="text-[0.95rem] font-medium leading-snug text-fg">{it.title}</p>
+                        <p className="text-[0.95rem] font-medium leading-snug text-fg">
+                          {servicePath(it.slug) ? (
+                            <a href={servicePath(it.slug)} className="underline decoration-transparent underline-offset-4 transition-colors hover:text-red hover:decoration-red">
+                              {it.title}
+                            </a>
+                          ) : (
+                            it.title
+                          )}
+                        </p>
                         <p className="mt-0.5 text-xs leading-snug text-mist sm:text-sm">{it.desc}</p>
                       </div>
                     </li>

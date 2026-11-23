@@ -57,6 +57,15 @@ function serviceHead(s) {
           { '@type': 'ListItem', position: 2, name: s.name, item: url },
         ],
       },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: s.faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
     ],
   }
   return `<!-- page-head:start (generated for /services/${s.slug}/) -->

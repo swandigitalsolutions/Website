@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowRight, ArrowUpRight, Phone, MapPin, Globe, Code2, Megaphone, ChevronDown } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Phone, MapPin, Globe, Code2, Megaphone, ChevronDown, GraduationCap, BarChart3, UtensilsCrossed, Bot } from 'lucide-react'
 import Navbar from './Navbar'
 import SplitText from './SplitText'
 import SectionEyebrow from './SectionEyebrow'
@@ -10,14 +10,13 @@ import Contact from './Contact'
 import Footer from './Footer'
 import ScrollProgress from './ScrollProgress'
 import SmoothScroll from './SmoothScroll'
-import Cursor from './Cursor'
 import SkyBackdrop from './SkyBackdrop'
 import { PROJECTS } from '../data/projects'
 import { PUBLISHED_SERVICES } from '../data/services'
 
 const ChatWidget = lazy(() => import('./ChatWidget'))
 
-const ICONS = { globe: Globe, code: Code2, megaphone: Megaphone }
+const ICONS = { globe: Globe, code: Code2, megaphone: Megaphone, school: GraduationCap, chart: BarChart3, hotel: UtensilsCrossed, bot: Bot }
 // Sections on this page: those with a nav link scroll in place; the rest link home.
 const LOCAL_IDS = ['process', 'contact']
 const SPY_IDS = ['top', 'features', 'related-work', 'process', 'faq', 'contact']
@@ -50,7 +49,6 @@ export default function ServicePage({ service }) {
       <SkyBackdrop />
       <SmoothScroll />
       <ScrollProgress />
-      <Cursor />
       <Navbar localIds={LOCAL_IDS} spyIds={SPY_IDS} />
       <main>
         {/* Intro */}
@@ -61,7 +59,7 @@ export default function ServicePage({ service }) {
           <div className="absolute inset-0 noise-grid pointer-events-none [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent_75%)]" />
 
           <div className="relative max-w-7xl mx-auto px-5 sm:px-6 md:px-10">
-            <motion.nav aria-label="Breadcrumb" custom={0} initial="hidden" animate="show" variants={fadeUp} className="mb-6 sm:mb-8">
+            <motion.nav aria-label="Breadcrumb" custom={0} initial={false} animate="show" variants={fadeUp} className="mb-6 sm:mb-8">
               <ol className="flex flex-wrap items-center gap-2 text-xs text-mist">
                 <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
                 <li aria-hidden="true">/</li>
@@ -71,7 +69,7 @@ export default function ServicePage({ service }) {
 
             <motion.div
               custom={0}
-              initial="hidden"
+              initial={false}
               animate="show"
               variants={fadeUp}
               className="eyebrow inline-flex items-center gap-2.5 rounded-2xl border border-red/20 bg-white/90 px-3.5 py-2 text-red mb-6 sm:mb-7 shadow-card !tracking-[0.12em] !text-[0.66rem] leading-relaxed"
@@ -89,13 +87,13 @@ export default function ServicePage({ service }) {
               segments={service.h1}
             />
 
-            <motion.p custom={3} initial="hidden" animate="show" variants={fadeUp} className="mt-7 text-base sm:text-lg text-mist max-w-2xl leading-relaxed">
+            <motion.p custom={3} initial={false} animate="show" variants={fadeUp} className="mt-7 text-base sm:text-lg text-mist max-w-2xl leading-relaxed">
               {service.intro}
             </motion.p>
 
             <motion.div
               custom={4}
-              initial="hidden"
+              initial={false}
               animate="show"
               variants={fadeUp}
               className="mt-9 sm:mt-10 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4"
@@ -120,7 +118,7 @@ export default function ServicePage({ service }) {
               </Magnetic>
             </motion.div>
 
-            <motion.p custom={5} initial="hidden" animate="show" variants={fadeUp} className="mt-8 inline-flex items-center gap-2 text-sm text-mist">
+            <motion.p custom={5} initial={false} animate="show" variants={fadeUp} className="mt-8 inline-flex items-center gap-2 text-sm text-mist">
               <MapPin size={15} className="text-red" />
               Based in Devanahalli, Karnataka · Serving Devanahalli &amp; Bengaluru
             </motion.p>

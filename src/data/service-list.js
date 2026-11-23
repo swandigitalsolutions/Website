@@ -9,7 +9,11 @@
 export const SERVICE_LIST = [
   { slug: 'website-development', name: 'Website Development', status: 'published' },
   { slug: 'software-development', name: 'Software Development', status: 'published' },
-  { slug: 'digital-marketing', name: 'Digital Marketing', status: 'draft' }, // content to be expanded before publishing
+  { slug: 'school-management-software', name: 'School Management Software', status: 'published' },
+  { slug: 'erp-software', name: 'ERP & Business Software', status: 'published' },
+  { slug: 'hotel-restaurant-websites', name: 'Hotel & Restaurant Websites', status: 'published' },
+  { slug: 'ai-solutions', name: 'AI Solutions & Automation', status: 'published' },
+  { slug: 'digital-marketing', name: 'Digital Marketing', status: 'published' },
   { slug: 'seo', name: 'SEO Services', status: 'draft' },
   { slug: 'social-media-marketing', name: 'Social Media Marketing', status: 'draft' },
 ]

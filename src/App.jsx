@@ -15,7 +15,6 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import ScrollProgress from './components/ScrollProgress'
 import SmoothScroll from './components/SmoothScroll'
-import Cursor from './components/Cursor'
 import SkyBackdrop from './components/SkyBackdrop'
 
 const ChatWidget = lazy(() => import('./components/ChatWidget'))
@@ -35,7 +34,6 @@ export default function App() {
       <SkyBackdrop />
       <SmoothScroll />
       <ScrollProgress />
-      <Cursor />
       <Navbar />
       <main>
         <Hero />

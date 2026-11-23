@@ -8,8 +8,13 @@
 
 ## Services
 
-- [Website Development](https://www.swandigitalsolutions.com/services/website-development/): fast, modern business, hotel and restaurant websites, plus ongoing maintenance.
-- [Software Development](https://www.swandigitalsolutions.com/services/software-development/): school management systems, business management software and custom web applications.
+- [Website Development](https://www.swandigitalsolutions.com/services/website-development/): fast, modern business websites and ongoing maintenance.
+- [Software Development](https://www.swandigitalsolutions.com/services/software-development/): custom web applications and business software.
+- [School Management Software](https://www.swandigitalsolutions.com/services/school-management-software/): admissions, attendance, fees and communication.
+- [ERP & Business Software](https://www.swandigitalsolutions.com/services/erp-software/): operations, inventory and reporting.
+- [Hotel & Restaurant Websites](https://www.swandigitalsolutions.com/services/hotel-restaurant-websites/): menus, galleries and reservations.
+- [AI Solutions & Automation](https://www.swandigitalsolutions.com/services/ai-solutions/): practical AI features and workflow automation.
+- [Digital Marketing](https://www.swandigitalsolutions.com/services/digital-marketing/): SEO, content and campaign support.
 
 ## Company
 
