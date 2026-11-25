@@ -5,6 +5,7 @@
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import ServiceRoot from './service-root'
+import LegalRoot from './legal-root'
 import { ISLANDS } from './islands'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -43,6 +44,14 @@ function renderHome() {
     .map(([name, Component]) => part(name, Component))
     .join('')
   return `<div class="text-fg font-body min-h-screen">${part('ScrollProgress', ScrollProgress)}${part('Navbar', Navbar)}<main>${main}</main>${part('Footer', Footer)}<div id="chat-root"></div></div>`
+}
+
+export function renderLegal(slug) {
+  return renderToString(
+    <React.StrictMode>
+      <LegalRoot slug={slug} />
+    </React.StrictMode>,
+  )
 }
 
 export function render(slug) {

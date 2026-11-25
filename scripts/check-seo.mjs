@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { ALL_SERVICES, PUBLISHED_SERVICES } from '../src/data/services.js'
+import { LEGAL_PAGES } from '../src/data/legal.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
@@ -18,6 +19,7 @@ const check = (cond, msg) => (cond ? ok(msg) : fail(msg))
 const pages = [
   { path: '/', file: 'index.html' },
   ...PUBLISHED_SERVICES.map((s) => ({ path: `/services/${s.slug}/`, file: `services/${s.slug}/index.html`, service: s })),
+  ...LEGAL_PAGES.map((l) => ({ path: `/${l.slug}/`, file: `${l.slug}/index.html`, legal: true })),
 ]
 const drafts = ALL_SERVICES.filter((s) => s.status !== 'published')
 
@@ -60,6 +62,7 @@ for (const p of pages) {
   const ldText = ldBlocks.map((b) => b[1]).join('')
   check(!/streetAddress|postalCode|geo"|openingHours|aggregateRating|review/i.test(ldText), 'no unverified address/geo/hours/review fields')
   if (p.service) check(types.includes('Service') && types.includes('BreadcrumbList'), 'Service + BreadcrumbList schema')
+  if (p.legal) check(types.includes('WebPage') && types.includes('BreadcrumbList'), 'WebPage + BreadcrumbList schema')
 
   const h1s = [...body.matchAll(/<h1[\s>]/g)].length
   check(h1s === 1, `exactly one <h1> (found ${h1s})`)

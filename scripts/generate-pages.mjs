@@ -8,6 +8,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PUBLISHED_SERVICES } from '../src/data/services.js'
+import { LEGAL_PAGES } from '../src/data/legal.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SITE = 'https://www.swandigitalsolutions.com'
@@ -108,9 +109,74 @@ for (const s of PUBLISHED_SERVICES) {
   fs.writeFileSync(path.join(outDir, s.slug, 'index.html'), html)
 }
 
+// Legal pages: /privacy-policy/ and /terms-and-conditions/ at the site root.
+function legalHead(page) {
+  const url = `${SITE}/${page.slug}/`
+  const ld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: page.seoTitle,
+        description: page.description,
+        inLanguage: 'en-IN',
+        isPartOf: { '@id': `${SITE}/#website` },
+        publisher: { '@id': BUSINESS_ID },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+          { '@type': 'ListItem', position: 2, name: page.title, item: url },
+        ],
+      },
+    ],
+  }
+  return `<!-- page-head:start (generated for /${page.slug}/) -->
+    <title>${esc(page.seoTitle)}</title>
+    <meta name="description" content="${esc(page.description)}" />
+    <link rel="canonical" href="${url}" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Swan Digital Solutions" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:title" content="${esc(page.seoTitle)}" />
+    <meta property="og:description" content="${esc(page.description)}" />
+    <meta property="og:image" content="${SITE}/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Swan Digital Solutions — Your Partner in Digital Growth" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${esc(page.seoTitle)}" />
+    <meta name="twitter:description" content="${esc(page.description)}" />
+    <meta name="twitter:image" content="${SITE}/og-image.jpg" />
+    <script type="application/ld+json">
+${jsonLd(ld)}
+    </script>
+    <!-- page-head:end -->`
+}
+
+for (const page of LEGAL_PAGES) {
+  const dir = path.join(root, page.slug)
+  fs.rmSync(dir, { recursive: true, force: true })
+  const html = template
+    .replace(HEAD_RE, () => legalHead(page))
+    .replace('<div id="root"></div>', `<div id="root" data-legal="${esc(page.slug)}"></div>`)
+    .replace('src="/src/main.jsx"', 'src="/src/legal-main.jsx"')
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(path.join(dir, 'index.html'), html)
+}
+
 // No <lastmod>: a build date on every URL is not a real modification date,
 // and Google ignores <priority>/<changefreq>.
-const urls = [`${SITE}/`, ...PUBLISHED_SERVICES.map((s) => `${SITE}/services/${s.slug}/`)]
+const urls = [
+  `${SITE}/`,
+  ...PUBLISHED_SERVICES.map((s) => `${SITE}/services/${s.slug}/`),
+  ...LEGAL_PAGES.map((p) => `${SITE}/${p.slug}/`),
+]
 fs.writeFileSync(
   path.join(root, 'public', 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>
@@ -120,4 +186,4 @@ ${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}
 `,
 )
 
-console.log(`Generated ${PUBLISHED_SERVICES.length} service pages and sitemap.xml (${urls.length} URLs)`)
+console.log(`Generated ${PUBLISHED_SERVICES.length} service pages, ${LEGAL_PAGES.length} legal pages and sitemap.xml (${urls.length} URLs)`)
