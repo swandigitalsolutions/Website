@@ -11,11 +11,17 @@ const COMPANY = [
 
 const SERVICE_LINKS = PUBLISHED_LIST.map((s) => ({ label: s.name, href: `/services/${s.slug}/` }))
 
+const LEGAL_LINKS = [
+  { label: 'Privacy Policy', href: '/privacy-policy/' },
+  { label: 'Terms & Conditions', href: '/terms-and-conditions/' },
+]
+
 /**
  * A conventional, professional footer: brand + call to action, three link
  * columns and a slim legal bar. Static — nothing here animates.
+ * `contactHref`: pages without a #contact section pass '/#contact'.
  */
-export default function Footer() {
+export default function Footer({ contactHref = '#contact' }) {
   const year = new Date().getFullYear()
 
   return (
@@ -34,7 +40,7 @@ export default function Footer() {
               Software and website development company in Devanahalli, Bengaluru (Bangalore), serving businesses across Karnataka and beyond.
             </p>
             <a
-              href="#contact"
+              href={contactHref}
               className="group mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-red px-5 text-sm font-medium text-plainwhite transition-colors hover:bg-red-soft"
             >
               Start a project
@@ -78,7 +84,20 @@ export default function Footer() {
 
         {/* legal bar */}
         <div className="flex flex-col-reverse items-start justify-between gap-4 border-t border-white/10 py-6 text-xs sm:flex-row sm:items-center">
-          <p>&copy; {year} Swan Digital Solutions. All rights reserved.</p>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-6">
+            <p>&copy; {year} Swan Digital Solutions. All rights reserved.</p>
+            <nav aria-label="Legal">
+              <ul className="flex flex-wrap items-center gap-x-5">
+                {LEGAL_LINKS.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href} className="inline-flex min-h-[40px] items-center transition-colors hover:text-plainwhite">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
           <a
             href="#top"
             className="group inline-flex min-h-[40px] items-center gap-2 rounded-full border border-white/15 px-4 transition-colors hover:border-white/40 hover:text-plainwhite"
